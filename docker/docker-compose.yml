@@ -71,17 +71,4 @@ services:
       - RUN_MODE=${RUN_MODE:-cron}
       - IMMEDIATE_RUN=${IMMEDIATE_RUN:-true}
 
-  trend-radar-mcp:
-    image: wantcat/trendradar-mcp:latest
-    container_name: trend-radar-mcp
-    restart: unless-stopped
 
-    ports:
-      - "127.0.0.1:3333:3333"
-
-    volumes:
-      - ../config:/app/config:ro
-      - ../output:/app/output
-
-    environment:
-      - TZ=Asia/Shanghai

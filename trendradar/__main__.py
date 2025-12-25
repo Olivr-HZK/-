@@ -118,7 +118,7 @@ class NewsAnalyzer:
         self.update_info = None
         self.proxy_url = None
         self._setup_proxy()
-        self.data_fetcher = DataFetcher(self.proxy_url)
+        #self.data_fetcher = DataFetcher(self.proxy_url)
 
         # 初始化存储管理器（使用 AppContext）
         self._init_storage_manager()
@@ -437,50 +437,50 @@ class NewsAnalyzer:
 
         return False
 
-    def _generate_summary_report(self, mode_strategy: Dict) -> Optional[str]:
-        """生成汇总报告（带通知）"""
-        summary_type = (
-            "当前榜单汇总" if mode_strategy["summary_mode"] == "current" else "当日汇总"
-        )
-        print(f"生成{summary_type}报告...")
+    # def _generate_summary_report(self, mode_strategy: Dict) -> Optional[str]:
+    #     """生成汇总报告（带通知）"""
+    #     summary_type = (
+    #         "当前榜单汇总" if mode_strategy["summary_mode"] == "current" else "当日汇总"
+    #     )
+    #     print(f"生成{summary_type}报告...")
 
-        # 加载分析数据
-        analysis_data = self._load_analysis_data()
-        if not analysis_data:
-            return None
+    #     # 加载分析数据
+    #     analysis_data = self._load_analysis_data()
+    #     if not analysis_data:
+    #         return None
 
-        all_results, id_to_name, title_info, new_titles, word_groups, filter_words, global_filters = (
-            analysis_data
-        )
+    #     all_results, id_to_name, title_info, new_titles, word_groups, filter_words, global_filters = (
+    #         analysis_data
+    #     )
 
-        # 运行分析流水线
-        stats, html_file = self._run_analysis_pipeline(
-            all_results,
-            mode_strategy["summary_mode"],
-            title_info,
-            new_titles,
-            word_groups,
-            filter_words,
-            id_to_name,
-            is_daily_summary=True,
-            global_filters=global_filters,
-        )
+    #     # 运行分析流水线
+    #     stats, html_file = self._run_analysis_pipeline(
+    #         all_results,
+    #         mode_strategy["summary_mode"],
+    #         title_info,
+    #         new_titles,
+    #         word_groups,
+    #         filter_words,
+    #         id_to_name,
+    #         is_daily_summary=True,
+    #         global_filters=global_filters,
+    #     )
 
-        if html_file:
-            print(f"{summary_type}报告已生成: {html_file}")
+    #     if html_file:
+    #         print(f"{summary_type}报告已生成: {html_file}")
 
-        # 发送通知
-        self._send_notification_if_needed(
-            stats,
-            mode_strategy["summary_report_type"],
-            mode_strategy["summary_mode"],
-            failed_ids=[],
-            new_titles=new_titles,
-            id_to_name=id_to_name,
-            html_file_path=html_file,
-        )
+    #     # 发送通知
+    #     self._send_notification_if_needed(
+    #         stats,
+    #         mode_strategy["summary_report_type"],
+    #         mode_strategy["summary_mode"],
+    #         failed_ids=[],
+    #         new_titles=new_titles,
+    #         id_to_name=id_to_name,
+    #         html_file_path=html_file,
+    #     )
 
-        return html_file
+    #     return html_file
 
     def _generate_summary_html(self, mode: str = "daily") -> Optional[str]:
         """生成汇总HTML"""
