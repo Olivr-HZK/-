@@ -40,7 +40,7 @@ Task:
 2. For each, provide a short "AI Insight" (one sentence in chinese. Focus on it's impact or insight on mini games's ads idea or its user acquisition).
 3. Format as a STICKY JSON for TrendRadar compatibility.
 
-The JSON structure MUST follow this exact template:
+The JSON structure MUST follow this exact template(you must give an json dictionary not a json array):
 {{
   "google_trend_ai": {{
     "Trend Title [AI Insight]": {{
