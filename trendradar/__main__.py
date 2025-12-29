@@ -214,23 +214,24 @@ class NewsAnalyzer:
         self, stats: List[Dict], new_titles: Optional[Dict] = None
     ) -> bool:
         """检查是否有有效的新闻内容"""
-        if self.report_mode == "incremental":
-            # 增量模式：必须有新增标题且匹配了关键词才推送
-            has_new_titles = bool(
-                new_titles and any(len(titles) > 0 for titles in new_titles.values())
-            )
-            has_matched_news = any(stat["count"] > 0 for stat in stats)
-            return has_new_titles and has_matched_news
-        elif self.report_mode == "current":
-            # current模式：只要stats有内容就说明有匹配的新闻
-            return any(stat["count"] > 0 for stat in stats)
-        else:
-            # 当日汇总模式下，检查是否有匹配的频率词新闻或新增新闻
-            has_matched_news = any(stat["count"] > 0 for stat in stats)
-            has_new_news = bool(
-                new_titles and any(len(titles) > 0 for titles in new_titles.values())
-            )
-            return has_matched_news or has_new_news
+        # if self.report_mode == "incremental":
+        #     # 增量模式：必须有新增标题且匹配了关键词才推送
+        #     has_new_titles = bool(
+        #         new_titles and any(len(titles) > 0 for titles in new_titles.values())
+        #     )
+        #     has_matched_news = any(stat["count"] > 0 for stat in stats)
+        #     return has_new_titles and has_matched_news
+        # elif self.report_mode == "current":
+        #     # current模式：只要stats有内容就说明有匹配的新闻
+        #     return any(stat["count"] > 0 for stat in stats)
+        # else:
+        #     # 当日汇总模式下，检查是否有匹配的频率词新闻或新增新闻
+        #     has_matched_news = any(stat["count"] > 0 for stat in stats)
+        #     has_new_news = bool(
+        #         new_titles and any(len(titles) > 0 for titles in new_titles.values())
+        #     )
+        #     return has_matched_news or has_new_news
+        return True # For testing
 
     def _load_analysis_data(
         self,
@@ -535,47 +536,91 @@ class NewsAnalyzer:
         print(f"报告模式: {self.report_mode}")
         print(f"运行模式: {mode_strategy['description']}")
 
+    # def _crawl_data(self) -> Tuple[Dict, Dict, List]:
+    #     """执行数据爬取"""
+    #     ids = []
+    #     for platform in self.ctx.platforms:
+    #         if "name" in platform:
+    #             ids.append((platform["id"], platform["name"]))
+    #         else:
+    #             ids.append(platform["id"])
+
+    #     print(
+    #         f"配置的监控平台: {[p.get('name', p['id']) for p in self.ctx.platforms]}"
+    #     )
+    #     print(f"开始爬取数据，请求间隔 {self.request_interval} 毫秒")
+    #     Path("output").mkdir(parents=True, exist_ok=True)
+
+    #     results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(
+    #         ids, self.request_interval
+    #     )
+
+    #     # 转换为 NewsData 格式并保存到存储后端
+    #     crawl_time = self.ctx.format_time()
+    #     crawl_date = self.ctx.format_date()
+    #     news_data = convert_crawl_results_to_news_data(
+    #         results, id_to_name, failed_ids, crawl_time, crawl_date
+    #     )
+
+    #     # 保存到存储后端（SQLite）
+    #     if self.storage_manager.save_news_data(news_data):
+    #         print(f"数据已保存到存储后端: {self.storage_manager.backend_name}")
+
+    #     # 保存 TXT 快照（如果启用）
+    #     txt_file = self.storage_manager.save_txt_snapshot(news_data)
+    #     if txt_file:
+    #         print(f"TXT 快照已保存: {txt_file}")
+
+    #     # 兼容：同时保存到原有 TXT 格式（确保向后兼容）
+    #     if self.ctx.config["STORAGE"]["FORMATS"]["TXT"]:
+    #         title_file = self.ctx.save_titles(results, id_to_name, failed_ids)
+    #         print(f"标题已保存到: {title_file}")
+
+    #     return results, id_to_name, failed_ids
     def _crawl_data(self) -> Tuple[Dict, Dict, List]:
-        """执行数据爬取"""
-        ids = []
-        for platform in self.ctx.platforms:
-            if "name" in platform:
-                ids.append((platform["id"], platform["name"]))
-            else:
-                ids.append(platform["id"])
+        """
+        修改版：不再爬取，改为加载自定义脚本生成的 JSON 并更新后端
+        """
+        print("🚀 启动自定义数据加载流程...")
+        
+        # 1. 运行你的外部脚本 (可以放在这里执行，也可以在外面跑完存好)
+        # import subprocess
+        # subprocess.run(["python", "/app/my_google_trend_ai.py"])
 
-        print(
-            f"配置的监控平台: {[p.get('name', p['id']) for p in self.ctx.platforms]}"
-        )
-        print(f"开始爬取数据，请求间隔 {self.request_interval} 毫秒")
-        Path("output").mkdir(parents=True, exist_ok=True)
+        # 2. 读取 AI 生成的 JSON (假设路径定死在 output/)
+        import json
+        json_path = Path("/app/output/ai_result.json")
+        if not json_path.exists():
+            raise FileNotFoundError(f"找不到 AI 结果文件: {json_path}")
+        
+        with open(json_path, 'r', encoding='utf-8') as f:
+            # 注意：这里的 data 必须符合原项目的格式： { "source_id": { "title": {"url": "...", "ranks": []} } }
+            custom_results = json.load(f)
 
-        results, id_to_name, failed_ids = self.data_fetcher.crawl_websites(
-            ids, self.request_interval
-        )
-
-        # 转换为 NewsData 格式并保存到存储后端
+        # 3. 构造元数据
+        # id_to_name 给你的自定义平台起个名字
+        id_to_name = {"google_trend_ai": "Google趋势AI分析"}
+        failed_ids = []
+        
+        # 4. 同步到后端（这是你最看重的：保持数据持久化）
         crawl_time = self.ctx.format_time()
         crawl_date = self.ctx.format_date()
+        
+        # 将你的 JSON 转换为原项目模型
+        from trendradar.storage import convert_crawl_results_to_news_data
         news_data = convert_crawl_results_to_news_data(
-            results, id_to_name, failed_ids, crawl_time, crawl_date
+            custom_results, id_to_name, failed_ids, crawl_time, crawl_date
         )
 
-        # 保存到存储后端（SQLite）
+        # 保存到 SQLite
         if self.storage_manager.save_news_data(news_data):
-            print(f"数据已保存到存储后端: {self.storage_manager.backend_name}")
+            print(f"✅ AI 数据已同步至 SQLite 后端")
 
-        # 保存 TXT 快照（如果启用）
-        txt_file = self.storage_manager.save_txt_snapshot(news_data)
-        if txt_file:
-            print(f"TXT 快照已保存: {txt_file}")
-
-        # 兼容：同时保存到原有 TXT 格式（确保向后兼容）
+        # 5. 保持 TXT 快照兼容（可选）
         if self.ctx.config["STORAGE"]["FORMATS"]["TXT"]:
-            title_file = self.ctx.save_titles(results, id_to_name, failed_ids)
-            print(f"标题已保存到: {title_file}")
+            self.ctx.save_titles(custom_results, id_to_name, failed_ids)
 
-        return results, id_to_name, failed_ids
+        return custom_results, id_to_name, failed_ids
 
     def _execute_mode_strategy(
         self, mode_strategy: Dict, results: Dict, id_to_name: Dict, failed_ids: List
@@ -704,12 +749,15 @@ class NewsAnalyzer:
         """执行分析流程"""
         try:
             self._initialize_and_check_config()
-
-            mode_strategy = self._get_mode_strategy()
-
+    
+            # 1. 载入 AI 结果进后端
             results, id_to_name, failed_ids = self._crawl_data()
-
-            self._execute_mode_strategy(mode_strategy, results, id_to_name, failed_ids)
+            
+            # 2. 直接复用原有的模式执行逻辑（它会自动处理排版和推送）
+            strategy = self._get_mode_strategy()
+            self._execute_mode_strategy(strategy, results, id_to_name, failed_ids)
+            
+            self.ctx.cleanup()
 
         except Exception as e:
             print(f"分析流程执行出错: {e}")

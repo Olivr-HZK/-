@@ -325,6 +325,7 @@ def load_config(config_path: Optional[str] = None) -> Dict[str, Any]:
 
     # Webhook 配置
     config.update(_load_webhook_config(config_data))
+    print(f"The WebHook Setting is the following:{ _load_webhook_config(config_data)} ")
 
     # 打印通知渠道配置来源
     _print_notification_sources(config)

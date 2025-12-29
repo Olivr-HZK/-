@@ -8,12 +8,19 @@ services:
 
     ports:
       - "127.0.0.1:${WEBSERVER_PORT:-8080}:${WEBSERVER_PORT:-8080}"
+    extra_hosts:   # 必须加上这个，否则连不上 Mac 代理
+      - "host.docker.internal:host-gateway"
+      
+
 
     volumes:
       - ../config:/app/config:ro
       - ../output:/app/output
+      - ../GTscraper.py:/app/GTscraper.py
+      - ../GTSummaryAI.py:/app/GTSummaryAI.py
 
     environment:
+      - PYTHONUNBUFFERED=1
       - TZ=Asia/Shanghai
       # 核心配置
       - ENABLE_CRAWLER=${ENABLE_CRAWLER:-}
@@ -73,19 +80,3 @@ services:
       - RUN_MODE=${RUN_MODE:-cron}
       - IMMEDIATE_RUN=${IMMEDIATE_RUN:-true}
 
-  trend-radar-mcp:
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.mcp
-    container_name: trend-radar-mcp
-    restart: unless-stopped
-
-    ports:
-      - "127.0.0.1:3333:3333"
-
-    volumes:
-      - ../config:/app/config:ro
-      - ../output:/app/output
-
-    environment:
-      - TZ=Asia/Shanghai

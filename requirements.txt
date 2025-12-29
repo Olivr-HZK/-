@@ -4,3 +4,12 @@ PyYAML>=6.0.3,<7.0.0
 fastmcp>=2.12.0,<2.14.0
 websockets>=13.0,<14.0
 boto3>=1.35.0,<2.0.0
+# 基础数据处理
+pandas
+
+# 网络请求与 AI 接口
+openai
+requests
+
+# 自动化爬虫引擎
+playwright
