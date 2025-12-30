@@ -347,6 +347,12 @@ class AppContext:
         mode: str = "daily",
     ) -> List[str]:
         """分批处理消息内容"""
+        rendered_content = None
+        if format_type == "feishu":
+            rendered_content = self.render_feishu(
+                report_data=report_data, update_info=update_info, mode=mode
+            )
+
         return split_content_into_batches(
             report_data=report_data,
             format_type=format_type,
@@ -361,6 +367,7 @@ class AppContext:
             feishu_separator=self.config.get("FEISHU_MESSAGE_SEPARATOR", "---"),
             reverse_content_order=self.config.get("REVERSE_CONTENT_ORDER", False),
             get_time_func=self.get_time,
+            rendered_content=rendered_content,
         )
 
     # === 通知发送 ===

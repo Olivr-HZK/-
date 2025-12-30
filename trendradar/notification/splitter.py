@@ -9,6 +9,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Callable
 
 from trendradar.report.formatter import format_title_for_platform
+from trendradar.notification.batch import truncate_to_bytes
 
 
 # 默认批次大小配置
@@ -18,6 +19,38 @@ DEFAULT_BATCH_SIZES = {
     "ntfy": 3800,
     "default": 4000,
 }
+
+
+def _split_text_by_bytes(text: str, max_bytes: int) -> List[str]:
+    """按字节限制拆分已渲染的内容，尽量保持行级完整性"""
+    batches: List[str] = []
+    if not text:
+        return batches
+
+    current = ""
+    for line in text.splitlines(keepends=True):
+        candidate = current + line
+        if len(candidate.encode("utf-8")) <= max_bytes:
+            current = candidate
+            continue
+
+        if current:
+            batches.append(current)
+            current = ""
+
+        while len(line.encode("utf-8")) > max_bytes:
+            safe_chunk = truncate_to_bytes(line, max_bytes)
+            if not safe_chunk:
+                break
+            batches.append(safe_chunk)
+            line = line[len(safe_chunk) :]
+
+        current = line
+
+    if current:
+        batches.append(current)
+
+    return batches
 
 
 def split_content_into_batches(
@@ -30,6 +63,7 @@ def split_content_into_batches(
     feishu_separator: str = "---",
     reverse_content_order: bool = False,
     get_time_func: Optional[Callable[[], datetime]] = None,
+    rendered_content: Optional[str] = None,
 ) -> List[str]:
     """分批处理消息内容，确保词组标题+至少第一条新闻的完整性
 
@@ -43,6 +77,7 @@ def split_content_into_batches(
         feishu_separator: 飞书消息分隔符
         reverse_content_order: 是否反转内容顺序（新增在前）
         get_time_func: 获取当前时间的函数（可选）
+        rendered_content: 预先渲染好的完整内容（可选）
 
     Returns:
         分批后的消息内容列表
@@ -59,6 +94,10 @@ def split_content_into_batches(
             max_bytes = sizes.get("ntfy", 3800)
         else:
             max_bytes = sizes.get("default", 4000)
+
+    # 如果提供预渲染内容（例如飞书专用渲染器），直接按字节拆分
+    if rendered_content is not None:
+        return _split_text_by_bytes(rendered_content, max_bytes)
 
     batches = []
 

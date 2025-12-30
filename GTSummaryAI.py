@@ -37,13 +37,15 @@ UNINTERESTED: Serious politics, diplomacy, war, deaths/obituaries, sports (espec
 
 Task:
 1. Identify interest-matching trends.
-2. For each, provide a short "AI Insight" (one sentence in chinese. Focus on it's impact or insight on mini games's ads idea or its user acquisition).
+2. For each, provide a short "AI Insight" (one short paragraph in chinese. Focus on it's impact or insight on mini games's ads idea or its user acquisition).
 3. Format as a STICKY JSON for TrendRadar compatibility.
+4. For each event, it's necessary to go into each url and read the content. (or the data cleansing is not sufficient) You're required to select the most insightfull event.
+5. You should point out that some of the trend are not very good for game ads insight nor UA. 
 
 The JSON structure MUST follow this exact template(you must give an json dictionary not a json array):
 {{
   "google_trend_ai": {{
-    "Trend Title [AI Insight]": {{
+    "Trend Title [AI Insight in point 2]": {{
       "url": "primary_link_from_csv",
       "ranks": [rank_number],
       "mobileUrl": ""
