@@ -56,6 +56,7 @@ COPY trendradar/ ./trendradar/
 # 3. 复制你的自定义脚本
 COPY GTscraper.py .
 COPY GTSummaryAI.py .
+COPY sender/ ./sender/
 
 # 复制控制脚本并设置权限
 COPY docker/entrypoint.sh /entrypoint.sh

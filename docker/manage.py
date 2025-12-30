@@ -30,14 +30,14 @@ def run_command(cmd, shell=True, capture_output=True):
 
 def manual_run():
         """手动执行一次爬虫（注入自定义爬虫与AI分析逻辑）"""
-        print("🚀 开始全流程任务 (Custom Scraper -> AI Summary -> 推送)...")
+        print("🚀 开始全流程任务 (Custom Scraper -> AI Summary -> Sender)...")
         
+        # MODIFIED: step order remains but Sender replaces trendradar push
         # 1. 运行你的 Google Scraper
         print("🌐 [步骤 1/3] 启动 Google Trends 爬虫...")
         success, stdout, stderr = run_command("python /app/GTscraper.py")
         if not success:
             print(f"❌ 爬虫执行失败: {stderr}")
-            # 这里可以选择 return 终止后续流程，避免 AI 报错
             return
         print(f"✅ 爬虫执行成功: {stdout.strip()}")
 
@@ -49,19 +49,18 @@ def manual_run():
             return
         print(f"✅ AI 分析完成: {stdout.strip()}")
 
-        # 3. 运行原项目推送逻辑
-        print("📊 [步骤 3/3] 注入数据并触发原项目推送引擎...")
+        # 3. 运行 Sender（轻量版 Feishu 推送）
+        print("📨 [步骤 3/3] 触发 Sender 发送飞书通知...")
         try:
-            # 这里维持原样：trendradar 会调用你修改后的 _crawl_data 读取 ai_result.json
             result = subprocess.run(
-                ["python", "-m", "trendradar"], cwd="/app", capture_output=False, text=True
+                ["python", "-m", "sender"], cwd="/app", capture_output=False, text=True
             )
             if result.returncode == 0:
                 print("✨ 所有任务完整执行成功！")
             else:
-                print(f"❌ 原项目引擎返回异常，退出码: {result.returncode}")
+                print(f"❌ Sender 返回异常，退出码: {result.returncode}")
         except Exception as e:
-            print(f"❌ 原项目引擎运行出错: {e}")
+            print(f"❌ Sender 运行出错: {e}")
 
 
 def parse_cron_schedule(cron_expr):
