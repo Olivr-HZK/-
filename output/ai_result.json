@@ -1,45 +1,73 @@
 {
   "google_trend_ai": {
-    "Stranger Things Finale [本条趋势聚焦《怪奇物语》大结局与影院特别版。小游戏广告若借用“80年代复古超自然”视觉元素，或通过限时解谜互动模拟“平行世界”传送，能精准触达渴望沉浸感的中青年用户，极大提升点击率。]": {
-      "url": "https://deadline.com/2025/12/stranger-things-finale-theatrical-release-locations-added-1236658345/",
+    "full moon january 2026": {
+      "url": "https://www.space.com/stargazing/the-1st-full-moon-of-2026-rises-tonight-heres-what-to-expect-from-januarys-supermoon-wolf-moon",
       "ranks": [
-        4
+        9
       ],
+      "usability_score": 7.5,
+      "analysis": {
+        "summary": "2026年首个满月“狼月”（Wolf Moon）叠加超级月亮天文现象，在1月初引发全球观测热潮，各大主流媒体纷纷发布精美摄影画报，引发社交媒体关于占星与观景的广泛讨论。",
+        "ua_inspiration": "利用‘超级月亮’作为休闲游戏的限时活动背景或UI皮肤。视频素材可采用‘月亮缩放’的变色互动逻辑：画面初始是昏暗的森林，引导用户点击月亮，月亮瞬间变大并发出神秘光芒（Wolf Moon能量），随后画面转入AI驱动生成的唯美星空消除或装饰界面。提示词：A photorealistic cinematic supermoon 'wolf moon' rising over a mystical pine forest, glowing white and blue ethereal light, extremely detailed night sky, high contrast, surreal atmosphere.",
+        "nature": "自然盛景/占星治愈",
+        "ai_suitability_check": "非常适合，AI对天文景观和唯美氛围的渲染极具优势且版权风险低。"
+      },
       "mobileUrl": ""
     },
-    "Uncut Gems (Marty Supreme) [提莫西·查拉梅的新片热潮。这类“全明星+时尚复古”的流行文化标志非常适合通过换装类或策略模拟类小游戏进行素材模拟，利用粉丝经济和“乒乓外交”相关的新颖视觉元素进行低成本买量。]": {
-      "url": "https://variety.com/2025/film/box-office/marty-supreme-timothee-chalamet-christmas-box-office-king-1236615317/",
+    "stranger things spinoff": {
+      "url": "https://www.netflix.com/tudum/articles/duffer-brothers-netflix-projects",
       "ranks": [
-        7
+        16
       ],
+      "usability_score": 8.8,
+      "analysis": {
+        "summary": "随着《怪奇物语》最终季接近尾声，官方与媒体开始密集披露衍生剧（包括动画版和恐怖新片）的开发进度，填补粉丝对霍金斯小镇故事完结后的心理空白。",
+        "ua_inspiration": "利用‘80年代复古合成器波’风格和‘Upside Down（颠倒世界）’的视觉冲突做UA素材。设计一个‘双重世界’分割画面的休闲游戏广告：上半部分是明亮的80年代小镇，下半部分是恐怖的暗黑世界，用户需通过AI风格转换滤镜在两端寻找线索。提示词：Split screen composition, top half 1980s colorful retro suburbia, bottom half dark misty 'Upside Down' world with blue glowing vines, 80s synthwave aesthetic, cinematic lighting.",
+        "nature": "流行文化/热门IP衍生",
+        "ai_suitability_check": "非常适合，AI擅长处理这种强风格化的视觉对比和复古氛围。"
+      },
       "mobileUrl": ""
     },
-    "The Copenhagen Test [Peacock新剧评价。这种悬疑对抗性质的剧情适合解谜类或剧情卡牌小游戏，其“道德测试”的内容内核可转化为高互动性的二选一买量素材，引导用户在广告中进行抉择。]": {
-      "url": "https://www.hollywoodreporter.com/tv/tv-reviews/the-copenhagen-test-review-simu-liu-melissa-barrera-peacock-1236458967/",
+    "year of the horse 2026": {
+      "url": "https://www.usatoday.com/story/news/world/2026/01/02/chinese-new-year-2026/87991205007/",
       "ranks": [
-        14
+        17
       ],
+      "usability_score": 8.2,
+      "analysis": {
+        "summary": "2026年为农历马年，开年之际海外媒体开始普及生肖文化及占星运势预测，‘马’的形象与新年运势成为社交讨论及文化传播的热点。",
+        "ua_inspiration": "针对休闲游戏，制作‘生肖开运’类测试素材。画面中心是一个华丽的AI生成黄金骏马，点击马蹄进行‘赛马抽卡’决定今日游戏运气。结合中国红与现代潮玩风格，吸引追求好运反馈的用户。提示词：A majestic horse jumping out of a stylized Chinese New Year red pocket, liquid gold and silk textures, 3D render style, festive red and gold color palette, high-end mobile game art.",
+        "nature": "传统文化/年度庆典",
+        "ai_suitability_check": "适合，AI能够快速生成高质量的长马形象及各种节庆装饰素材。"
+      },
       "mobileUrl": ""
     },
-    "Clavicular / Faze Clan [顶流主播争议事件。虽然该事件具有社交热度，但其涉及交通事故与负面行为，不建议直接作为长期广告素材，仅适合在极短时间内利用“突发冲突”的视觉张力捕捉核心游戏玩家群体的注意力。]": {
-      "url": "https://timesofindia.indiatimes.com/world/us-streamers/bro-about-to-start-a-riot-clavicular-joins-faze-clan-at-the-worst-possible-time-as-fans-predict-chaos/articleshow/126211291.cms",
+    "mtv": {
+      "url": "https://deadline.com/2025/12/mtv-off-air-video-killed-radio-star-1236659461/",
       "ranks": [
-        19
+        12
       ],
+      "usability_score": 9.2,
+      "analysis": {
+        "summary": "MTV部分标志性电视频道宣布正式停播，并以首支播放的MV《Video Killed The Radio Star》作为终曲，引发了80、90后大规模的集体怀旧叙事。",
+        "ua_inspiration": "极致的‘数字怀旧’营销。UA视频采用复古大头电视机（CRT TV）滤镜，播放模拟MTV台标的动效，随后电视屏幕因‘故障风’切换为休闲游戏画面。配合经典的‘Video Killed The Radio Star’前奏（需版权适配或AI模仿曲）。提示词：VHS glitch effect on an old 1990s television screen, MTV logo parody, neon purple and teal lighting, 90s aesthetic, retro living room background.",
+        "nature": "情怀杀/集体怀念",
+        "ai_suitability_check": "由于涉及版权标志，需对MTV logo进行AI变形处理或使用相似元素替代。"
+      },
       "mobileUrl": ""
     },
-    "Goodbye June / Kate Winslet [温斯莱特新片口碑。作为娱乐趋势，其文艺调性较高的特点较难直接转化为强刺激的素材。相比前述怪奇物语等强IPL，此类传统影视内容在快节奏的小游戏买量市场中洞察价值偏低。]": {
-      "url": "https://www.netflix.com/tudum/features/kate-winslet-talks-directing-goodbye-june",
-      "ranks": [
-        21
-      ],
-      "mobileUrl": ""
-    },
-    "Harry Styles Surprise Video [哈里·斯泰尔斯惊喜回归。音乐偶像的回归极易引发社区共振。节奏类或女性向换装游戏可借鉴视频中的钢琴及复古美学风格，通过音乐节奏和明星风格相似的形象进行用户拉新。]": {
-      "url": "https://deadline.com/2025/12/harry-styles-surprise-video-forever-forever-piano-ballad-1236657460/",
+    "piper rockelle": {
+      "url": "https://people.com/piper-rockelle-launches-onlyfans-allegedly-makes-2-9-million-in-first-day-11878561",
       "ranks": [
         22
       ],
+      "usability_score": 8.5,
+      "analysis": {
+        "summary": "著名18岁网红Piper Rockelle入驻OnlyFans并宣称首日收益达290万美元，因其从‘童星自媒体’到‘成人内容’的转型引发了巨大的社会争议和流量关注。",
+        "ua_inspiration": "利用‘收益暴涨’和‘奢华转型’的心理反差做模拟器类游戏广告。画面左边是平凡少女，右边是满屏溢出的美金和豪华派对，文案聚焦‘From Influencer to Multi-Millionaire in 24h’。提示词：A confident young fashion influencer surrounded by raining banknotes, luxury lifestyle background with sports cars and neon lights, high-end high-glam photography style, social media interface overlay.",
+        "nature": "争议八卦/暴富神话",
+        "ai_suitability_check": "适合，AI能够生成高质量的极简奢华场景和财富视觉冲击力。"
+      },
       "mobileUrl": ""
     }
   }

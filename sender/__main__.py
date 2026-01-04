@@ -98,6 +98,25 @@ def split_text_by_bytes(text: str, max_bytes: int) -> List[str]:
     return batches
 
 
+def format_score(score) -> str:
+    """根据分数返回带颜色提示的显示（使用彩色圆点以兼容文本消息）"""
+    try:
+        val = float(score)
+    except Exception:
+        return ""
+
+    if val > 9.0:
+        icon = "🟡"  # golden
+    elif val > 8:
+        icon = "🟣"  # purple
+    elif val > 6.5:
+        icon = "⚫"   # black
+    else:
+        icon = "⚪"   # gray
+
+    return f"{icon} {val:.2f}"
+
+
 def build_feishu_text(trends: List[Tuple[str, Dict]]) -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     lines: List[str] = [
@@ -110,9 +129,19 @@ def build_feishu_text(trends: List[Tuple[str, Dict]]) -> str:
         lines.append("📭 未找到可推送的趋势数据")
         return "\n".join(lines)
 
-    lines.append(f"共 {len(trends)} 条趋势：")
+    # 按评分排序（降序），无评分排后
+    def score_key(item):
+        _, payload = item
+        try:
+            return float(payload.get("usability_score", -1))
+        except Exception:
+            return -1
 
-    for idx, (title, payload) in enumerate(trends, 1):
+    sorted_trends = sorted(trends, key=score_key, reverse=True)
+
+    lines.append(f"共 {len(sorted_trends)} 条趋势：")
+
+    for idx, (title, payload) in enumerate(sorted_trends, 1):
         url = (
             payload.get("mobileUrl")
             or payload.get("mobile_url")
@@ -120,18 +149,43 @@ def build_feishu_text(trends: List[Tuple[str, Dict]]) -> str:
             or ""
         )
         rank_text = format_rank(payload.get("ranks"))
-        bullet = f"{idx}. **{title.strip()}**"
+        analysis = payload.get("analysis", {}) if isinstance(payload, dict) else {}
+        score_val = payload.get("usability_score")
+        score_text = format_score(score_val)
+        high_score_tag = ""
+        try:
+            if float(score_val) > 9.0:
+                high_score_tag = "❗"
+            else:
+                high_score_tag = "🏷️"
+        except Exception:
+            pass
 
-        meta_parts = []
+        # 核心信息（去除缩进，适配手机矩形块显示）
+        lines.append(f"{idx}. {high_score_tag} **{title.strip()}**{high_score_tag}")
+        if score_text:
+            lines.append(f"⭐ **启发性评分**: {score_text}")
         if rank_text:
-            meta_parts.append(f"排名: {rank_text}")
+            lines.append(f"🔥 热度排名: {rank_text}")
+
+        summary = analysis.get("summary") or ""
+        nature = analysis.get("nature") or ""
+        ua_inspiration = analysis.get("ua_inspiration") or ""
+        suitability = analysis.get("ai_suitability_check") or ""
+
+        if summary:
+            lines.append(f"📝 **摘要**:\n**{summary}**\n")
+        if nature:
+            lines.append(f"🎭 性质:\n{nature}")
+        if ua_inspiration:
+            lines.append(f"🎯 **UA灵感**:\n{ua_inspiration}")
+        if suitability:
+            lines.append(f"🤖 **生成适配**:\n{suitability}")
+
         if url:
-            meta_parts.append(f"[查看]({url})")
+            lines.append(f"🔗 链接:\n[查看链接]({url})")
 
-        if meta_parts:
-            bullet += "  (" + " | ".join(meta_parts) + ")"
-
-        lines.append(bullet)
+        lines.append("━━━")
 
     return "\n".join(lines)
 

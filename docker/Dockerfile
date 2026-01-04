@@ -49,11 +49,8 @@ RUN playwright install chromium && playwright install-deps chromium
 # RUN pip install --no-cache-dir -r my_requirements.txt
 
 # ---- 代码注入阶段 ----
-# 复制所有核心代码
+# 复制控制脚本和业务脚本（TrendRadar 已移除）
 COPY docker/manage.py .
-COPY trendradar/ ./trendradar/
-
-# 3. 复制你的自定义脚本
 COPY GTscraper.py .
 COPY GTSummaryAI.py .
 COPY sender/ ./sender/

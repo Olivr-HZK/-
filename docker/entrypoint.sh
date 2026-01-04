@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-# 检查配置文件
-if [ ! -f "/app/config/config.yaml" ] || [ ! -f "/app/config/frequency_words.txt" ]; then
-    echo "❌ 配置文件缺失"
-    exit 1
+# MODIFIED: TrendRadar removed; config is optional. Warn instead of exit.
+if [ ! -f "/app/config/config.yaml" ]; then
+    echo "⚠️ 未找到 /app/config/config.yaml，将仅使用环境变量"
 fi
 
 # 保存环境变量

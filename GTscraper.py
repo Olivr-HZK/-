@@ -1,26 +1,48 @@
+import os
 import pandas as pd
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 import time
 
 
 def scrape_with_sidebar():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True,args=[
-            '--no-sandbox', 
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage', # 核心：解决 Docker 环境内存超时问题
-                ]
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",  # 核心：解决 Docker 环境内存超时问题
+            ],
         )
+        # MODIFIED: 允许通过环境变量配置代理，默认沿用 host.docker.internal，并忽略证书错误
+        proxy_server = os.environ.get("PROXY_URL", "http://host.docker.internal:7890")
         context = browser.new_context(
-            proxy={"server": "http://host.docker.internal:7890"}, #后续修改
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            proxy={"server": proxy_server},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            ignore_https_errors=True,
         )
         page = context.new_page()
-        
+        page.set_default_navigation_timeout(120000)
+
+        # MODIFIED: 屏蔽部分易超时的静态资源，加快主文档加载
+        def _route_filter(route, request):
+            url = request.url
+            if any(host in url for host in ["fonts.googleapis.com", "fonts.gstatic.com", "googletagmanager.com"]):
+                return route.abort()
+            return route.continue_()
+        page.route("**/*", _route_filter)
+
         target_url = "https://trends.google.com/trending?geo=US&hours=168&status=active&sort=search-volume"
         print(f"[*] 开始执行自动化侦察: {target_url}")
-        
-        page.goto(target_url, timeout=60000, wait_until="load") 
+
+        # MODIFIED: 增加更高的超时与一次重试，避免偶发加载超时
+        try:
+            page.goto(target_url, timeout=90000, wait_until="domcontentloaded")
+            page.wait_for_timeout(2000)  # 给静态资源一点缓冲
+        except PlaywrightTimeout:
+            print("[!] 首次加载超时，尝试刷新重试...")
+            page.reload(timeout=90000, wait_until="domcontentloaded")
+            page.wait_for_timeout(2000)
 
 
         # 1. 定位所有趋势行
