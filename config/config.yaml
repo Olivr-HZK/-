@@ -137,7 +137,7 @@ notification:
   #   • Email already supports multiple recipients (comma-separated), unchanged
   #
   webhooks:
-    feishu_url: "https://www.feishu.cn/flow/api/trigger-webhook/71bd11100e83c0934be724dcff9dda7c" # 飞书机器人的 webhook URL（多账号用 ; 分隔）
+    feishu_url: "https://open.feishu.cn/open-apis/bot/v2/hook/9d802f35-b86c-4018-9244-0298344f1d85" # 飞书机器人的 webhook URL（多账号用 ; 分隔）
     dingtalk_url: "" # 钉钉机器人的 webhook URL（多账号用 ; 分隔）
     wework_url: "" # 企业微信机器人的 webhook URL（多账号用 ; 分隔）
     wework_msg_type: "markdown" # 企业微信消息类型：markdown(群机器人) 或 text(个人微信应用)

@@ -3,16 +3,6 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-      args:
-        http_proxy: ${HTTP_PROXY:-}
-        https_proxy: ${HTTPS_PROXY:-}
-        no_proxy: ${NO_PROXY:-}
-      extra_hosts:
-        - "host.docker.internal:host-gateway"
-      args:
-        http_proxy: ${HTTP_PROXY:-}
-        https_proxy: ${HTTPS_PROXY:-}
-        no_proxy: ${NO_PROXY:-}
     container_name: trend-radar
     restart: unless-stopped
 
@@ -36,6 +26,9 @@ services:
       - TZ=Asia/Shanghai
       - FEISHU_WEBHOOK_URL=${FEISHU_WEBHOOK_URL:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - SERPER_API_KEY=${SERPER_API_KEY:-}
+      - FEISHU_APP_ID=${FEISHU_APP_ID:-}
+      - FEISHU_APP_SECRET=${FEISHU_APP_SECRET:-}
       # 运行模式
       - CRON_SCHEDULE=${CRON_SCHEDULE:-*/5 * * * *}
       - RUN_MODE=${RUN_MODE:-cron}

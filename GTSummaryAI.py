@@ -199,15 +199,18 @@ Calculate the score using this weighted formula:
 You must return a single JSON object. The "Trend Title" should be the original keyword.
 The "AI_Insight" must be in Chinese, structured as: [Event Summary] + [Ad/UA Inspiration] + [Nature of Event].
 
+# Hints:
+If you find some topics are actually refering to a same event, you should try to avoid duplicated reporting.
+
 ```json
 {{
 "google_trend_ai": {{
         "Keyword_Title": {{
         "url": "primary_link",
-        "ranks": [rank_number],
+        "ranks": rank_number,
         "usability_score": float,
             "analysis": {{
-                "summary": "用一段文字来精确概括事件，其中必须包含事件的介绍以及具体为什么这个时候有热度",
+                "summary": "用一段文字来精确概括事件，其中必须包含事件的介绍(如这这个电影的基本介绍)以及具体为什么这个时候有热度",
                 "ua_inspiration": "针对休闲游戏广告投放、素材创意（视频与图片的生成创意）的具体启发。严禁：对玩法和游戏产品本身的建议；用晦涩难懂的总结形容特点。必须：做到UA focus。将具体热点和UA结合。例如：有一温馨的歌火（名字叫xxx）了，正确输出例如：用xxx做bgm（记得考虑版权问题）；错误输出：用温馨的歌作bgm。你的职责：为每一个UA灵感生成一小段可以用于图片或视频（具体看你的灵感说的是什么）生成的提示词",
                 "nature": "事件性质分类（如：怀旧/争议/娱乐风暴/社会奇观）",
                 "ai_suitability_check": "说明该趋势是否适合AI模型生成素材，若不适合请直言"

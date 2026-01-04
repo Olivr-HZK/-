@@ -29,60 +29,77 @@ def run_command(cmd, shell=True, capture_output=True):
 
 
 def manual_run():
-        """手动执行一次爬虫（注入自定义爬虫与AI分析逻辑）"""
-        print("🚀 开始全流程任务 (Custom Scraper -> AI Summary -> Sender)...")
+    """手动执行一次爬虫（注入自定义爬虫与AI分析逻辑）"""
+    print("🚀 开始全流程任务 (Custom Scraper -> AI Summary -> Sender)...")
 
-        # MODIFIED: 如遇下游失败，整体流程最多重试一次
-        for attempt in range(2):
-            retry_tag = f" (重试 {attempt}/1)" if attempt > 0 else ""
+    # MODIFIED: 重试策略优化：全流程一次重试，Imagesearch 和 Sender 内部各自最多 3 次重试
+    for attempt in range(2):
+        retry_tag = f" (重试 {attempt}/1)" if attempt > 0 else ""
 
-            # 1. 运行你的 Google Scraper
-            print(f"🌐 [步骤 1/3] 启动 Google Trends 爬虫...{retry_tag}")
-            success, stdout, stderr = run_command("python /app/GTscraper.py")
-            if not success:
-                print(f"❌ 爬虫执行失败: {stderr}")
+        # 1. 运行你的 Google Scraper
+        print(f"🌐 [步骤 1/4] 启动 Google Trends 爬虫...{retry_tag}")
+        success, stdout, stderr = run_command("python /app/GTscraper.py")
+        if not success:
+            print(f"❌ 爬虫执行失败: {stderr}")
+            if attempt == 0:
+                print("↻ 将在 2 秒后重试全流程...")
+                time.sleep(2)
+                continue
+            return
+        print(f"✅ 爬虫执行成功: {stdout.strip()}")
+
+        # 2. 运行你的 AI 处理器
+        print(f"🤖 [步骤 2/4] 启动 AI 深度汇总分析...{retry_tag}")
+        success, stdout, stderr = run_command("python /app/GTSummaryAI.py")
+        if not success:
+            print(f"❌ AI 分析失败: {stderr}")
+            if attempt == 0:
+                print("↻ 将在 2 秒后重试全流程...")
+                time.sleep(2)
+                continue
+            return
+        print(f"✅ AI 分析完成: {stdout.strip()}")
+
+        # 3. 运行 ImageSearch（生成带图片的结果）
+        print(f"🖼️ [步骤 3/4] 运行 ImageSearch 添加图片...{retry_tag}")
+        for img_try in range(3):
+            success, stdout, stderr = run_command("python /app/Imagesearch.py")
+            if success:
+                print(f"✅ ImageSearch 完成: {stdout.strip()}")
+                break
+            print(f"⚠️ ImageSearch 执行失败 (第 {img_try+1}/3): {stderr}")
+            if img_try < 2:
+                time.sleep(2)
+        if not success:
+            if attempt == 0:
+                print("↻ 将在 2 秒后重试全流程...")
+                time.sleep(2)
+                continue
+            return
+
+        # 4. 运行 Sender（轻量版 Feishu 推送）
+        print(f"📨 [步骤 4/4] 触发 Sender 发送飞书通知...{retry_tag}")
+        try:
+            result = subprocess.run(
+                ["python", "-m", "sender"], cwd="/app", capture_output=False, text=True
+            )
+            if result.returncode == 0:
+                print("✨ 所有任务完整执行成功！")
+                return
+            else:
+                print(f"❌ Sender 返回异常，退出码: {result.returncode}")
                 if attempt == 0:
                     print("↻ 将在 2 秒后重试全流程...")
                     time.sleep(2)
                     continue
                 return
-            print(f"✅ 爬虫执行成功: {stdout.strip()}")
-
-            # 2. 运行你的 AI 处理器
-            print(f"🤖 [步骤 2/3] 启动 AI 深度汇总分析...{retry_tag}")
-            success, stdout, stderr = run_command("python /app/GTSummaryAI.py")
-            if not success:
-                print(f"❌ AI 分析失败: {stderr}")
-                if attempt == 0:
-                    print("↻ 将在 2 秒后重试全流程...")
-                    time.sleep(2)
-                    continue
-                return
-            print(f"✅ AI 分析完成: {stdout.strip()}")
-
-            # 3. 运行 Sender（轻量版 Feishu 推送）
-            print(f"📨 [步骤 3/3] 触发 Sender 发送飞书通知...{retry_tag}")
-            try:
-                result = subprocess.run(
-                    ["python", "-m", "sender"], cwd="/app", capture_output=False, text=True
-                )
-                if result.returncode == 0:
-                    print("✨ 所有任务完整执行成功！")
-                    return
-                else:
-                    print(f"❌ Sender 返回异常，退出码: {result.returncode}")
-                    if attempt == 0:
-                        print("↻ 将在 2 秒后重试全流程...")
-                        time.sleep(2)
-                        continue
-                    return
-            except Exception as e:
-                print(f"❌ Sender 运行出错: {e}")
-                if attempt == 0:
-                    print("↻ 将在 2 秒后重试全流程...")
-                    time.sleep(2)
-                    continue
-                return
+        except Exception as e:
+            print(f"❌ Sender 运行出错: {e}")
+            if attempt == 0:
+                print("↻ 将在 2 秒后重试全流程...")
+                time.sleep(2)
+                continue
+            return
 
 
 def parse_cron_schedule(cron_expr):
