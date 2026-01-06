@@ -32,7 +32,12 @@ output/*.csv
 output/*.db
 output/*.txt
 output/*.html
+# 但保留 output 目录结构
 !output/.gitkeep
+# 排除所有 output 子目录中的文件
+output/**/*.db
+output/**/*.json
+output/**/*.csv
 
 # Docker
 docker/.env
