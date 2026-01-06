@@ -9,6 +9,8 @@ from typing import Dict, List, Tuple
 import requests
 from openai import OpenAI
 
+import env_loader  # noqa: F401  # 确保 .env 环境变量被加载
+
 # 优先使用环境变量提供的 API Key；如未设置则回退到原硬编码值
 API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 if not API_KEY:
@@ -123,12 +125,21 @@ def select_keywords_with_ai(trends: List[Dict], pick: int = 5) -> List[str]:
 Input candidates (JSON list with keyword, rank, volume, URLs):
 {json.dumps(candidates, ensure_ascii=False, indent=2)}
 
-Interests: Funny events, entertainment, scandals, pop culture, light-hearted viral news.
-UNINTERESTED: Serious politics, diplomacy, war, deaths/obituaries, routine sports scores.
+Our firm:We're a dynamic firm creating & marketing casual games globally. We focus on AI - powered content. Our growth loop involves user acquisition, product development, and monetization. We seek creative assets with engaging visuals, clear value, cultural relevance, optimization potential, and a data - driven approach. We use innovative AI for content creation.
+
+Interests: Funny events, entertainment, scandals, pop culture, light-hearted viral news and anythings that our company may interested.
+UNINTERESTED: Serious politics(strictly forbiden), diplomacy, war, deaths/obituaries, routine sports scores.
+
+# Hints:
+If you find some topics are actually refering to a same event, you should try to avoid duplicated reporting. For example, if multiple keywords are refering to one movie or event, you just need to keep the one with highest volumn.
+
+despite the uninterested events, you should try to give more potential events (don't be too strict on "Interestes" events)
 
 Task:
 - Use both keyword and URL clues to judge cultural/creative potential.
 - Choose up to {pick} keywords with highest UA/ads potential; drop low-signal or uninterested topics.
+
+
 
 Output strictly as JSON: {{"selected_keywords": ["kw1","kw2",...]}}
 Do not add extra fields."""
@@ -164,13 +175,14 @@ Do not add extra fields."""
 
 # === AI 阶段二：深度分析 ===
 
-def build_final_prompt(selected_payload: List[Dict]) -> str:
-    trends_json = json.dumps(selected_payload, ensure_ascii=False, indent=2)
+def build_final_prompt_for_topic(topic_payload: Dict) -> str:
+    """为单个主题生成深度分析提示"""
+    trends_json = json.dumps([topic_payload], ensure_ascii=False, indent=2)
     return f"""# Role
 You are a Senior UA (User Acquisition) Specialist and Creative Director for a leading AI-driven casual gaming company. Your expertise lies in distilling viral trends into actionable ad creative concepts and product optimization ideas.
 
 # Input Data
-CSV Content of Today's Google Trends:
+JSON Content of Today's Google Trends:
 ---
 {trends_json}
 ---
@@ -181,26 +193,22 @@ CSV Content of Today's Google Trends:
 - Goal: Create high-conversion ad creatives and optimize user interaction based on cultural zeitgeist.
 
 # Task Instructions
-1. **Strict Filtering**: 
-- IGNORE: Purely technical sports scores (e.g., "Team A vs Team B" with no drama), high-level diplomacy, and routine war updates.
-- PRIORITIZE: Pop culture milestones, viral entertainment, scandalous/funny events, and major emotional triggers in society.
 
-2. **Deep Content Analysis**: 
-- For high-potential trends, read through the whole events providing the URLs to extract the core emotional hook and visual potential.
-- You are required give a precise summary on the event. You should'not bragging the event, state what it is. 
+1. **Deep Content Analysis**: 
+- For this trends, read through the whole events providing the URLs to extract the core emotional hook and visual potential.
+- You are required give a precise summary on the event. You should'not bragging the event, state what it is. Remeber to add description about the event because people may not familiar with it (unless it's common knowledge)
 
 3. **Scoring Logic (Usability Score: 0-10)**:
 Calculate the score using this weighted formula:
 - **Trend Power (30%)**: Based on Rank and Search Volume.
 - **Cultural Resonance (20%)**: Does it touch a "nerve" in US culture? (Nostalgia, Controversy, Joy).
-- **Reference Value (50%)**: How easily can this be turned into a CASUAL GAME AD? (e.g., Can it be a mini-game mechanic? A stylized visual skin? A viral audio hook?)
+- **Reference Value (50%)**: How easily can this be turned into a CASUAL GAME AD? (e.g., Can it become a intriging mini game ad? A stylized visual skin? A viral audio hook?)
 
 # Output Requirements (JSON Template)
-You must return a single JSON object. The "Trend Title" should be the original keyword.
+You **MUST** return a single JSON object. The "Trend Title" should be the original keyword.
 The "AI_Insight" must be in Chinese, structured as: [Event Summary] + [Ad/UA Inspiration] + [Nature of Event].
 
-# Hints:
-If you find some topics are actually refering to a same event, you should try to avoid duplicated reporting.
+
 
 ```json
 {{
@@ -212,8 +220,8 @@ If you find some topics are actually refering to a same event, you should try to
             "analysis": {{
                 "summary": "用一段文字来精确概括事件，其中必须包含事件的介绍(如这这个电影的基本介绍)以及具体为什么这个时候有热度",
                 "ua_inspiration": "针对休闲游戏广告投放、素材创意（视频与图片的生成创意）的具体启发。严禁：对玩法和游戏产品本身的建议；用晦涩难懂的总结形容特点。必须：做到UA focus。将具体热点和UA结合。例如：有一温馨的歌火（名字叫xxx）了，正确输出例如：用xxx做bgm（记得考虑版权问题）；错误输出：用温馨的歌作bgm。你的职责：为每一个UA灵感生成一小段可以用于图片或视频（具体看你的灵感说的是什么）生成的提示词",
-                "nature": "事件性质分类（如：怀旧/争议/娱乐风暴/社会奇观）",
-                "ai_suitability_check": "说明该趋势是否适合AI模型生成素材，若不适合请直言"
+                "nature": "事件性质分类（如：影视，丑闻，游戏，节日，气候，大事件，等等）",
+                "ai_suitability_check": "说明该趋势是否适合AI模型生成素材，若不适合请直言 (should fitting your reference value)"
             }},
         "mobileUrl": ""
         }}
@@ -222,8 +230,9 @@ If you find some topics are actually refering to a same event, you should try to
 ```"""
 
 
-def generate_final_report(selected_payload: List[Dict]) -> Dict:
-    prompt = build_final_prompt(selected_payload)
+def generate_topic_report(topic_payload: Dict) -> Dict:
+    """对单个主题调用模型生成报告"""
+    prompt = build_final_prompt_for_topic(topic_payload)
     response = None
     timeout = float(os.environ.get("OPENAI_TIMEOUT", DEFAULT_TIMEOUT))
     for attempt in range(3):
@@ -303,16 +312,24 @@ async def process():
     except Exception as e:
         print(f"写入中间文件失败: {e}")
 
-    # 第三步：生成最终 JSON 报告
-    final_data = generate_final_report(selected_payload)
-    if not final_data:
+    # 第三步：逐主题生成最终 JSON 报告并汇总
+    merged = {"google_trend_ai": {}}
+    for topic in selected_payload:
+        topic_report = generate_topic_report(topic)
+        if not topic_report or "google_trend_ai" not in topic_report:
+            print(f"[WARN] 单主题生成失败，跳过: {topic.get('keyword')}")
+            continue
+        # 合并单主题结果
+        merged["google_trend_ai"].update(topic_report["google_trend_ai"])
+
+    if not merged["google_trend_ai"]:
         print("⚠️ 最终报告生成失败")
         return
 
     output_path = "/app/output/ai_result.json"
     try:
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(final_data, f, ensure_ascii=False, indent=2)
+            json.dump(merged, f, ensure_ascii=False, indent=2)
         print(f"✅ AI Analysis saved to {output_path}")
     except Exception as e:
         print(f"❌ Failed to save AI JSON: {e}")

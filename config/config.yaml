@@ -160,6 +160,106 @@ weight:
   frequency_weight: 0.3 # 频次权重
   hotness_weight: 0.1 # 热度权重
 
+# 竞品社媒监控配置
+competitor_monitor:
+  enable: true # 是否启用竞品监控
+  use_proxy: false # 是否使用代理
+  proxy: "http://host.docker.internal:7890" # 代理地址（如果启用）
+  # 竞品公司列表（支持公司层级和游戏层级）
+  competitors:
+  - name: voodoo
+    priority: high
+    platforms:
+      - url: https://x.com/voodooplatform
+        enabled: true
+        type: twitter
+      - url: https://www.instagram.com/voodoo.io/
+        enabled: true
+        type: instagram
+      - url: https://www.linkedin.com/company/voodoo.io/
+        enabled: true
+        type: linkedin
+      - url: https://voodoo.io/
+        enabled: true
+        type: website
+    # 游戏列表（可选）
+    games:
+      - name: papers.io
+        priority: high
+        platforms:
+          - url: https://www.instagram.com/paper.io2game/
+            enabled: true
+            type: instagram
+          - url: https://www.youtube.com/@Paper.io2
+            enabled: true
+            type: youtube
+          - url: https://www.tiktok.com/@gamepaper.io2
+            enabled: true
+            type: tiktok
+      - name: Mob control
+        platforms:
+          - url: https://www.instagram.com/mobcontrolgame/
+            enabled: true
+            type: instagram
+          - url: https://www.youtube.com/@MobControlAds/shorts
+            enabled: true
+            type: youtube
+          - url: https://www.tiktok.com/@gamemobcontrol
+            enabled: true
+            type: tiktok
+
+  - name: vita
+    priority: high
+    platforms:
+      - url: https://www.facebook.com/p/Vita-Mahjong-61561738276462/
+        enabled: true
+        type: facebook
+      - url: https://www.tiktok.com/@vitamahjong_official
+        enabled: true
+        type: tiktok
+
+  - name: dream games
+    priority: high
+    platforms:
+      - url: https://www.instagram.com/dreamgames/
+        enabled: true
+        type: instagram
+      - url: https://www.tiktok.com/@dreamgames
+        enabled: true
+        type: tiktok
+      - url: https://x.com/dreamgames
+        enabled: true
+        type: twitter
+      - url: https://www.facebook.com/dreamgames
+        enabled: true
+        type: facebook
+
+  - name: Hungry studio
+    priority: high
+    platforms:
+      - url: https://www.youtube.com/@hungrystudio_games
+        enabled: true
+        type: youtube
+      - url: https://www.linkedin.com/company/hungry-studio/
+        enabled: true
+        type: linkedin
+      - url: https://hungrystudio.com/home
+        enabled: true
+        type: website
+    # 游戏列表
+    games:
+      - name: Block Blast
+        platforms:
+          - url: https://www.instagram.com/blockblastglobal/
+            enabled: true
+            type: instagram
+          - url: https://www.tiktok.com/@blockblastofficial
+            enabled: true
+            type: tiktok
+          - url: https://x.com/BlockBlastSquad
+            enabled: true
+            type: twitter
+
 # name 可以定义任意名称，只具有显示作用，即使项目运行了几天后，忽然改掉 name 也不会影响代码的正常运行
 platforms:
   - id: "google_trend_ai"      # 必须与你 JSON 里的第一个 Key 完全一致

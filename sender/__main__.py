@@ -12,6 +12,8 @@ from typing import Dict, List, Tuple
 import requests
 import yaml
 
+import env_loader  # noqa: F401  # 从 .env 加载 FEISHU_* 等环境变量
+
 
 DEFAULT_INPUT_PATH = "/app/output/ai_result_with_images.json"
 DEFAULT_MAX_BYTES = 29000
