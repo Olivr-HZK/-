@@ -1,6 +1,7 @@
 import json
 import os
-from typing import Any, Dict
+from datetime import datetime
+from typing import Any, Dict, List, Tuple
 
 import requests
 import yaml
@@ -58,26 +59,78 @@ def get_feishu_webhook() -> str:
         return ""
 
 
-def build_markdown_text(ai_data: Dict[str, Any]) -> str:
+def _platform_icon(platform: str) -> str:
     """
-    将竞品 AI 分析结果转成一段 Markdown 文本，通过飞书机器人推送。
-    结构示例：
+    根据平台类型返回一个简单的 icon，提升可读性。
+    """
+    p = (platform or "").lower()
+    if "twitter" in p or "x.com" in p or p == "x":
+        return "🐦"
+    if "instagram" in p or "ig" == p:
+        return "📸"
+    if "tiktok" in p:
+        return "🎵"
+    if "youtube" in p:
+        return "▶️"
+    if "facebook" in p or "fb" == p:
+        return "📘"
+    return "🌐"
 
-    【竞品社媒监控】
-    1. 公司A - X
-    - 链接: ...
-    - 评分: ...
-    - 摘要: ...
-    - 广告创意: ...
-    - 玩法/机制: ...
-    - 建议: ...
-    --- 分割线 ---
+
+def _format_report_date(ai_data: Dict[str, Any]) -> str:
+    """
+    从结果中推断抓取日期（fetched_at），用于日报头部展示。
     """
     if not isinstance(ai_data, dict):
         return ""
 
-    lines = ["【竞品社媒监控 · 自动播报】"]
-    items = list(ai_data.items())
+    fetched_at: str | None = None
+    for payload in ai_data.values():
+        if not isinstance(payload, dict):
+            continue
+        fetched_at = payload.get("fetched_at")
+        if fetched_at:
+            break
+
+    if not fetched_at:
+        return ""
+
+    try:
+        # 兼容 ISO8601 带 Z 的格式
+        if fetched_at.endswith("Z"):
+            dt = datetime.fromisoformat(fetched_at.replace("Z", "+00:00"))
+        else:
+            dt = datetime.fromisoformat(fetched_at)
+        return dt.strftime("%Y-%m-%d")
+    except Exception:
+        return fetched_at
+
+
+def build_markdown_text(ai_data: Dict[str, Any]) -> str:
+    """
+    将竞品 AI 分析结果转成一段 Markdown 文本，通过飞书机器人推送。
+    - 按公司品牌分组展示
+    - 在日报头部展示抓取日期和来源说明
+    - 每条信息增加平台 icon、优先级 icon、互动情况等，提升可读性
+    """
+    if not isinstance(ai_data, dict):
+        return ""
+
+    report_date = _format_report_date(ai_data)
+    header_line = "🏁【竞品社媒监控 · 自动播报】"
+    if report_date:
+        header_line += f"\n📅 日期: {report_date}（抓取时间）"
+    header_line += "\n📎 来源: 各竞品官方社媒页面（X / Instagram / TikTok 等）"
+
+    lines: List[str] = [header_line]
+
+    # 先按公司进行分组
+    company_groups: Dict[str, List[Tuple[str, Dict[str, Any]]]] = {}
+    for title, payload in ai_data.items():
+        if not isinstance(payload, dict):
+            continue
+        company = payload.get("company") or title
+        company_groups.setdefault(company, []).append((title, payload))
 
     def score_of(payload: Dict[str, Any]) -> float:
         try:
@@ -85,54 +138,67 @@ def build_markdown_text(ai_data: Dict[str, Any]) -> str:
         except Exception:
             return -1.0
 
-    # 按评分排序，高分在前
-    items.sort(key=lambda kv: score_of(kv[1]), reverse=True)
-
-    for idx, (title, payload) in enumerate(items, 1):
-        if not isinstance(payload, dict):
-            continue
-        company = payload.get("company") or title
-        game = payload.get("game")
-        platform = payload.get("platform") or ""
-        url = payload.get("url") or ""
-        priority = payload.get("priority", "medium")
-        score = payload.get("usability_score", "")
-        analysis = payload.get("analysis") or {}
-
-        summary = analysis.get("summary") or ""
-        ad_insight = analysis.get("ad_creative_insights") or ""
-        gameplay_insight = analysis.get("gameplay_or_mechanic_insights") or ""
-        action_suggestions = analysis.get("direct_action_suggestions") or ""
-
-        # 构建标题：显示公司、游戏（如果有）、平台
-        title_line = f"{idx}. {company}"
-        if game:
-            title_line += f" - {game}"
-        if platform:
-            title_line += f"（{platform}）"
-        if priority and priority != "medium":
-            priority_icon = "🔴" if priority == "high" else "🟡"
-            title_line += f" {priority_icon}"
-        
+    # 按公司名称排序，组内再按评分从高到低排序
+    for company_idx, (company, items) in enumerate(sorted(company_groups.items(), key=lambda kv: kv[0].lower()), 1):
         lines.append("")
-        lines.append(title_line)
-        if url:
-            lines.append(f"- 链接: {url}")
-        if score != "":
-            try:
-                score_val = float(score)
-                score_icon = "⭐" * min(int(score_val / 2), 5) if score_val > 0 else ""
-                lines.append(f"- 可用性评分: {score} {score_icon}")
-            except:
-                lines.append(f"- 可用性评分: {score}")
-        if summary:
-            lines.append(f"- 摘要: {summary}")
-        if ad_insight:
-            lines.append(f"- 广告创意观察: {ad_insight}")
-        if gameplay_insight:
-            lines.append(f"- 玩法/机制观察: {gameplay_insight}")
-        if action_suggestions:
-            lines.append(f"- 建议动作: {action_suggestions}")
+        lines.append(f"{company_idx}. 🏢 {company}")
+
+        # 组内排序
+        items_sorted = sorted(items, key=lambda kv: score_of(kv[1]), reverse=True)
+        for idx, (title, payload) in enumerate(items_sorted, 1):
+            game = payload.get("game")
+            platform = payload.get("platform") or ""
+            url = payload.get("url") or ""
+            priority = payload.get("priority", "medium")
+            score = payload.get("usability_score", "")
+            analysis = payload.get("analysis") or {}
+
+            summary = analysis.get("summary") or ""
+            ad_insight = analysis.get("ad_creative_insights") or ""
+            gameplay_insight = analysis.get("gameplay_or_mechanic_insights") or ""
+            action_suggestions = analysis.get("direct_action_suggestions") or ""
+            engagement = analysis.get("engagement") or ""
+
+            platform_icon = _platform_icon(platform)
+
+            # 每条子项标题：平台 + 游戏
+            sub_title = f"   {idx}) {platform_icon}"
+            if game:
+                sub_title += f" {game}"
+            else:
+                sub_title += f" {company} 官方账号"
+            if platform:
+                sub_title += f"（{platform}）"
+            if priority and priority != "medium":
+                priority_icon = "🔴" if priority == "high" else "🟡"
+                sub_title += f" {priority_icon}"
+
+            lines.append(sub_title)
+
+            # 链接与评分
+            if url:
+                lines.append(f"      - 🔗 链接: {url}")
+            if score != "":
+                try:
+                    score_val = float(score)
+                    score_icon = "⭐" * min(int(score_val / 2), 5) if score_val > 0 else ""
+                    lines.append(f"      - 📊 可用性评分: {score} {score_icon}")
+                except Exception:
+                    lines.append(f"      - 📊 可用性评分: {score}")
+
+            # 互动情况（尽量对应原帖点赞/评论等）
+            if engagement:
+                lines.append(f"      - 👍 互动概览: {engagement}")
+
+            if summary:
+                lines.append(f"      - 📝 摘要: {summary}")
+            if ad_insight:
+                lines.append(f"      - 🎯 广告创意观察: {ad_insight}")
+            if gameplay_insight:
+                lines.append(f"      - 🎮 玩法/机制观察: {gameplay_insight}")
+            if action_suggestions:
+                lines.append(f"      - ✅ 建议动作: {action_suggestions}")
+
         lines.append("━━━━━━━━━━━━━━━")
 
     return "\n".join(lines)
