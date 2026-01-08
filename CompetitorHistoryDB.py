@@ -34,8 +34,10 @@ class CompetitorHistoryDB:
         # 数据目录结构
         self.raw_data_dir = os.path.join(self.db_dir, "raw_data")  # 原始爬取数据
         self.ai_analysis_dir = os.path.join(self.db_dir, "ai_analysis")  # AI分析结果
+        self.daily_report_dir = os.path.join(self.db_dir, "daily_report")  # 日报JSON
         os.makedirs(self.raw_data_dir, exist_ok=True)
         os.makedirs(self.ai_analysis_dir, exist_ok=True)
+        os.makedirs(self.daily_report_dir, exist_ok=True)
     
     def _get_date_str(self, dt: Optional[date] = None) -> str:
         """获取日期字符串 YYYY-MM-DD"""

@@ -6,7 +6,7 @@
 import json
 import os
 import sys
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 import env_loader  # noqa: F401
@@ -840,26 +840,37 @@ def run_daily_workflow(
     print()
     
     # 步骤3: AI分析
+    all_companies_ai: Dict[str, Dict[str, Any]] = {}
+    
     if not skip_ai:
         print("【步骤 3/5】AI分析")
         print("-" * 60)
         
-        all_companies_ai: Dict[str, Dict[str, Any]] = {}
-        
-    for company, platforms_data in all_companies_data.items():
-        ai_results = analyze_company_posts(company, platforms_data)
-        if ai_results:
+        for company, platforms_data in all_companies_data.items():
+            print(f"\n  [调试] 开始分析公司: '{company}'")
+            ai_results = analyze_company_posts(company, platforms_data)
+            print(f"  [调试] analyze_company_posts 返回结果数量: {len(ai_results) if ai_results else 0}")
+            print(f"  [调试] ai_results 内容: {list(ai_results.keys()) if ai_results else 'None'}")
+            
+            # 无论结果是否为空，都保存到 all_companies_ai（必须保存，这样后续才能正确获取）
             all_companies_ai[company] = ai_results
-            # 保存AI分析结果到历史数据库
-            print(f"\n  💾 保存AI分析结果到历史数据库...")
-            db.save_ai_analysis(company, ai_results, analysis_date=date.today() - timedelta(days=days_ago))
+            print(f"  [调试] 已保存到 all_companies_ai['{company}']")
+            print(f"  [调试] 当前all_companies_ai中的所有公司: {list(all_companies_ai.keys())}")
+            
+            # 只有非空结果才保存到数据库
+            if ai_results:
+                # 保存AI分析结果到历史数据库
+                print(f"\n  💾 保存AI分析结果到历史数据库...")
+                db.save_ai_analysis(company, ai_results, analysis_date=date.today() - timedelta(days=days_ago))
+            else:
+                print(f"  [调试] {company} 的AI分析结果为空，跳过保存到数据库")
         
         print(f"\n✓ AI分析完成，共 {len(all_companies_ai)} 个公司有分析结果")
+        print(f"  [调试] all_companies_ai 中的公司: {list(all_companies_ai.keys())}")
         print()
     else:
         print("⚠️ 跳过AI分析步骤")
         print()
-        all_companies_ai = {}
     
     # 步骤4: 生成日报
     print("【步骤 4/5】生成日报")
@@ -868,7 +879,11 @@ def run_daily_workflow(
     reports: Dict[str, str] = {}
     
     for company, platforms_data in all_companies_data.items():
+        print(f"\n  [调试] 生成日报: 公司名称='{company}'")
+        print(f"  [调试] all_companies_ai 中的键: {list(all_companies_ai.keys())}")
+        print(f"  [调试] 检查 all_companies_ai.get('{company}')...")
         ai_results = all_companies_ai.get(company, {})
+        print(f"  [调试] 获取到的 ai_results 类型: {type(ai_results)}, 长度: {len(ai_results) if isinstance(ai_results, dict) else 'N/A'}")
         
         print(f"\n  📄 生成日报: {company}")
         print(f"    AI结果数量: {len(ai_results)}")
@@ -884,7 +899,7 @@ def run_daily_workflow(
             
         reports[company] = report_text
         
-        # 保存日报到文件
+        # 保存日报到文件（Markdown格式）
         # 优先使用环境变量，否则使用项目根目录下的output目录
         output_dir = os.environ.get("OUTPUT_DIR")
         if not output_dir or not os.path.exists(output_dir):
@@ -910,6 +925,46 @@ def run_daily_workflow(
             print(f"    [调试] 文件大小: {os.path.getsize(report_file)} 字节")
         except Exception as exc:
             print(f"    ❌ 保存日报失败: {exc}")
+            import traceback
+            print(f"    [调试] 错误详情: {traceback.format_exc()}")
+        
+        # 同时保存JSON格式的日报到 db/reports 目录
+        db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
+        if not os.path.exists(db_dir):
+            alt_db_dir = os.path.join(os.path.dirname(__file__), "db")
+            if os.path.exists(alt_db_dir):
+                db_dir = alt_db_dir
+            else:
+                alt_db_dir = os.path.join(os.path.dirname(__file__), "db")
+                os.makedirs(alt_db_dir, exist_ok=True)
+                db_dir = alt_db_dir
+        
+        reports_dir = os.path.join(db_dir, "reports")
+        os.makedirs(reports_dir, exist_ok=True)
+        
+        json_report_file = os.path.join(reports_dir, f"{safe_company}_{report_date}.json")
+        
+        # 构建JSON格式的日报数据（确保包含AI结果）
+        report_data = {
+            "company": company,
+            "date": report_date,
+            "generated_at": datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z"),
+            "markdown_content": report_text,
+            "ai_results": ai_results,  # 从 all_companies_ai 获取的结果
+            "platforms_data": platforms_data,
+        }
+        
+        print(f"    [调试] 保存JSON日报: {json_report_file}")
+        print(f"    [调试] ai_results 数量: {len(ai_results)}")
+        print(f"    [调试] ai_results 键: {list(ai_results.keys()) if ai_results else 'None'}")
+        
+        try:
+            with open(json_report_file, "w", encoding="utf-8") as f:
+                json.dump(report_data, f, ensure_ascii=False, indent=2)
+            print(f"    ✓ JSON日报已保存: {json_report_file}")
+            print(f"    [调试] JSON文件大小: {os.path.getsize(json_report_file)} 字节")
+        except Exception as exc:
+            print(f"    ❌ 保存JSON日报失败: {exc}")
             import traceback
             print(f"    [调试] 错误详情: {traceback.format_exc()}")
     
