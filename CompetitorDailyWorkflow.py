@@ -16,6 +16,7 @@ from CompetitorScraperRapidAPI import (
     get_posts_from_twitter,
     get_posts_from_tiktok,
     get_posts_from_youtube,
+    get_posts_from_instagram,
     get_twitter_user_id_from_username,
     get_tiktok_secuid_from_username,
     get_youtube_channel_id_from_handle,
@@ -85,6 +86,11 @@ def parse_all_platform_accounts(input_data: Dict[str, Any]) -> Dict[str, List[Di
             elif platform_type == "facebook":
                 account["url"] = (plat.get("url") or "").strip()
                 account["page_id"] = (plat.get("page_id") or plat.get("pageid") or "").strip()
+            elif platform_type == "instagram":
+                account["username"] = (plat.get("username") or "").strip().lstrip("@")
+                account["url"] = (plat.get("url") or "").strip()
+                if not account["url"] and account["username"]:
+                    account["url"] = f"https://www.instagram.com/{account['username']}/"
             
             companies[company].append(account)
         
@@ -127,6 +133,11 @@ def parse_all_platform_accounts(input_data: Dict[str, Any]) -> Dict[str, List[Di
                 elif platform_type == "facebook":
                     account["url"] = (plat.get("url") or "").strip()
                     account["page_id"] = (plat.get("page_id") or plat.get("pageid") or "").strip()
+                elif platform_type == "instagram":
+                    account["username"] = (plat.get("username") or "").strip().lstrip("@")
+                    account["url"] = (plat.get("url") or "").strip()
+                    if not account["url"] and account["username"]:
+                        account["url"] = f"https://www.instagram.com/{account['username']}/"
                 
                 companies[company].append(account)
     
@@ -247,6 +258,45 @@ def scrape_youtube_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[s
         return None
 
 
+def scrape_instagram_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[str, Any]:
+    """爬取Instagram账号的前一天帖子"""
+    username = account.get("username", "")
+    url = account.get("url", "")
+    
+    print(f"    [Instagram] 用户名: {username}")
+    
+    # 从URL中提取username（如果没有提供）
+    if not username and url:
+        import re
+        match = re.search(r'instagram\.com/([^/?]+)', url)
+        if match:
+            username = match.group(1)
+            print(f"      [调试] 从URL提取用户名: {username}")
+    
+    if not username:
+        print(f"      ❌ 未提供Instagram用户名")
+        return None
+    
+    try:
+        posts = get_posts_from_instagram(username, days_ago=days_ago, original_username=username)
+        print(f"      ✓ 获取到 {len(posts)} 条帖子（已过滤前一天）")
+        
+        return {
+            "platform_type": "instagram",
+            "game": account.get("game"),
+            "url": url or f"https://www.instagram.com/{username}/",
+            "username": username,
+            "posts": posts,
+            "posts_count": len(posts),
+            "fetched_at": datetime.utcnow().isoformat() + "Z",
+        }
+    except Exception as exc:
+        print(f"      ❌ Instagram爬取失败: {exc}")
+        import traceback
+        print(f"      [调试] 错误详情: {traceback.format_exc()}")
+        return None
+
+
 def scrape_facebook_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[str, Any]:
     """爬取Facebook页面的前一天帖子"""
     page_id = account.get("page_id", "")
@@ -307,9 +357,10 @@ def scrape_facebook_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[
 def save_identifiers_to_input_json(input_path: str, company: str, account_identifiers: Dict[str, Dict[str, str]]):
     """
     保存获取到的标识符（user_id, sec_uid等）到input JSON文件
+    总是保存到 input/twitter_input.json（相对于项目根目录）
     
     Args:
-        input_path: 输入JSON文件路径
+        input_path: 输入JSON文件路径（用于读取，但保存时使用 input/twitter_input.json）
         company: 公司名称
         account_identifiers: {platform_key: {identifier_type: value, ...}, ...}
                            例如: {"twitter_voodoo": {"user_id": "123456"}, "tiktok_game1": {"sec_uid": "abc..."}}
@@ -318,9 +369,33 @@ def save_identifiers_to_input_json(input_path: str, company: str, account_identi
         return
     
     try:
-        # 读取现有JSON
-        input_data = load_input_json(input_path)
+        # 确定保存路径：总是使用 input/twitter_input.json（相对于项目根目录）
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        save_path = os.path.join(script_dir, "input", "twitter_input.json")
+        
+        # 如果脚本目录下的文件不存在，尝试当前工作目录
+        if not os.path.exists(save_path):
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                save_path = os.path.abspath(rel_path)
+        
+        # 确保目录存在
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        
+        print(f"  [调试] 保存标识符到文件: {save_path}")
+        
+        # 读取现有JSON（优先从保存路径读取，如果不存在则从input_path读取）
+        input_data = None
+        if os.path.exists(save_path):
+            with open(save_path, "r", encoding="utf-8") as f:
+                input_data = json.load(f)
+        elif input_path and os.path.exists(input_path):
+            # 如果保存路径不存在，但从input_path可以读取，先读取它
+            with open(input_path, "r", encoding="utf-8") as f:
+                input_data = json.load(f)
+        
         if not input_data:
+            print(f"  ⚠️ 无法读取输入文件，跳过保存标识符")
             return
         
         competitors = input_data.get("competitors", [])
@@ -387,16 +462,20 @@ def save_identifiers_to_input_json(input_path: str, company: str, account_identi
                             print(f"      💾 已保存 sec_uid 到配置: {identifiers['sec_uid'][:30]}...")
                             updated = True
         
-        # 保存回文件
+        # 保存回文件（总是保存到 input/twitter_input.json）
         if updated:
-            with open(input_path, "w", encoding="utf-8") as f:
+            with open(save_path, "w", encoding="utf-8") as f:
                 json.dump(input_data, f, ensure_ascii=False, indent=2)
-            print(f"  ✓ 已更新输入配置文件: {input_path}")
+            abs_path = os.path.abspath(save_path)
+            print(f"  ✓ 已更新输入配置文件: {abs_path}")
+            print(f"  [调试] 文件大小: {os.path.getsize(abs_path)} 字节")
         else:
             print(f"  ⚠️ 未找到匹配的平台配置，跳过保存标识符")
         
     except Exception as exc:
         print(f"  ⚠️ 保存标识符到配置文件失败: {exc}")
+        import traceback
+        print(f"  [调试] 错误详情: {traceback.format_exc()}")
 
 
 def scrape_company_platforms(
@@ -453,13 +532,21 @@ def scrape_company_platforms(
         elif platform_type == "youtube":
             print(f"      ⚠️ YouTube爬虫已禁用，跳过")
             continue
+        elif platform_type == "instagram":
+            result = scrape_instagram_account(account, days_ago=days_ago)
         elif platform_type == "facebook":
             result = scrape_facebook_account(account, days_ago=days_ago)
         else:
             print(f"      ⚠️ 不支持的平台类型: {platform_type}")
         
         if result:
-            platforms_data.append(result)
+            # 只保存有数据的平台（posts_count > 0）
+            posts_count = result.get("posts_count", 0)
+            if posts_count > 0:
+                platforms_data.append(result)
+                print(f"      ✓ 已添加到数据列表（{posts_count} 条帖子）")
+            else:
+                print(f"      ⚠️ 无数据，跳过保存（posts_count: 0）")
     
     # 保存标识符到输入JSON文件
     if account_identifiers and input_path:
@@ -533,9 +620,21 @@ def analyze_company_posts(company: str, platforms_data: List[Dict[str, Any]]) ->
 
 
 def build_company_daily_report(
-    company: str, ai_results: Dict[str, Any], platforms_data: List[Dict[str, Any]], days_ago: int = 1
+    company: str, 
+    ai_results: Dict[str, Any], 
+    platforms_data: List[Dict[str, Any]], 
+    all_accounts_config: List[Dict[str, Any]] = None,
+    days_ago: int = 1
 ) -> str:
-    """构建某个公司的日报Markdown"""
+    """构建某个公司的日报Markdown
+    
+    Args:
+        company: 公司名称
+        ai_results: AI分析结果
+        platforms_data: 爬取到的平台数据（只包含有数据的平台）
+        all_accounts_config: 所有平台的配置信息（包括未更新的平台）
+        days_ago: 查询多少天前的数据
+    """
     from datetime import datetime
     
     lines = []
@@ -546,25 +645,115 @@ def build_company_daily_report(
     # 报告日期（目标日期）
     target_date = (date.today() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
     lines.append(f"📅 监控日期: {target_date}")
-    lines.append(f"📎 来源: 各竞品官方社媒页面")
+    
+    # 显示所有监控的社交媒体来源URL
+    lines.append(f"📎 来源:")
+    if all_accounts_config:
+        platform_icons = {
+            "twitter": "🐦",
+            "tiktok": "🎵",
+            "youtube": "▶️",
+            "facebook": "📘",
+            "instagram": "📷",
+        }
+        for account in all_accounts_config:
+            platform_type = account.get("platform_type", "").lower()
+            game = account.get("game")
+            url = account.get("url", "").strip()
+            
+            if not url:
+                # 如果没有URL，尝试根据平台类型和用户名生成
+                username = account.get("username", "").strip()
+                if platform_type == "twitter" and username:
+                    url = f"https://x.com/{username}"
+                elif platform_type == "tiktok" and username:
+                    url = f"https://www.tiktok.com/@{username}"
+                elif platform_type == "instagram" and username:
+                    url = f"https://www.instagram.com/{username}/"
+                elif platform_type == "facebook":
+                    page_id = account.get("page_id", "")
+                    if page_id:
+                        url = f"https://www.facebook.com/{page_id}"
+            
+            if url:
+                icon = platform_icons.get(platform_type, "🌐")
+                label = f"{icon} {platform_type.upper()}"
+                if game:
+                    label += f" - {game}"
+                lines.append(f"   • {label}: {url}")
+    else:
+        lines.append("   各竞品官方社媒页面")
+    
     lines.append("")
     
     # 检查是否有无更新的平台
-    no_update_platforms = []
+    # 首先从 platforms_data 中找出有数据但 posts_count=0 的平台
+    scraped_platforms = {}
     for platform_data in platforms_data:
-        if platform_data.get("posts_count", 0) == 0:
-            platform_type = platform_data.get("platform_type", "")
-            game = platform_data.get("game")
-            url = platform_data.get("url", "")
+        platform_type = platform_data.get("platform_type", "").lower()
+        game = platform_data.get("game")
+        key = f"{platform_type}_{game or 'company'}"
+        scraped_platforms[key] = platform_data
+    
+    no_update_platforms = []
+    # 检查所有配置的平台
+    if all_accounts_config:
+        for account in all_accounts_config:
+            platform_type = account.get("platform_type", "").lower()
+            game = account.get("game")
+            key = f"{platform_type}_{game or 'company'}"
             
-            display_name = f"{platform_type}"
-            if game:
-                display_name = f"{platform_type} - {game}"
-            
-            no_update_platforms.append({
-                "name": display_name,
-                "url": url,
-            })
+            # 如果这个平台在 scraped_platforms 中，检查 posts_count
+            if key in scraped_platforms:
+                platform_data = scraped_platforms[key]
+                if platform_data.get("posts_count", 0) == 0:
+                    url = platform_data.get("url", "") or account.get("url", "")
+                    display_name = f"{platform_type.upper()}"
+                    if game:
+                        display_name = f"{platform_type.upper()} - {game}"
+                    no_update_platforms.append({
+                        "name": display_name,
+                        "url": url,
+                    })
+            else:
+                # 如果这个平台没有出现在 scraped_platforms 中（可能是爬取失败或跳过），也标记为无更新
+                url = account.get("url", "")
+                if not url:
+                    username = account.get("username", "").strip()
+                    if platform_type == "twitter" and username:
+                        url = f"https://x.com/{username}"
+                    elif platform_type == "tiktok" and username:
+                        url = f"https://www.tiktok.com/@{username}"
+                    elif platform_type == "instagram" and username:
+                        url = f"https://www.instagram.com/{username}/"
+                    elif platform_type == "facebook":
+                        page_id = account.get("page_id", "")
+                        if page_id:
+                            url = f"https://www.facebook.com/{page_id}"
+                
+                display_name = f"{platform_type.upper()}"
+                if game:
+                    display_name = f"{platform_type.upper()} - {game}"
+                no_update_platforms.append({
+                    "name": display_name,
+                    "url": url,
+                })
+    else:
+        # 如果没有 all_accounts_config，回退到旧逻辑
+        for platform_data in platforms_data:
+            if platform_data.get("posts_count", 0) == 0:
+                platform_type = platform_data.get("platform_type", "")
+                game = platform_data.get("game")
+                url = platform_data.get("url", "")
+                
+                display_name = f"{platform_type.upper()}"
+                if game:
+                    display_name = f"{platform_type.upper()} - {game}"
+                
+                no_update_platforms.append({
+                    "name": display_name,
+                    "url": url,
+                })
     
     # 显示无更新平台信息
     if no_update_platforms:
@@ -584,12 +773,23 @@ def build_company_daily_report(
         reverse=True
     )
     
+    # 检查是否有任何有更新的平台
+    has_updates = False
+    for platform_data in platforms_data:
+        if platform_data.get("posts_count", 0) > 0:
+            has_updates = True
+            break
+    
     if sorted_results:
         lines.append("📊 有更新的平台分析")
         lines.append("-" * 60)
         lines.append("")
-    elif no_update_platforms:
-        lines.append("📝 说明：所有平台昨天均无社媒更新")
+    elif not has_updates:
+        # 如果所有平台都没有更新，显示说明
+        if no_update_platforms:
+            lines.append("📝 说明：所有平台昨天均无社媒更新，请手动查看上述链接确认。")
+        else:
+            lines.append("📝 说明：所有监控平台昨天均无社媒更新。")
         lines.append("")
     
     for idx, (title, payload) in enumerate(sorted_results, 1):
@@ -607,6 +807,7 @@ def build_company_daily_report(
             "tiktok": "🎵",
             "youtube": "▶️",
             "facebook": "📘",
+            "instagram": "📷",
         }
         icon = platform_icons.get(platform.lower(), "🌐")
         
@@ -792,7 +993,18 @@ def run_daily_workflow(
     print("【步骤 1/5】读取输入配置")
     print("-" * 60)
     if input_path is None:
-        input_path = os.environ.get("COMPETITOR_INPUT_PATH", "/app/input/twitter_input.json")
+        # 优先使用环境变量
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH")
+        if not input_path:
+            # 尝试相对路径（本地开发环境）
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                input_path = rel_path
+            else:
+                # 回退到绝对路径（Docker环境）
+                input_path = "/app/input/twitter_input.json"
+    
+    print(f"  📋 输入配置文件: {input_path}")
     input_data = load_input_json(input_path)
     if not input_data:
         print("❌ 无法读取输入配置，工作流终止")
@@ -825,18 +1037,22 @@ def run_daily_workflow(
         platforms_data, account_identifiers = scrape_company_platforms(
             company, accounts, days_ago=days_ago, input_path=input_path
         )
+        # 即使没有数据，也保存空的列表，这样后续可以生成"无更新"的报告
+        all_companies_data[company] = platforms_data or []
+        
         if platforms_data:
-            all_companies_data[company] = platforms_data
-            
-            # 保存到历史数据库
+            # 保存到历史数据库（只保存有数据的平台）
             print(f"\n  💾 保存原始数据到历史数据库...")
             db.save_raw_data(company, platforms_data, fetch_date=date.today() - timedelta(days=days_ago))
+        else:
+            print(f"  ⚠️ {company} 无有效数据，将生成无更新报告")
     
     if not all_companies_data:
-        print("❌ 未爬取到任何数据，工作流终止")
+        print("❌ 未找到任何公司配置，工作流终止")
         return 1
     
-    print(f"\n✓ 爬取完成，共 {len(all_companies_data)} 个公司有数据")
+    companies_with_data = sum(1 for v in all_companies_data.values() if v)
+    print(f"\n✓ 爬取完成，共 {len(all_companies_data)} 个公司，其中 {companies_with_data} 个公司有数据")
     print()
     
     # 步骤3: AI分析
@@ -847,6 +1063,12 @@ def run_daily_workflow(
         print("-" * 60)
         
         for company, platforms_data in all_companies_data.items():
+            # 如果没有数据，跳过AI分析，但初始化空结果
+            if not platforms_data:
+                all_companies_ai[company] = {}
+                print(f"\n  ⚠️ {company} 无数据，跳过AI分析")
+                continue
+            
             print(f"\n  [调试] 开始分析公司: '{company}'")
             ai_results = analyze_company_posts(company, platforms_data)
             print(f"  [调试] analyze_company_posts 返回结果数量: {len(ai_results) if ai_results else 0}")
@@ -865,10 +1087,13 @@ def run_daily_workflow(
             else:
                 print(f"  [调试] {company} 的AI分析结果为空，跳过保存到数据库")
         
-        print(f"\n✓ AI分析完成，共 {len(all_companies_ai)} 个公司有分析结果")
+        print(f"\n✓ AI分析完成，共 {len(all_companies_ai)} 个公司处理完成")
         print(f"  [调试] all_companies_ai 中的公司: {list(all_companies_ai.keys())}")
         print()
     else:
+        # 如果跳过AI分析，初始化所有公司的空结果
+        for company in all_companies_data.keys():
+            all_companies_ai[company] = {}
         print("⚠️ 跳过AI分析步骤")
         print()
     
@@ -878,7 +1103,9 @@ def run_daily_workflow(
     
     reports: Dict[str, str] = {}
     
-    for company, platforms_data in all_companies_data.items():
+    # 对所有配置的公司都生成日报（即使没有数据）
+    for company in companies_config.keys():
+        platforms_data = all_companies_data.get(company, [])
         print(f"\n  [调试] 生成日报: 公司名称='{company}'")
         print(f"  [调试] all_companies_ai 中的键: {list(all_companies_ai.keys())}")
         print(f"  [调试] 检查 all_companies_ai.get('{company}')...")
@@ -889,8 +1116,16 @@ def run_daily_workflow(
         print(f"    AI结果数量: {len(ai_results)}")
         print(f"    平台数据数量: {len(platforms_data)}")
         
+        # 获取该公司的所有平台配置（包括未更新的平台）
+        all_accounts_config = companies_config.get(company, [])
+        print(f"    总配置平台数量: {len(all_accounts_config)}")
+        
         # 即使没有AI结果也要生成日报（显示无更新平台信息）
-        report_text = build_company_daily_report(company, ai_results, platforms_data, days_ago=days_ago)
+        report_text = build_company_daily_report(
+            company, ai_results, platforms_data, 
+            all_accounts_config=all_accounts_config,
+            days_ago=days_ago
+        )
         print(f"    日报长度: {len(report_text)} 字符")
         
         if not report_text.strip():
@@ -1005,7 +1240,7 @@ if __name__ == "__main__":
     import argparse
     
     parser = argparse.ArgumentParser(description="竞品监控日报工作流")
-    parser.add_argument("--input", "-i", help="输入JSON文件路径", default=None)
+    parser.add_argument("--input", "-i", help="输入JSON文件路径", default="/input/twitter_input.json")
     parser.add_argument("--days-ago", "-d", type=int, help="爬取多少天前的数据", default=1)
     parser.add_argument("--skip-ai", action="store_true", help="跳过AI分析步骤")
     parser.add_argument("--skip-send", action="store_true", help="跳过飞书推送")

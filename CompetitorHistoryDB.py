@@ -45,24 +45,19 @@ class CompetitorHistoryDB:
             dt = date.today()
         return dt.strftime("%Y-%m-%d")
     
-    def _get_file_path(self, company: str, date_str: str, is_ai: bool = False) -> str:
+    def _get_file_path(self, date_str: str, is_ai: bool = False) -> str:
         """
-        获取存储文件路径
+        获取存储文件路径（按日期存储，每天一个文件）
         
         Args:
-            company: 公司名称
             date_str: 日期字符串 YYYY-MM-DD
             is_ai: 是否为AI分析数据
         
         Returns:
             文件路径
         """
-        # 清理公司名称，用于文件名（移除特殊字符）
-        safe_company = "".join(c for c in company if c.isalnum() or c in (' ', '-', '_')).strip()
-        safe_company = safe_company.replace(' ', '_').lower()
-        
         base_dir = self.ai_analysis_dir if is_ai else self.raw_data_dir
-        filename = f"{safe_company}_{date_str}.json"
+        filename = f"{date_str}.json"
         return os.path.join(base_dir, filename)
     
     def save_raw_data(
@@ -72,7 +67,7 @@ class CompetitorHistoryDB:
         fetch_date: Optional[date] = None
     ) -> str:
         """
-        保存原始爬取数据
+        保存原始爬取数据（按日期存储，每天一个文件包含所有公司）
         
         Args:
             company: 公司名称
@@ -89,14 +84,23 @@ class CompetitorHistoryDB:
             保存的文件路径
         """
         date_str = self._get_date_str(fetch_date)
-        file_path = self._get_file_path(company, date_str, is_ai=False)
+        file_path = self._get_file_path(date_str, is_ai=False)
         
         # 加载已有数据（如果存在）
-        existing_data = self.load_raw_data(company, fetch_date) or {}
+        existing_data = self.load_raw_data_by_date(fetch_date) or {}
+        
+        # 获取或创建该公司的数据
+        companies_dict = existing_data.get("companies", {})
+        if company not in companies_dict:
+            companies_dict[company] = {
+                "company": company,
+                "platforms": {}
+            }
+        
+        company_data = companies_dict[company]
+        platforms_dict = company_data.get("platforms", {})
         
         # 合并数据（按平台组织）
-        platforms_dict = existing_data.get("platforms", {})
-        
         for platform_data in platforms_data:
             platform_type = platform_data.get("platform_type", "unknown")
             game = platform_data.get("game")
@@ -118,37 +122,37 @@ class CompetitorHistoryDB:
                 "fetched_at": platform_data.get("fetched_at") or datetime.utcnow().isoformat() + "Z",
             }
         
+        company_data["platforms"] = platforms_dict
+        
         # 构建完整数据结构
         data = {
-            "company": company,
             "date": date_str,
             "fetched_at": datetime.utcnow().isoformat() + "Z",
-            "platforms": platforms_dict,
+            "companies": companies_dict,
         }
         
         # 保存到文件
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"  ✓ 已保存原始数据: {file_path}")
+            print(f"  ✓ 已保存原始数据: {file_path} (公司: {company})")
             return file_path
         except Exception as exc:
             print(f"  ❌ 保存原始数据失败: {exc}")
             return ""
     
-    def load_raw_data(self, company: str, fetch_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
+    def load_raw_data_by_date(self, fetch_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
         """
-        加载原始爬取数据
+        按日期加载原始爬取数据（包含所有公司）
         
         Args:
-            company: 公司名称
             fetch_date: 日期，默认为今天
         
         Returns:
             数据字典，如果不存在则返回None
         """
         date_str = self._get_date_str(fetch_date)
-        file_path = self._get_file_path(company, date_str, is_ai=False)
+        file_path = self._get_file_path(date_str, is_ai=False)
         
         if not os.path.exists(file_path):
             return None
@@ -160,6 +164,35 @@ class CompetitorHistoryDB:
             print(f"  ⚠️ 加载原始数据失败: {exc}")
             return None
     
+    def load_raw_data(self, company: str, fetch_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
+        """
+        加载指定公司的原始爬取数据（兼容旧接口）
+        
+        Args:
+            company: 公司名称
+            fetch_date: 日期，默认为今天
+        
+        Returns:
+            数据字典，如果不存在则返回None
+        """
+        all_data = self.load_raw_data_by_date(fetch_date)
+        if not all_data:
+            return None
+        
+        companies_dict = all_data.get("companies", {})
+        company_data = companies_dict.get(company)
+        
+        if not company_data:
+            return None
+        
+        # 转换为旧格式以保持兼容性
+        return {
+            "company": company,
+            "date": all_data.get("date"),
+            "fetched_at": all_data.get("fetched_at"),
+            "platforms": company_data.get("platforms", {})
+        }
+    
     def save_ai_analysis(
         self,
         company: str,
@@ -167,7 +200,7 @@ class CompetitorHistoryDB:
         analysis_date: Optional[date] = None
     ) -> str:
         """
-        保存AI分析结果
+        保存AI分析结果（按日期存储，每天一个文件包含所有公司）
         
         Args:
             company: 公司名称
@@ -178,38 +211,46 @@ class CompetitorHistoryDB:
             保存的文件路径
         """
         date_str = self._get_date_str(analysis_date)
-        file_path = self._get_file_path(company, date_str, is_ai=True)
+        file_path = self._get_file_path(date_str, is_ai=True)
         
-        # 构建数据结构
-        data = {
+        # 加载已有数据（如果存在）
+        existing_data = self.load_ai_analysis_by_date(analysis_date) or {}
+        
+        # 获取或创建该公司的数据
+        companies_dict = existing_data.get("companies", {})
+        companies_dict[company] = {
             "company": company,
+            "results": ai_results,  # 保持原有的 {title: payload} 结构
+        }
+        
+        # 构建完整数据结构
+        data = {
             "date": date_str,
             "analyzed_at": datetime.utcnow().isoformat() + "Z",
-            "results": ai_results,  # 保持原有的 {title: payload} 结构
+            "companies": companies_dict,
         }
         
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-            print(f"  ✓ 已保存AI分析结果: {file_path}")
+            print(f"  ✓ 已保存AI分析结果: {file_path} (公司: {company})")
             return file_path
         except Exception as exc:
             print(f"  ❌ 保存AI分析结果失败: {exc}")
             return ""
     
-    def load_ai_analysis(self, company: str, analysis_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
+    def load_ai_analysis_by_date(self, analysis_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
         """
-        加载AI分析结果
+        按日期加载AI分析结果（包含所有公司）
         
         Args:
-            company: 公司名称
             analysis_date: 日期，默认为今天
         
         Returns:
             数据字典，如果不存在则返回None
         """
         date_str = self._get_date_str(analysis_date)
-        file_path = self._get_file_path(company, date_str, is_ai=True)
+        file_path = self._get_file_path(date_str, is_ai=True)
         
         if not os.path.exists(file_path):
             return None
@@ -220,6 +261,35 @@ class CompetitorHistoryDB:
         except Exception as exc:
             print(f"  ⚠️ 加载AI分析结果失败: {exc}")
             return None
+    
+    def load_ai_analysis(self, company: str, analysis_date: Optional[date] = None) -> Optional[Dict[str, Any]]:
+        """
+        加载指定公司的AI分析结果（兼容旧接口）
+        
+        Args:
+            company: 公司名称
+            analysis_date: 日期，默认为今天
+        
+        Returns:
+            数据字典，如果不存在则返回None
+        """
+        all_data = self.load_ai_analysis_by_date(analysis_date)
+        if not all_data:
+            return None
+        
+        companies_dict = all_data.get("companies", {})
+        company_data = companies_dict.get(company)
+        
+        if not company_data:
+            return None
+        
+        # 转换为旧格式以保持兼容性
+        return {
+            "company": company,
+            "date": all_data.get("date"),
+            "analyzed_at": all_data.get("analyzed_at"),
+            "results": company_data.get("results", {})
+        }
     
     def get_companies_for_date(self, target_date: Optional[date] = None, is_ai: bool = False) -> List[str]:
         """
@@ -233,17 +303,19 @@ class CompetitorHistoryDB:
             公司名称列表
         """
         date_str = self._get_date_str(target_date)
-        base_dir = self.ai_analysis_dir if is_ai else self.raw_data_dir
         
-        companies = set()
-        if os.path.exists(base_dir):
-            for filename in os.listdir(base_dir):
-                if filename.endswith(f"_{date_str}.json"):
-                    # 提取公司名称：{company}_{date}.json
-                    company_part = filename.rsplit(f"_{date_str}.json", 1)[0]
-                    companies.add(company_part.replace("_", " ").title())
+        if is_ai:
+            all_data = self.load_ai_analysis_by_date(target_date)
+            if all_data:
+                companies_dict = all_data.get("companies", {})
+                return sorted(list(companies_dict.keys()))
+        else:
+            all_data = self.load_raw_data_by_date(target_date)
+            if all_data:
+                companies_dict = all_data.get("companies", {})
+                return sorted(list(companies_dict.keys()))
         
-        return sorted(list(companies))
+        return []
     
     def get_all_dates_for_company(self, company: str, is_ai: bool = False) -> List[str]:
         """
@@ -258,19 +330,27 @@ class CompetitorHistoryDB:
         """
         base_dir = self.ai_analysis_dir if is_ai else self.raw_data_dir
         
-        # 清理公司名称
-        safe_company = "".join(c for c in company if c.isalnum() or c in (' ', '-', '_')).strip()
-        safe_company = safe_company.replace(' ', '_').lower()
-        
         dates = []
         if os.path.exists(base_dir):
-            prefix = f"{safe_company}_"
             for filename in os.listdir(base_dir):
-                if filename.startswith(prefix) and filename.endswith(".json"):
-                    # 提取日期：{company}_YYYY-MM-DD.json
-                    date_part = filename[len(prefix):-5]  # 移除前缀和.json
+                if filename.endswith(".json"):
+                    # 提取日期：YYYY-MM-DD.json
+                    date_part = filename[:-5]  # 移除.json
                     if len(date_part) == 10 and date_part.count("-") == 2:
-                        dates.append(date_part)
+                        # 检查该日期文件中是否包含该公司
+                        try:
+                            date_obj = date.fromisoformat(date_part)
+                            if is_ai:
+                                all_data = self.load_ai_analysis_by_date(date_obj)
+                            else:
+                                all_data = self.load_raw_data_by_date(date_obj)
+                            
+                            if all_data:
+                                companies_dict = all_data.get("companies", {})
+                                if company in companies_dict:
+                                    dates.append(date_part)
+                        except Exception:
+                            pass
         
         return sorted(dates, reverse=True)  # 最新日期在前
 

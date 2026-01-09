@@ -11,7 +11,12 @@ from datetime import date, timedelta
 from typing import Dict, Any, List, Optional
 
 from CompetitorHistoryDB import CompetitorHistoryDB
-from CompetitorDailyWorkflow import build_company_daily_report, send_company_report_to_feishu
+from CompetitorDailyWorkflow import (
+    build_company_daily_report, 
+    send_company_report_to_feishu,
+    parse_all_platform_accounts,
+    load_input_json,
+)
 
 def load_ai_analysis_from_db(db: CompetitorHistoryDB, company: str, target_date: date) -> Optional[Dict[str, Any]]:
     """从数据库加载AI分析结果"""
@@ -20,7 +25,13 @@ def load_ai_analysis_from_db(db: CompetitorHistoryDB, company: str, target_date:
         return None
     
     # 返回 results 字段（格式为 {title: payload}）
-    return ai_data.get("results", {})
+    # 兼容新旧格式
+    if "results" in ai_data:
+        return ai_data.get("results", {})
+    elif "companies" in ai_data:
+        company_data = ai_data.get("companies", {}).get(company, {})
+        return company_data.get("results", {})
+    return {}
 
 
 def load_raw_data_from_db(db: CompetitorHistoryDB, company: str, target_date: date) -> Optional[List[Dict[str, Any]]]:
@@ -29,7 +40,18 @@ def load_raw_data_from_db(db: CompetitorHistoryDB, company: str, target_date: da
     if not raw_data:
         return None
     
+    # 兼容新旧格式
     platforms_dict = raw_data.get("platforms", {})
+    if not platforms_dict:
+        # 尝试从新格式中获取
+        all_data = db.load_raw_data_by_date(target_date)
+        if all_data:
+            companies_dict = all_data.get("companies", {})
+            company_data = companies_dict.get(company, {})
+            platforms_dict = company_data.get("platforms", {})
+    
+    if not platforms_dict:
+        return None
     
     # 转换为列表格式
     platforms_data = []
@@ -63,7 +85,8 @@ def generate_report_from_db(
     company: str,
     target_date: date,
     db: CompetitorHistoryDB,
-    days_ago: int = 1
+    days_ago: int = 1,
+    input_path: Optional[str] = None
 ) -> Optional[str]:
     """
     从数据库生成公司日报
@@ -73,6 +96,7 @@ def generate_report_from_db(
         target_date: 目标日期
         db: 数据库实例
         days_ago: 相对今天的天数（用于报告标题）
+        input_path: 输入JSON文件路径（用于获取所有平台配置）
     
     Returns:
         生成的Markdown报告文本，如果失败则返回None
@@ -83,7 +107,8 @@ def generate_report_from_db(
     ai_results = load_ai_analysis_from_db(db, company, target_date)
     if not ai_results:
         print(f"    ⚠️ 未找到 {company} 在 {target_date} 的AI分析结果")
-        return None
+        # 即使没有AI结果，也尝试生成报告（显示无更新信息）
+        ai_results = {}
     
     print(f"    ✓ 找到 {len(ai_results)} 个平台的AI分析结果")
     
@@ -96,15 +121,28 @@ def generate_report_from_db(
     
     print(f"    ✓ 找到 {len(platforms_data)} 个平台的原始数据")
     
-    # 3. 转换AI结果格式
+    # 3. 加载所有平台配置（用于显示"来源"部分）
+    all_accounts_config = None
+    if input_path:
+        try:
+            input_data = load_input_json(input_path)
+            if input_data:
+                companies_config = parse_all_platform_accounts(input_data)
+                all_accounts_config = companies_config.get(company, [])
+                print(f"    ✓ 加载了 {len(all_accounts_config)} 个平台的配置")
+        except Exception as exc:
+            print(f"    ⚠️ 加载平台配置失败: {exc}")
+    
+    # 4. 转换AI结果格式
     ai_results_formatted = convert_ai_results_to_workflow_format(ai_results)
     
-    # 4. 生成日报
+    # 5. 生成日报
     print(f"    📝 生成日报...")
     report_text = build_company_daily_report(
         company=company,
         ai_results=ai_results_formatted,
         platforms_data=platforms_data,
+        all_accounts_config=all_accounts_config,
         days_ago=days_ago
     )
     
@@ -127,7 +165,8 @@ def run_report_from_db_workflow(
     target_date: Optional[date] = None,
     target_companies: Optional[List[str]] = None,
     skip_send: bool = False,
-    days_ago: int = 1
+    days_ago: int = 1,
+    input_path: Optional[str] = None
 ):
     """
     从数据库读取AI分析结果，生成日报并发送到飞书
@@ -137,6 +176,7 @@ def run_report_from_db_workflow(
         target_companies: 目标公司列表，如果为None则处理所有有数据的公司
         skip_send: 是否跳过发送到飞书
         days_ago: 相对今天的天数（如果 target_date 为 None）
+        input_path: 输入JSON文件路径（用于获取所有平台配置）
     """
     print("=" * 60)
     print("📊 从数据库生成日报工作流")
@@ -150,6 +190,23 @@ def run_report_from_db_workflow(
     print(f"📅 目标日期: {target_date}")
     print()
     
+    # 确定输入路径
+    if input_path is None:
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH", "/app/input/twitter_input.json")
+        # 兼容本地运行
+        if not os.path.exists(input_path):
+            alt_path = os.path.join(os.path.dirname(__file__), "input", "twitter_input.json")
+            if os.path.exists(alt_path):
+                input_path = alt_path
+    
+    if os.path.exists(input_path):
+        print(f"📋 输入配置文件: {input_path}")
+    else:
+        print(f"⚠️ 未找到输入配置文件: {input_path}，将无法显示所有平台来源")
+        input_path = None
+    
+    print()
+    
     # 初始化数据库
     db = CompetitorHistoryDB()
     
@@ -159,7 +216,10 @@ def run_report_from_db_workflow(
         print(f"📋 指定公司: {', '.join(companies)}")
     else:
         companies = db.get_companies_for_date(target_date, is_ai=True)
-        print(f"📋 找到 {len(companies)} 个公司有AI分析数据: {', '.join(companies)}")
+        if not companies:
+            # 如果没有AI数据，尝试从原始数据中获取公司列表
+            companies = db.get_companies_for_date(target_date, is_ai=False)
+        print(f"📋 找到 {len(companies)} 个公司有数据: {', '.join(companies) if companies else '无'}")
     
     if not companies:
         print("⚠️ 未找到任何公司的数据，退出")
@@ -185,7 +245,8 @@ def run_report_from_db_workflow(
                 company=company,
                 target_date=target_date,
                 db=db,
-                days_ago=days_ago_calc
+                days_ago=days_ago_calc,
+                input_path=input_path
             )
             
             if not report_text:
@@ -265,6 +326,11 @@ def main():
         action="store_true",
         help="跳过发送到飞书，只生成报告文件",
     )
+    parser.add_argument(
+        "--input",
+        type=str,
+        help="输入JSON文件路径（用于获取所有平台配置）",
+    )
     
     args = parser.parse_args()
     
@@ -282,7 +348,8 @@ def main():
         target_date=target_date,
         target_companies=args.companies,
         skip_send=args.skip_send,
-        days_ago=args.days_ago
+        days_ago=args.days_ago,
+        input_path=args.input
     )
     
     return 0

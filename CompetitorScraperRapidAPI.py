@@ -149,8 +149,15 @@ def extract_username_from_url(url: str, platform: str) -> Optional[str]:
     return None
 
 
-def get_posts_from_instagram(username: str, days_ago: int = 1) -> List[Dict[str, Any]]:
-    """使用 RapidAPI 获取 Instagram 帖子"""
+def get_posts_from_instagram(username: str, days_ago: int = None, original_username: str = None) -> List[Dict[str, Any]]:
+    """
+    使用 RapidAPI 获取 Instagram 帖子
+    
+    Args:
+        username: Instagram 用户名
+        days_ago: 相对今天的天数，如果为None则不过滤日期
+        original_username: 原始用户名（用于构建post_url），如果为None则使用username
+    """
     if not RAPIDAPI_KEY:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
@@ -175,52 +182,97 @@ def get_posts_from_instagram(username: str, days_ago: int = 1) -> List[Dict[str,
         result = data.get("result", {})
         edges = result.get("edges", [])
         
-        # 计算昨天的时间戳范围
-        yesterday = datetime.now() - timedelta(days=days_ago)
-        yesterday_start = yesterday.replace(hour=0, minute=0, second=0).timestamp()
-        yesterday_end = yesterday.replace(hour=23, minute=59, second=59).timestamp()
+        # 计算日期过滤范围（如果指定了days_ago）
+        day_start_ts = None
+        day_end_ts = None
+        if days_ago is not None:
+            target_day = datetime.now() - timedelta(days=days_ago)
+            day_start_ts = target_day.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+            day_end_ts = target_day.replace(hour=23, minute=59, second=59, microsecond=999999).timestamp()
         
         for edge in edges:
             node = edge.get("node", {})
-            taken_at = node.get("taken_at_timestamp", 0)
             
-            # 只取昨天的帖子
-            if yesterday_start <= taken_at <= yesterday_end:
-                caption_node = node.get("caption", {})
-                caption_text = caption_node.get("text", "") if caption_node else ""
-                
-                # 提取图片URL
-                media_urls = []
-                image_versions = node.get("image_versions2", {})
-                candidates = image_versions.get("candidates", [])
-                if candidates:
-                    media_urls.append(candidates[0].get("url", ""))
-                
-                # 提取视频URL
-                video_versions = node.get("video_versions", [])
-                if video_versions:
-                    media_urls.append(video_versions[0].get("url", ""))
-                
-                # 互动数据
-                engagement = {
-                    "like": node.get("like_count", 0),
-                    "comment": node.get("comment_count", 0),
-                }
-                
-                post = {
-                    "text": caption_text,
-                    "published_at": datetime.fromtimestamp(taken_at).isoformat(),
-                    "published_at_display": datetime.fromtimestamp(taken_at).strftime("%Y-%m-%d %H:%M:%S"),
-                    "post_url": f"https://www.instagram.com/p/{node.get('code', '')}/",
-                    "media_urls": media_urls,
-                    "engagement": engagement,
-                }
-                posts.append(post)
+            # 获取时间戳（根据示例，字段名是 taken_at）
+            taken_at = node.get("taken_at") or node.get("taken_at_timestamp", 0)
+            if not taken_at:
+                continue  # 如果没有时间戳，跳过
+            
+            # 日期过滤（如果指定了days_ago）
+            if day_start_ts is not None and day_end_ts is not None:
+                if not (day_start_ts <= taken_at <= day_end_ts):
+                    continue
+            
+            # 提取标题/文本
+            caption_node = node.get("caption", {})
+            caption_text = caption_node.get("text", "") if caption_node else ""
+            
+            # 提取媒体URL
+            media_urls = []
+            
+            # 图片（image_versions2.candidates）
+            image_versions = node.get("image_versions2", {})
+            candidates = image_versions.get("candidates", [])
+            if candidates:
+                # 取最高质量的图片（通常是第一个）
+                for candidate in candidates:
+                    img_url = candidate.get("url", "")
+                    if img_url:
+                        media_urls.append(img_url)
+                        break  # 只取第一个
+            
+            # 视频（video_versions）
+            video_versions = node.get("video_versions", [])
+            if video_versions:
+                # 取最高质量的视频（通常是第一个）
+                for video in video_versions:
+                    video_url = video.get("url", "")
+                    if video_url:
+                        media_urls.append(video_url)
+                        break  # 只取第一个
+            
+            # 互动数据（根据示例，可能需要从不同字段获取）
+            like_count = node.get("like_count") or node.get("edge_liked_by", {}).get("count", 0)
+            comment_count = node.get("comment_count") or node.get("edge_media_to_comment", {}).get("count", 0)
+            
+            engagement = {
+                "like": like_count,
+                "comment": comment_count,
+            }
+            
+            # 构建帖子URL
+            code = node.get("code", "")
+            post_url = f"https://www.instagram.com/p/{code}/" if code else ""
+            
+            # 格式化发布时间
+            if taken_at:
+                try:
+                    published_at = datetime.fromtimestamp(taken_at)
+                    published_at_iso = published_at.isoformat()
+                    published_at_display = published_at.strftime("%Y-%m-%d %H:%M:%S")
+                except Exception:
+                    published_at_iso = ""
+                    published_at_display = ""
+            else:
+                published_at_iso = ""
+                published_at_display = ""
+            
+            post = {
+                "text": caption_text,
+                "published_at": published_at_iso,
+                "published_at_display": published_at_display,
+                "post_url": post_url,
+                "media_urls": media_urls,
+                "engagement": engagement,
+            }
+            posts.append(post)
         
         return posts
     
     except Exception as exc:
         print(f"  ❌ Instagram API 调用失败: {exc}")
+        import traceback
+        print(f"  [调试] 错误详情: {traceback.format_exc()}")
         return []
 
 
