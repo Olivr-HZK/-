@@ -1183,7 +1183,7 @@ def run_daily_workflow(
         report_data = {
             "company": company,
             "date": report_date,
-            "generated_at": datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z"),
+            "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "markdown_content": report_text,
             "ai_results": ai_results,  # 从 all_companies_ai 获取的结果
             "platforms_data": platforms_data,
