@@ -896,10 +896,370 @@ def build_company_daily_report(
     return "\n".join(lines)
 
 
-def send_company_report_to_feishu(company: str, report_text: str) -> bool:
-    """发送公司日报到飞书"""
+def _get_company_color(company: str) -> str:
+    """
+    为不同公司分配不同颜色的边框
+    使用预定义的颜色列表，通过哈希值分配
+    """
+    colors = [
+        "blue", "wathet", "turquoise", "green", "yellow", "orange",
+        "red", "carmine", "violet", "purple", "indigo", "grey",
+    ]
+    hash_value = hash(company.lower()) % len(colors)
+    return colors[hash_value]
+
+
+def _platform_icon(platform: str) -> str:
+    """根据平台类型返回图标"""
+    p = (platform or "").lower()
+    if "twitter" in p or "x.com" in p or p == "x":
+        return "🐦"
+    if "instagram" in p or "ig" == p:
+        return "📸"
+    if "tiktok" in p:
+        return "🎵"
+    if "youtube" in p:
+        return "▶️"
+    if "facebook" in p or "fb" == p:
+        return "📘"
+    return "🌐"
+
+
+def build_company_feishu_card(
+    company: str,
+    ai_results: Dict[str, Any],
+    platforms_data: List[Dict[str, Any]],
+    all_accounts_config: List[Dict[str, Any]] = None,
+    days_ago: int = 1
+) -> Dict[str, Any]:
+    """
+    构建公司日报的飞书卡片格式
+    
+    Args:
+        company: 公司名称
+        ai_results: AI分析结果 {title: payload}
+        platforms_data: 平台数据列表
+        all_accounts_config: 所有平台配置
+        days_ago: 查询多少天前的数据
+    
+    Returns:
+        飞书卡片字典
+    """
+    target_date = (date.today() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
+    company_color = _get_company_color(company)
+    
+    elements: List[Dict[str, Any]] = []
+    
+    # 添加日期和来源信息
+    header_info = [f"📅 **日期**: {target_date}（监控日期）"]
+    
+    # 显示所有监控的社交媒体来源URL
+    sources = []
+    if all_accounts_config:
+        platform_icons = {
+            "twitter": "🐦", "tiktok": "🎵", "youtube": "▶️",
+            "facebook": "📘", "instagram": "📷",
+        }
+        for account in all_accounts_config:
+            platform_type = account.get("platform_type", "").lower()
+            game = account.get("game")
+            url = account.get("url", "").strip()
+            
+            if not url:
+                username = account.get("username", "").strip()
+                if platform_type == "twitter" and username:
+                    url = f"https://x.com/{username}"
+                elif platform_type == "tiktok" and username:
+                    url = f"https://www.tiktok.com/@{username}"
+                elif platform_type == "instagram" and username:
+                    url = f"https://www.instagram.com/{username}/"
+                elif platform_type == "facebook":
+                    page_id = account.get("page_id", "")
+                    if page_id:
+                        url = f"https://www.facebook.com/{page_id}"
+            
+            if url:
+                icon = platform_icons.get(platform_type, "🌐")
+                label = f"{icon} {platform_type.upper()}"
+                if game:
+                    label += f" - {game}"
+                sources.append(f"{label}: [{url}]({url})")
+    
+    if sources:
+        header_info.append(f"📎 **来源**:\n" + "\n".join([f"   • {s}" for s in sources]))
+    else:
+        header_info.append("📎 **来源**: 各竞品官方社媒页面")
+    
+    elements.append({
+        "tag": "div",
+        "text": {
+            "tag": "lark_md",
+            "content": "\n".join(header_info)
+        }
+    })
+    elements.append({"tag": "hr"})
+    
+    # 检查无更新的平台
+    scraped_platforms = {}
+    for platform_data in platforms_data:
+        platform_type = platform_data.get("platform_type", "").lower()
+        game = platform_data.get("game")
+        key = f"{platform_type}_{game or 'company'}"
+        scraped_platforms[key] = platform_data
+    
+    no_update_platforms = []
+    if all_accounts_config:
+        for account in all_accounts_config:
+            platform_type = account.get("platform_type", "").lower()
+            game = account.get("game")
+            key = f"{platform_type}_{game or 'company'}"
+            
+            if key in scraped_platforms:
+                platform_data = scraped_platforms[key]
+                if platform_data.get("posts_count", 0) == 0:
+                    url = platform_data.get("url", "") or account.get("url", "")
+                    no_update_platforms.append({
+                        "name": f"{platform_type.upper()}" + (f" - {game}" if game else ""),
+                        "url": url,
+                    })
+            else:
+                url = account.get("url", "")
+                if not url:
+                    username = account.get("username", "").strip()
+                    if platform_type == "twitter" and username:
+                        url = f"https://x.com/{username}"
+                    elif platform_type == "tiktok" and username:
+                        url = f"https://www.tiktok.com/@{username}"
+                    elif platform_type == "instagram" and username:
+                        url = f"https://www.instagram.com/{username}/"
+                    elif platform_type == "facebook":
+                        page_id = account.get("page_id", "")
+                        if page_id:
+                            url = f"https://www.facebook.com/{page_id}"
+                
+                no_update_platforms.append({
+                    "name": f"{platform_type.upper()}" + (f" - {game}" if game else ""),
+                    "url": url,
+                })
+    
+    # 显示无更新平台
+    if no_update_platforms:
+        no_update_lines = ["⚠️ **无社媒更新的平台**"]
+        for no_up in no_update_platforms:
+            if no_up['url']:
+                no_update_lines.append(f"  • {no_up['name']}: [{no_up['url']}]({no_up['url']})（建议手动查看）")
+            else:
+                no_update_lines.append(f"  • {no_up['name']}")
+        
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "\n".join(no_update_lines)
+            }
+        })
+        elements.append({"tag": "hr"})
+    
+    # 按评分排序AI结果
+    sorted_results = sorted(
+        ai_results.items(),
+        key=lambda x: float(x[1].get("usability_score", 0)),
+        reverse=True
+    )
+    
+    # 检查是否有更新的平台
+    has_updates = any(p.get("posts_count", 0) > 0 for p in platforms_data)
+    
+    if not sorted_results and not has_updates:
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "📝 **说明**: 所有平台昨天均无社媒更新，请手动查看上述链接确认。"
+            }
+        })
+    
+    # 添加有更新的平台分析
+    if sorted_results:
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "📊 **有更新的平台分析**"
+            }
+        })
+        elements.append({"tag": "hr"})
+    
+    # 为每个平台添加详细信息
+    for idx, (title, payload) in enumerate(sorted_results, 1):
+        game = payload.get("game")
+        platform = payload.get("platform") or ""
+        url = payload.get("url") or ""
+        priority = payload.get("priority", "medium")
+        score = payload.get("usability_score", "")
+        posts_count = payload.get("posts_count", 0)
+        analysis = payload.get("analysis") or {}
+        
+        platform_icon = _platform_icon(platform)
+        
+        # 构建平台标题
+        platform_title_parts = [f"{platform_icon}"]
+        if game:
+            platform_title_parts.append(f"**{game}**")
+        else:
+            platform_title_parts.append(f"**{company} 官方账号**")
+        if platform:
+            platform_title_parts.append(f"({platform})")
+        
+        priority_text = ""
+        if priority == "high":
+            priority_text = " 🔴 **高优先级**"
+        elif priority == "low":
+            priority_text = " 🟡 **低优先级**"
+        
+        platform_title = " ".join(platform_title_parts) + priority_text
+        
+        # 创建字段
+        fields: List[Dict[str, Any]] = []
+        
+        # 平台信息和链接
+        platform_info = f"**{idx}. {platform_title}**"
+        if url:
+            platform_info += f"\n🔗 [{url}]({url})"
+        
+        fields.append({
+            "is_short": False,
+            "text": {
+                "tag": "lark_md",
+                "content": platform_info
+            }
+        })
+        
+        # 评分和帖子数
+        score_info = []
+        if score != "":
+            try:
+                score_val = float(score)
+                score_stars = "⭐" * min(int(score_val / 2), 5) if score_val > 0 else ""
+                score_info.append(f"📊 **可用性评分**: {score} {score_stars}")
+            except Exception:
+                score_info.append(f"📊 **可用性评分**: {score}")
+        
+        if posts_count:
+            score_info.append(f"📝 **分析帖子数**: {posts_count} 条")
+        
+        if score_info:
+            fields.append({
+                "is_short": False,
+                "text": {
+                    "tag": "lark_md",
+                    "content": "\n".join(score_info)
+                }
+            })
+        
+        if fields:
+            elements.append({"tag": "div", "fields": fields})
+        
+        # 分析内容
+        content_lines = []
+        summary = analysis.get("summary") or ""
+        engagement = analysis.get("engagement") or ""
+        ad_insight = analysis.get("ad_creative_insights") or ""
+        gameplay_insight = analysis.get("gameplay_or_mechanic_insights") or ""
+        actions_raw = analysis.get("direct_action_suggestions") or ""
+        
+        if summary:
+            content_lines.append(f"📝 **摘要**: {summary}")
+        if engagement:
+            content_lines.append(f"👍 **互动概览**: {engagement}")
+        if ad_insight:
+            content_lines.append(f"🎯 **广告创意观察**: {ad_insight}")
+        if gameplay_insight:
+            content_lines.append(f"🎮 **玩法/机制观察**: {gameplay_insight}")
+        if actions_raw:
+            if isinstance(actions_raw, list):
+                actions = "\n".join([f"  - {item}" for item in actions_raw if item])
+            else:
+                actions = str(actions_raw)
+            if actions:
+                content_lines.append(f"✅ **建议动作**:\n{actions}")
+        
+        if content_lines:
+            elements.append({
+                "tag": "div",
+                "text": {
+                    "tag": "lark_md",
+                    "content": "\n\n".join(content_lines)
+                }
+            })
+        
+        # 如果不是最后一个，添加分隔线
+        if idx < len(sorted_results):
+            elements.append({"tag": "hr"})
+    
+    # 添加原帖链接部分
+    post_urls = []
+    for platform_data in platforms_data:
+        platform_type = platform_data.get("platform_type", "")
+        game = platform_data.get("game")
+        posts = platform_data.get("posts", [])
+        
+        for post in posts:
+            post_url = post.get("post_url") or post.get("link", "")
+            if post_url:
+                label = f"{platform_type}"
+                if game:
+                    label = f"{platform_type} - {game}"
+                post_urls.append(f"  • [{label}]({post_url})")
+    
+    if post_urls:
+        elements.append({"tag": "hr"})
+        elements.append({
+            "tag": "div",
+            "text": {
+                "tag": "lark_md",
+                "content": "📎 **原帖链接**\n\n" + "\n".join(post_urls)
+            }
+        })
+    
+    # 构建卡片
+    card = {
+        "config": {"wide_screen_mode": True},
+        "header": {
+            "template": company_color,
+            "title": {
+                "tag": "plain_text",
+                "content": f"🏁 竞品监控 · {company}"
+            }
+        },
+        "elements": elements
+    }
+    
+    return card
+
+
+def send_company_report_to_feishu(
+    company: str,
+    report_text: str = None,
+    ai_results: Dict[str, Any] = None,
+    platforms_data: List[Dict[str, Any]] = None,
+    all_accounts_config: List[Dict[str, Any]] = None,
+    days_ago: int = 1
+) -> bool:
+    """
+    发送公司日报到飞书（使用卡片格式）
+    
+    Args:
+        company: 公司名称
+        report_text: Markdown格式的报告文本（保留兼容性，但优先使用卡片格式）
+        ai_results: AI分析结果（用于构建卡片）
+        platforms_data: 平台数据列表（用于构建卡片）
+        all_accounts_config: 所有平台配置（用于构建卡片）
+        days_ago: 查询多少天前的数据
+    """
     import requests
     import yaml
+    import time
     
     # 获取webhook
     webhook = ""
@@ -926,7 +1286,49 @@ def send_company_report_to_feishu(company: str, report_text: str) -> bool:
         print(f"  ⚠️ 未找到飞书webhook，跳过推送")
         return False
     
-    if not report_text.strip():
+    # 优先使用卡片格式（如果提供了必要数据）
+    if ai_results is not None and platforms_data is not None:
+        try:
+            card = build_company_feishu_card(
+                company=company,
+                ai_results=ai_results,
+                platforms_data=platforms_data,
+                all_accounts_config=all_accounts_config,
+                days_ago=days_ago
+            )
+            
+            payload = {"msg_type": "interactive", "card": card}
+            
+            sent = False
+            for attempt in range(3):
+                try:
+                    resp = requests.post(webhook, json=payload, timeout=20)
+                    resp_data = {}
+                    try:
+                        resp_data = resp.json()
+                    except Exception:
+                        resp_data = {}
+                    
+                    code = resp_data.get("StatusCode", resp_data.get("code", 0))
+                    if resp.status_code == 200 and code in (0,):
+                        print(f"  ✓ 日报已推送到飞书（卡片格式）")
+                        return True
+                    else:
+                        print(f"  ❌ 飞书推送失败 (尝试 {attempt + 1}/3): {resp.text[:200]}")
+                except Exception as exc:
+                    print(f"  ❌ 飞书推送异常 (尝试 {attempt + 1}/3): {exc}")
+                
+                if attempt < 2:
+                    time.sleep(2)
+            
+            return False
+            
+        except Exception as exc:
+            print(f"  ⚠️ 构建卡片失败，回退到文本格式: {exc}")
+            # 继续使用文本格式
+    
+    # 回退到文本格式（兼容旧方式）
+    if not report_text or not report_text.strip():
         print(f"  ⚠️ 报告内容为空，跳过推送")
         return False
     
@@ -942,19 +1344,12 @@ def send_company_report_to_feishu(company: str, report_text: str) -> bool:
     }
     
     try:
-        print(f"  [调试] 推送内容长度: {len(report_text)} 字符")
-        print(f"  [调试] Webhook: {webhook[:50]}...")
-        
         resp = requests.post(webhook, json=payload, timeout=20)
-        
-        print(f"  [调试] 响应状态码: {resp.status_code}")
-        if resp.status_code != 200:
-            print(f"  [调试] 响应内容: {resp.text[:500]}")
         
         if resp.status_code == 200:
             result = resp.json()
             if result.get("code") == 0:
-                print(f"  ✓ 日报已推送到飞书")
+                print(f"  ✓ 日报已推送到飞书（文本格式）")
                 return True
             else:
                 print(f"  ❌ 飞书返回错误: {result.get('msg', 'Unknown error')}")
@@ -1216,8 +1611,22 @@ def run_daily_workflow(
         else:
             for company, report_text in reports.items():
                 print(f"\n  📤 推送日报: {company}")
-                print(f"    内容预览（前200字符）: {report_text[:200]}...")
-                success = send_company_report_to_feishu(company, report_text)
+                
+                # 获取该公司的AI结果和平台数据，用于构建卡片
+                ai_results = all_companies_ai.get(company, {})
+                platforms_data = all_companies_data.get(company, [])
+                all_accounts_config = companies_config.get(company, [])
+                
+                # 使用卡片格式发送（传递完整数据）
+                success = send_company_report_to_feishu(
+                    company=company,
+                    report_text=report_text,  # 保留作为后备
+                    ai_results=ai_results,
+                    platforms_data=platforms_data,
+                    all_accounts_config=all_accounts_config,
+                    days_ago=days_ago
+                )
+                
                 if success:
                     print(f"    ✓ {company} 日报推送成功")
                 else:

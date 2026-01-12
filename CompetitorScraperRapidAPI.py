@@ -21,6 +21,7 @@ RAPIDAPI_HOSTS = {
     "instagram": "instagram120.p.rapidapi.com",
     "tiktok": "tiktok-api23.p.rapidapi.com",
     "youtube": "youtube138.p.rapidapi.com",
+    "youtube_shorts": "yt-api.p.rapidapi.com",  # YouTube Shorts 使用不同的 API
     "twitter": "twitter241.p.rapidapi.com",
 }
 
@@ -138,8 +139,14 @@ def extract_username_from_url(url: str, platform: str) -> Optional[str]:
     
     elif "youtube" in platform_lower:
         # https://www.youtube.com/@username or https://www.youtube.com/c/channel or https://www.youtube.com/channel/UCxxxxx
+        # 也支持包含 /shorts 的情况：https://www.youtube.com/@username/shorts
         match = re.search(r'youtube\.com/(?:@|channel/|c/)([^/?]+)', url)
-        return match.group(1) if match else None
+        if match:
+            identifier = match.group(1)
+            # 如果提取的标识符包含 /shorts，去掉它
+            identifier = identifier.split('/')[0]
+            return identifier
+        return None
     
     elif "twitter" in platform_lower or "x.com" in url.lower():
         # https://x.com/username or https://twitter.com/username
@@ -595,6 +602,233 @@ def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List
         return []
 
 
+def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
+    """
+    通过 handle/@username 获取 YouTube channel ID（用于 Shorts API）
+    使用 Shorts API 的 meta 信息来获取 channel ID
+    """
+    if not RAPIDAPI_KEY:
+        print("  ❌ 未配置 RAPIDAPI_KEY")
+        return None
+    
+    host = RAPIDAPI_HOSTS["youtube_shorts"]
+    url = f"https://{host}/channel/shorts"
+    
+    headers = {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': host
+    }
+    
+    # 去掉 @ 符号
+    handle_clean = handle.lstrip("@")
+    
+    # 尝试直接用 handle 调用，看是否支持
+    params = {"id": handle_clean}
+    
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=30)
+        if response.status_code == 200:
+            data = response.json()
+            # 从 meta 中提取 channelId
+            meta = data.get("meta", {})
+            channel_id = meta.get("channelId")
+            if channel_id:
+                print(f"  ✓ 获取到 channel ID: {channel_id} (handle: {handle_clean})")
+                return channel_id
+    except Exception as e:
+        print(f"  [调试] Shorts API 调用失败: {e}")
+    
+    # 如果 handle 不行，尝试通过原有方法获取
+    return get_youtube_channel_id_from_handle(handle)
+
+
+def get_youtube_shorts_from_channel(
+    channel_id_or_handle: str,
+    count: int = 10,
+    historical_video_ids: Optional[set[str]] = None
+) -> List[Dict[str, Any]]:
+    """
+    使用 RapidAPI 获取 YouTube Shorts
+    
+    Args:
+        channel_id_or_handle: Channel ID 或 handle (如 @username)
+        count: 获取的 Shorts 数量（5-10条）
+        historical_video_ids: 历史视频ID集合，用于过滤已存在的视频
+    
+    Returns:
+        Shorts 列表，只返回不在历史数据中的新 Shorts
+    """
+    if not RAPIDAPI_KEY:
+        print("  ❌ 未配置 RAPIDAPI_KEY")
+        return []
+    
+    host = RAPIDAPI_HOSTS["youtube_shorts"]
+    url = f"https://{host}/channel/shorts"
+    
+    headers = {
+        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-host': host
+    }
+    
+    # 判断是 channel ID (UC开头，通常是24个字符) 还是 handle
+    channel_id = channel_id_or_handle.lstrip("@")
+    
+    # Channel ID 通常是 UC 开头，24个字符
+    is_channel_id = channel_id.startswith("UC") and len(channel_id) == 24
+    
+    if not is_channel_id:
+        # 如果不是 channel ID，尝试获取
+        print(f"  [YouTube Shorts] 检测到 handle: {channel_id}")
+        print(f"  [YouTube Shorts] 尝试获取对应的 channel ID...")
+        resolved_id = get_youtube_channel_id_from_handle_for_shorts(channel_id)
+        if resolved_id:
+            channel_id = resolved_id
+        else:
+            print(f"  [YouTube Shorts] 无法获取 channel ID，将尝试直接使用 handle...")
+            # 继续使用 handle，某些 API 可能支持
+    
+    params = {"id": channel_id}
+    
+    try:
+        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+        
+        shorts = []
+        data_list = data.get("data", [])
+        
+        # 限制获取数量
+        data_list = data_list[:count]
+        
+        # 如果没有提供历史数据，则初始化空集合
+        if historical_video_ids is None:
+            historical_video_ids = set()
+        
+        for item in data_list:
+            video_id = item.get("videoId", "")
+            
+            # 跳过历史数据中已存在的视频
+            if video_id in historical_video_ids:
+                continue
+            
+            title = item.get("title", "")
+            view_count_text = item.get("viewCountText", "")
+            
+            # 提取缩略图
+            media_urls = []
+            thumbnails = item.get("thumbnail", [])
+            if thumbnails and isinstance(thumbnails, list) and len(thumbnails) > 0:
+                # 取第一个缩略图（通常是最高质量的）
+                thumb = thumbnails[0]
+                if isinstance(thumb, dict):
+                    media_urls.append(thumb.get("url", ""))
+                elif isinstance(thumb, str):
+                    media_urls.append(thumb)
+            
+            # 解析观看数（如 "7K views", "1.1M views"）
+            view_count = 0
+            if view_count_text:
+                view_match = re.search(r'([\d.]+)([KMB]?)', view_count_text.replace(',', '').upper())
+                if view_match:
+                    num = float(view_match.group(1))
+                    unit = view_match.group(2)
+                    if unit == 'K':
+                        view_count = int(num * 1000)
+                    elif unit == 'M':
+                        view_count = int(num * 1000000)
+                    elif unit == 'B':
+                        view_count = int(num * 1000000000)
+                    else:
+                        view_count = int(num)
+            
+            engagement = {
+                "view": view_count,
+            }
+            
+            short = {
+                "text": title,
+                "video_id": video_id,  # 保存 videoId 用于比对
+                "post_url": f"https://www.youtube.com/shorts/{video_id}",
+                "media_urls": media_urls,
+                "engagement": engagement,
+                "view_count_text": view_count_text,
+            }
+            shorts.append(short)
+        
+        print(f"  ✓ 获取到 {len(shorts)} 条新的 Shorts（共爬取 {len(data_list)} 条，过滤掉 {len(data_list) - len(shorts)} 条历史数据）")
+        return shorts
+    
+    except Exception as exc:
+        print(f"  ❌ YouTube Shorts API 调用失败: {exc}")
+        import traceback
+        print(f"  [调试] 错误详情: {traceback.format_exc()}")
+        return []
+
+
+def load_historical_youtube_shorts(
+    company: str,
+    game: Optional[str],
+    platform_type: str,
+    url: str,
+    days_ago: int = 1
+) -> set[str]:
+    """
+    从历史数据库中加载指定频道的 Shorts video IDs
+    
+    Args:
+        company: 公司名称
+        game: 游戏名称（可选）
+        platform_type: 平台类型
+        url: 频道URL
+        days_ago: 查看几天前的数据（默认1天前，即昨天的数据）
+    
+    Returns:
+        video ID 集合
+    """
+    try:
+        from CompetitorHistoryDB import CompetitorHistoryDB
+        from datetime import date
+        
+        db = CompetitorHistoryDB()
+        target_date = date.today() - timedelta(days=days_ago)
+        
+        # 加载历史数据
+        raw_data = db.load_raw_data_by_date(target_date)
+        if not raw_data:
+            return set()
+        
+        companies_dict = raw_data.get("companies", {})
+        company_data = companies_dict.get(company)
+        if not company_data:
+            return set()
+        
+        platforms_dict = company_data.get("platforms", {})
+        video_ids = set()
+        
+        # 遍历所有平台数据，查找匹配的平台
+        for key, platform_data in platforms_dict.items():
+            # 检查是否匹配（平台类型和URL）
+            if (platform_data.get("platform_type", "").lower() == platform_type.lower() and
+                platform_data.get("url", "") == url):
+                posts = platform_data.get("posts", [])
+                for post in posts:
+                    # 提取 video_id（可能在不同字段中）
+                    vid = post.get("video_id") or post.get("videoId")
+                    if vid:
+                        video_ids.add(vid)
+                    # 也可以从 post_url 中提取
+                    post_url = post.get("post_url", "")
+                    if "/shorts/" in post_url:
+                        match = re.search(r'/shorts/([A-Za-z0-9_-]+)', post_url)
+                        if match:
+                            video_ids.add(match.group(1))
+        
+        return video_ids
+    except Exception as e:
+        print(f"  ⚠️ 加载历史数据失败: {e}")
+        return set()
+
+
 def get_twitter_user_id_from_username(username: str, debug: bool = False) -> Optional[str]:
     """通过 username 获取 Twitter user ID"""
     if not RAPIDAPI_KEY:
@@ -883,8 +1117,21 @@ def get_posts_from_twitter(
         return []
 
 
-def scrape_posts_with_rapidapi(account: Dict[str, Any], days_ago: int = 1) -> List[Dict[str, Any]]:
-    """根据平台类型调用对应的 API"""
+def scrape_posts_with_rapidapi(
+    account: Dict[str, Any],
+    days_ago: int = 1,
+    count: int = 10,
+    use_shorts: bool = False
+) -> List[Dict[str, Any]]:
+    """
+    根据平台类型调用对应的 API
+    
+    Args:
+        account: 账号信息字典
+        days_ago: 日期过滤（用于有发布时间的情况）
+        count: 获取数量（用于 Shorts 等没有发布时间的情况）
+        use_shorts: 是否使用 Shorts API（仅对 YouTube 有效）
+    """
     platform_type = account.get("platform_type", "").lower()
     url = account.get("url", "")
     
@@ -895,7 +1142,33 @@ def scrape_posts_with_rapidapi(account: Dict[str, Any], days_ago: int = 1) -> Li
     
     print(f"  [RapidAPI] 平台: {platform_type}, 标识符: {identifier}")
     
-    if "instagram" in platform_type:
+    # 判断是否为 YouTube Shorts
+    is_youtube_shorts = False
+    if "youtube" in platform_type:
+        # 如果 URL 包含 /shorts 或者明确指定使用 Shorts
+        if "/shorts" in url.lower() or use_shorts:
+            is_youtube_shorts = True
+    
+    if is_youtube_shorts:
+        # 加载历史数据用于比对
+        company = account.get("company", "")
+        game = account.get("game")
+        historical_video_ids = load_historical_youtube_shorts(
+            company=company,
+            game=game,
+            platform_type=platform_type,
+            url=url,
+            days_ago=1  # 查看昨天的数据
+        )
+        print(f"  [YouTube Shorts] 历史数据中有 {len(historical_video_ids)} 个视频ID")
+        
+        # 获取 Shorts（会自动过滤历史数据）
+        return get_youtube_shorts_from_channel(
+            channel_id_or_handle=identifier,
+            count=count,
+            historical_video_ids=historical_video_ids
+        )
+    elif "instagram" in platform_type:
         return get_posts_from_instagram(identifier, days_ago)
     elif "tiktok" in platform_type:
         return get_posts_from_tiktok(identifier, days_ago)
@@ -933,9 +1206,22 @@ def scrape_competitor_social_with_rapidapi() -> None:
         display_name = f"{company} - {game}" if game else company
         print(f"\n[*] 正在抓取：{display_name} - {platform_type} ({url}) [优先级: {priority}]")
         
-        # 获取昨天的帖子（days_ago=1 表示昨天）
-        posts = scrape_posts_with_rapidapi(acc, days_ago=1)
-        print(f"  ✓ 解析到 {len(posts)} 条昨天的帖子")
+        # 判断是否为 YouTube Shorts
+        use_shorts = False
+        count = 10  # 默认获取10条
+        if "youtube" in platform_type.lower():
+            if "/shorts" in url.lower():
+                use_shorts = True
+                count = 10  # Shorts 默认获取10条
+            # 也可以从配置中读取数量
+        
+        # 获取帖子/Shorts
+        if use_shorts:
+            posts = scrape_posts_with_rapidapi(acc, days_ago=None, count=count, use_shorts=True)
+            print(f"  ✓ 解析到 {len(posts)} 条新的 Shorts")
+        else:
+            posts = scrape_posts_with_rapidapi(acc, days_ago=1)
+            print(f"  ✓ 解析到 {len(posts)} 条昨天的帖子")
         
         item = {
             "company": company,
