@@ -221,59 +221,27 @@ def scrape_tiktok_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[st
 
 
 def scrape_youtube_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[str, Any]:
-    """
-    爬取YouTube频道的 Shorts（仅使用 Shorts API）
-    
-    由于 YouTube API 无法返回发布时间，我们通过比对历史数据来找出新 Shorts：
-    1. 获取最近 20 条 Shorts
-    2. 从历史数据库中加载前一天的视频 ID
-    3. 比对找出不在历史数据中的新 Shorts（即昨天发布的）
-    """
-    from CompetitorScraperRapidAPI import (
-        get_youtube_shorts_from_channel,
-        get_youtube_channel_id_from_handle_for_shorts,
-        load_historical_youtube_shorts,
-    )
-    
+    """爬取YouTube频道的前一天视频"""
     channel_id = account.get("channel_id", "")
     handle = account.get("handle", "")
-    company = account.get("company", "")
-    game = account.get("game")
-    url = account.get("url", "")
-    platform_type = "youtube"
     
-    print(f"    [YouTube Shorts] 频道ID: {channel_id or handle}")
+    print(f"    [YouTube] 频道ID: {channel_id or handle}")
     
     # 如果没有channel_id，尝试获取
     if not channel_id and handle:
         print(f"      [调试] 未找到缓存的channel_id，正在获取...")
-        channel_id = get_youtube_channel_id_from_handle_for_shorts(handle.lstrip("@"))
+        channel_id = get_youtube_channel_id_from_handle(handle)
         if channel_id:
             account["channel_id"] = channel_id
     
-    identifier = channel_id if channel_id else handle.lstrip("@")
+    identifier = channel_id if channel_id else handle
     if not identifier:
         print(f"      ❌ 无法确定YouTube标识符")
         return None
     
     try:
-        # 加载前一天的历史数据用于比对去重
-        historical_video_ids = load_historical_youtube_shorts(
-            company=company,
-            game=game,
-            platform_type=platform_type,
-            url=url,
-            days_ago=days_ago  # 加载前一天的数据
-        )
-        print(f"      [YouTube Shorts] 历史数据中有 {len(historical_video_ids)} 个视频ID（用于去重）")
-        
-        # 获取 Shorts（会自动过滤历史数据）
-        posts = get_youtube_shorts_from_channel(
-            identifier,
-            count=20,  # 获取最近 20 条用于比对
-            historical_video_ids=historical_video_ids
-        )
-        print(f"      ✓ 获取到 {len(posts)} 条新 Shorts（通过历史数据比对去重）")
+        posts = get_posts_from_youtube(identifier, days_ago=days_ago)
+        print(f"      ✓ 获取到 {len(posts)} 条视频（已过滤前一天）")
         
         return {
             "platform_type": "youtube",
@@ -286,9 +254,7 @@ def scrape_youtube_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[s
             "fetched_at": datetime.utcnow().isoformat() + "Z",
         }
     except Exception as exc:
-        print(f"      ❌ YouTube Shorts 爬取失败: {exc}")
-        import traceback
-        print(f"      [调试] 错误详情: {traceback.format_exc()}")
+        print(f"      ❌ YouTube爬取失败: {exc}")
         return None
 
 
@@ -1398,6 +1364,496 @@ def send_company_report_to_feishu(
         return False
 
 
+def run_scrape_only(
+    input_path: str = None,
+    days_ago: int = 1,
+    target_companies: List[str] = None,
+) -> int:
+    """
+    只执行爬虫步骤，将数据保存到数据库
+    
+    Returns:
+        0 表示成功，1 表示失败
+    """
+    print("\n" + "=" * 60)
+    print("🚀 竞品监控 - 仅执行爬虫")
+    print("=" * 60)
+    print(f"📅 目标日期: {(date.today() - timedelta(days=days_ago)).strftime('%Y-%m-%d')}")
+    print("=" * 60)
+    print()
+    
+    # 初始化数据库
+    db = CompetitorHistoryDB()
+    print(f"📦 历史数据库目录: {db.db_dir}")
+    print()
+    
+    # 读取配置
+    print("【步骤 1/2】读取输入配置")
+    print("-" * 60)
+    if input_path is None:
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH")
+        if not input_path:
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                input_path = rel_path
+            else:
+                input_path = "/app/input/twitter_input.json"
+    
+    print(f"  📋 输入配置文件: {input_path}")
+    input_data = load_input_json(input_path)
+    if not input_data:
+        print("❌ 无法读取输入配置，工作流终止")
+        return 1
+    
+    companies_config = parse_all_platform_accounts(input_data)
+    if not companies_config:
+        print("❌ 未找到任何竞品账号配置")
+        return 1
+    
+    print(f"✓ 找到 {len(companies_config)} 个公司，共 {sum(len(accs) for accs in companies_config.values())} 个平台账号")
+    print()
+    
+    # 过滤目标公司
+    if target_companies:
+        companies_config = {
+            k: v for k, v in companies_config.items()
+            if k.lower() in [c.lower() for c in target_companies]
+        }
+        print(f"🔍 已过滤到 {len(companies_config)} 个目标公司")
+        print()
+    
+    # 爬取数据
+    print("【步骤 2/2】爬取各平台数据")
+    print("-" * 60)
+    
+    all_companies_data: Dict[str, List[Dict[str, Any]]] = {}
+    
+    for company, accounts in companies_config.items():
+        platforms_data, account_identifiers = scrape_company_platforms(
+            company, accounts, days_ago=days_ago, input_path=input_path
+        )
+        all_companies_data[company] = platforms_data or []
+        
+        if platforms_data:
+            print(f"\n  💾 保存原始数据到历史数据库...")
+            db.save_raw_data(company, platforms_data, fetch_date=date.today() - timedelta(days=days_ago))
+        else:
+            print(f"  ⚠️ {company} 无有效数据")
+    
+    companies_with_data = sum(1 for v in all_companies_data.values() if v)
+    print(f"\n✓ 爬取完成，共 {len(all_companies_data)} 个公司，其中 {companies_with_data} 个公司有数据")
+    print()
+    print("=" * 60)
+    print("✅ 爬虫步骤完成")
+    print("=" * 60)
+    
+    return 0
+
+
+def run_ai_analysis_only(
+    input_path: str = None,
+    days_ago: int = 1,
+    target_companies: List[str] = None,
+) -> int:
+    """
+    只执行AI分析步骤，从数据库读取原始数据，分析后保存到数据库
+    
+    Returns:
+        0 表示成功，1 表示失败
+    """
+    print("\n" + "=" * 60)
+    print("🚀 竞品监控 - 仅执行AI分析")
+    print("=" * 60)
+    print(f"📅 目标日期: {(date.today() - timedelta(days=days_ago)).strftime('%Y-%m-%d')}")
+    print("=" * 60)
+    print()
+    
+    # 初始化数据库
+    db = CompetitorHistoryDB()
+    target_date = date.today() - timedelta(days=days_ago)
+    
+    # 读取配置（用于获取公司列表）
+    print("【步骤 1/2】读取输入配置")
+    print("-" * 60)
+    if input_path is None:
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH")
+        if not input_path:
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                input_path = rel_path
+            else:
+                input_path = "/app/input/twitter_input.json"
+    
+    print(f"  📋 输入配置文件: {input_path}")
+    input_data = load_input_json(input_path)
+    if not input_data:
+        print("❌ 无法读取输入配置，工作流终止")
+        return 1
+    
+    companies_config = parse_all_platform_accounts(input_data)
+    if not companies_config:
+        print("❌ 未找到任何竞品账号配置")
+        return 1
+    
+    # 过滤目标公司
+    if target_companies:
+        companies_config = {
+            k: v for k, v in companies_config.items()
+            if k.lower() in [c.lower() for c in target_companies]
+        }
+        print(f"🔍 已过滤到 {len(companies_config)} 个目标公司")
+    
+    print(f"✓ 找到 {len(companies_config)} 个公司")
+    print()
+    
+    # AI分析
+    print("【步骤 2/2】AI分析")
+    print("-" * 60)
+    
+    all_companies_ai: Dict[str, Dict[str, Any]] = {}
+    
+    for company in companies_config.keys():
+        print(f"\n  📊 处理公司: {company}")
+        
+        # 从数据库加载原始数据
+        raw_data = db.load_raw_data(company, target_date)
+        if not raw_data:
+            print(f"    ⚠️ 未找到 {company} 在 {target_date} 的原始数据，跳过")
+            all_companies_ai[company] = {}
+            continue
+        
+        # 转换为 platforms_data 格式
+        platforms_dict = raw_data.get("platforms", {})
+        platforms_data = []
+        for key, platform_info in platforms_dict.items():
+            platforms_data.append({
+                "platform_type": platform_info.get("platform_type", ""),
+                "game": platform_info.get("game"),
+                "url": platform_info.get("url", ""),
+                "username": platform_info.get("username"),
+                "page_id": platform_info.get("page_id"),
+                "channel_id": platform_info.get("channel_id"),
+                "posts": platform_info.get("posts", []),
+                "posts_count": platform_info.get("posts_count", 0),
+                "fetched_at": platform_info.get("fetched_at"),
+                "priority": platform_info.get("priority", "medium"),
+            })
+        
+        if not platforms_data:
+            print(f"    ⚠️ {company} 无平台数据，跳过AI分析")
+            all_companies_ai[company] = {}
+            continue
+        
+        print(f"    ✓ 从数据库加载了 {len(platforms_data)} 个平台的数据")
+        
+        # 执行AI分析
+        ai_results = analyze_company_posts(company, platforms_data)
+        all_companies_ai[company] = ai_results
+        
+        # 保存AI分析结果到数据库
+        if ai_results:
+            print(f"\n  💾 保存AI分析结果到历史数据库...")
+            db.save_ai_analysis(company, ai_results, analysis_date=target_date)
+        else:
+            print(f"    ⚠️ {company} 的AI分析结果为空")
+    
+    companies_with_ai = sum(1 for v in all_companies_ai.values() if v)
+    print(f"\n✓ AI分析完成，共 {len(all_companies_ai)} 个公司，其中 {companies_with_ai} 个公司有AI结果")
+    print()
+    print("=" * 60)
+    print("✅ AI分析步骤完成")
+    print("=" * 60)
+    
+    return 0
+
+
+def run_generate_reports_only(
+    input_path: str = None,
+    days_ago: int = 1,
+    target_companies: List[str] = None,
+) -> int:
+    """
+    只生成日报步骤，从数据库读取AI结果和原始数据，生成日报
+    
+    Returns:
+        0 表示成功，1 表示失败
+    """
+    print("\n" + "=" * 60)
+    print("🚀 竞品监控 - 仅生成日报")
+    print("=" * 60)
+    print(f"📅 目标日期: {(date.today() - timedelta(days=days_ago)).strftime('%Y-%m-%d')}")
+    print("=" * 60)
+    print()
+    
+    # 初始化数据库
+    db = CompetitorHistoryDB()
+    target_date = date.today() - timedelta(days=days_ago)
+    
+    # 读取配置
+    print("【步骤 1/2】读取输入配置")
+    print("-" * 60)
+    if input_path is None:
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH")
+        if not input_path:
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                input_path = rel_path
+            else:
+                input_path = "/app/input/twitter_input.json"
+    
+    print(f"  📋 输入配置文件: {input_path}")
+    input_data = load_input_json(input_path)
+    if not input_data:
+        print("❌ 无法读取输入配置，工作流终止")
+        return 1
+    
+    companies_config = parse_all_platform_accounts(input_data)
+    if not companies_config:
+        print("❌ 未找到任何竞品账号配置")
+        return 1
+    
+    # 过滤目标公司
+    if target_companies:
+        companies_config = {
+            k: v for k, v in companies_config.items()
+            if k.lower() in [c.lower() for c in target_companies]
+        }
+        print(f"🔍 已过滤到 {len(companies_config)} 个目标公司")
+    
+    print(f"✓ 找到 {len(companies_config)} 个公司")
+    print()
+    
+    # 生成日报
+    print("【步骤 2/2】生成日报")
+    print("-" * 60)
+    
+    reports: Dict[str, str] = {}
+    
+    for company in companies_config.keys():
+        print(f"\n  📄 生成日报: {company}")
+        
+        # 从数据库加载AI结果
+        ai_data = db.load_ai_analysis(company, target_date)
+        ai_results = ai_data.get("results", {}) if ai_data else {}
+        
+        # 从数据库加载原始数据
+        raw_data = db.load_raw_data(company, target_date)
+        platforms_data = []
+        if raw_data:
+            platforms_dict = raw_data.get("platforms", {})
+            for key, platform_info in platforms_dict.items():
+                platforms_data.append({
+                    "platform_type": platform_info.get("platform_type", ""),
+                    "game": platform_info.get("game"),
+                    "url": platform_info.get("url", ""),
+                    "posts": platform_info.get("posts", []),
+                    "posts_count": platform_info.get("posts_count", 0),
+                })
+        
+        print(f"    AI结果数量: {len(ai_results)}")
+        print(f"    平台数据数量: {len(platforms_data)}")
+        
+        # 获取该公司的所有平台配置
+        all_accounts_config = companies_config.get(company, [])
+        
+        # 生成日报
+        report_text = build_company_daily_report(
+            company, ai_results, platforms_data,
+            all_accounts_config=all_accounts_config,
+            days_ago=days_ago
+        )
+        
+        if not report_text.strip():
+            print(f"    ⚠️ 生成的日报为空，跳过")
+            continue
+        
+        reports[company] = report_text
+        
+        # 保存Markdown报告
+        output_dir = os.environ.get("OUTPUT_DIR")
+        if not output_dir or not os.path.exists(output_dir):
+            alt_dir = os.path.join(os.path.dirname(__file__), "output")
+            if not os.path.exists(alt_dir):
+                os.makedirs(alt_dir, exist_ok=True)
+            output_dir = alt_dir
+        
+        report_date = target_date.strftime("%Y-%m-%d")
+        safe_company = "".join(c for c in company if c.isalnum() or c in (' ', '-', '_')).strip()
+        safe_company = safe_company.replace(' ', '_').lower()
+        
+        date_output_dir = os.path.join(output_dir, report_date)
+        os.makedirs(date_output_dir, exist_ok=True)
+        report_file = os.path.join(date_output_dir, f"daily_report_{safe_company}_{report_date}.md")
+        
+        try:
+            with open(report_file, "w", encoding="utf-8") as f:
+                f.write(report_text)
+            print(f"    ✓ Markdown日报已保存: {report_file}")
+        except Exception as exc:
+            print(f"    ❌ 保存Markdown日报失败: {exc}")
+        
+        # 保存JSON报告
+        db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
+        if not os.path.exists(db_dir):
+            alt_db_dir = os.path.join(os.path.dirname(__file__), "db")
+            if os.path.exists(alt_db_dir):
+                db_dir = alt_db_dir
+            else:
+                alt_db_dir = os.path.join(os.path.dirname(__file__), "db")
+                os.makedirs(alt_db_dir, exist_ok=True)
+                db_dir = alt_db_dir
+        
+        reports_dir = os.path.join(db_dir, "reports")
+        date_reports_dir = os.path.join(reports_dir, report_date)
+        os.makedirs(date_reports_dir, exist_ok=True)
+        
+        json_report_file = os.path.join(date_reports_dir, f"{safe_company}_{report_date}.json")
+        
+        report_data = {
+            "company": company,
+            "date": report_date,
+            "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "markdown_content": report_text,
+            "ai_results": ai_results,
+            "platforms_data": platforms_data,
+        }
+        
+        try:
+            with open(json_report_file, "w", encoding="utf-8") as f:
+                json.dump(report_data, f, ensure_ascii=False, indent=2)
+            print(f"    ✓ JSON日报已保存: {json_report_file}")
+        except Exception as exc:
+            print(f"    ❌ 保存JSON日报失败: {exc}")
+    
+    print(f"\n✓ 日报生成完成，共 {len(reports)} 份日报")
+    print()
+    print("=" * 60)
+    print("✅ 日报生成步骤完成")
+    print("=" * 60)
+    
+    return 0
+
+
+def run_send_only(
+    input_path: str = None,
+    days_ago: int = 1,
+    target_companies: List[str] = None,
+) -> int:
+    """
+    只发送日报步骤，从数据库读取报告数据，发送到飞书
+    
+    Returns:
+        0 表示成功，1 表示失败
+    """
+    print("\n" + "=" * 60)
+    print("🚀 竞品监控 - 仅发送日报")
+    print("=" * 60)
+    print(f"📅 目标日期: {(date.today() - timedelta(days=days_ago)).strftime('%Y-%m-%d')}")
+    print("=" * 60)
+    print()
+    
+    # 初始化数据库
+    db = CompetitorHistoryDB()
+    target_date = date.today() - timedelta(days=days_ago)
+    
+    # 读取配置
+    print("【步骤 1/2】读取输入配置")
+    print("-" * 60)
+    if input_path is None:
+        input_path = os.environ.get("COMPETITOR_INPUT_PATH")
+        if not input_path:
+            rel_path = os.path.join("input", "twitter_input.json")
+            if os.path.exists(rel_path):
+                input_path = rel_path
+            else:
+                input_path = "/app/input/twitter_input.json"
+    
+    print(f"  📋 输入配置文件: {input_path}")
+    input_data = load_input_json(input_path)
+    if not input_data:
+        print("❌ 无法读取输入配置，工作流终止")
+        return 1
+    
+    companies_config = parse_all_platform_accounts(input_data)
+    if not companies_config:
+        print("❌ 未找到任何竞品账号配置")
+        return 1
+    
+    # 过滤目标公司
+    if target_companies:
+        companies_config = {
+            k: v for k, v in companies_config.items()
+            if k.lower() in [c.lower() for c in target_companies]
+        }
+        print(f"🔍 已过滤到 {len(companies_config)} 个目标公司")
+    
+    print(f"✓ 找到 {len(companies_config)} 个公司")
+    print()
+    
+    # 发送日报
+    print("【步骤 2/2】推送到飞书")
+    print("-" * 60)
+    
+    success_count = 0
+    fail_count = 0
+    
+    for company in companies_config.keys():
+        print(f"\n  📤 推送日报: {company}")
+        
+        # 从数据库加载AI结果
+        ai_data = db.load_ai_analysis(company, target_date)
+        ai_results = ai_data.get("results", {}) if ai_data else {}
+        
+        # 从数据库加载原始数据
+        raw_data = db.load_raw_data(company, target_date)
+        platforms_data = []
+        if raw_data:
+            platforms_dict = raw_data.get("platforms", {})
+            for key, platform_info in platforms_dict.items():
+                platforms_data.append({
+                    "platform_type": platform_info.get("platform_type", ""),
+                    "game": platform_info.get("game"),
+                    "url": platform_info.get("url", ""),
+                    "posts": platform_info.get("posts", []),
+                    "posts_count": platform_info.get("posts_count", 0),
+                })
+        
+        # 获取该公司的所有平台配置
+        all_accounts_config = companies_config.get(company, [])
+        
+        # 生成报告文本（用于后备）
+        report_text = build_company_daily_report(
+            company, ai_results, platforms_data,
+            all_accounts_config=all_accounts_config,
+            days_ago=days_ago
+        )
+        
+        # 发送到飞书
+        success = send_company_report_to_feishu(
+            company=company,
+            report_text=report_text,
+            ai_results=ai_results,
+            platforms_data=platforms_data,
+            all_accounts_config=all_accounts_config,
+            days_ago=days_ago
+        )
+        
+        if success:
+            print(f"    ✓ {company} 日报推送成功")
+            success_count += 1
+        else:
+            print(f"    ❌ {company} 日报推送失败")
+            fail_count += 1
+    
+    print(f"\n✓ 推送完成，成功: {success_count}，失败: {fail_count}")
+    print()
+    print("=" * 60)
+    print("✅ 发送步骤完成")
+    print("=" * 60)
+    
+    return 0 if fail_count == 0 else 1
+
+
 def run_daily_workflow(
     input_path: str = None,
     days_ago: int = 1,
@@ -1576,7 +2032,11 @@ def run_daily_workflow(
         report_date = (date.today() - timedelta(days=days_ago)).strftime("%Y-%m-%d")
         safe_company = "".join(c for c in company if c.isalnum() or c in (' ', '-', '_')).strip()
         safe_company = safe_company.replace(' ', '_').lower()
-        report_file = os.path.join(output_dir, f"daily_report_{safe_company}_{report_date}.md")
+        
+        # 按日期创建子文件夹
+        date_output_dir = os.path.join(output_dir, report_date)
+        os.makedirs(date_output_dir, exist_ok=True)
+        report_file = os.path.join(date_output_dir, f"daily_report_{safe_company}_{report_date}.md")
         
         print(f"    [调试] 保存路径: {report_file}")
         print(f"    [调试] 输出目录: {output_dir}")
@@ -1592,7 +2052,7 @@ def run_daily_workflow(
             import traceback
             print(f"    [调试] 错误详情: {traceback.format_exc()}")
         
-        # 同时保存JSON格式的日报到 db/reports 目录
+        # 同时保存JSON格式的日报到 db/reports 目录（按日期分文件夹）
         db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
         if not os.path.exists(db_dir):
             alt_db_dir = os.path.join(os.path.dirname(__file__), "db")
@@ -1604,9 +2064,11 @@ def run_daily_workflow(
                 db_dir = alt_db_dir
         
         reports_dir = os.path.join(db_dir, "reports")
-        os.makedirs(reports_dir, exist_ok=True)
+        # 按日期创建子文件夹
+        date_reports_dir = os.path.join(reports_dir, report_date)
+        os.makedirs(date_reports_dir, exist_ok=True)
         
-        json_report_file = os.path.join(reports_dir, f"{safe_company}_{report_date}.json")
+        json_report_file = os.path.join(date_reports_dir, f"{safe_company}_{report_date}.json")
         
         # 构建JSON格式的日报数据（确保包含AI结果）
         report_data = {
@@ -1682,21 +2144,83 @@ def run_daily_workflow(
 if __name__ == "__main__":
     import argparse
     
-    parser = argparse.ArgumentParser(description="竞品监控日报工作流")
+    parser = argparse.ArgumentParser(
+        description="竞品监控日报工作流",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+使用示例:
+  # 完整工作流
+  python CompetitorDailyWorkflow.py
+  
+  # 只执行爬虫
+  python CompetitorDailyWorkflow.py --only-scrape
+  
+  # 只执行AI分析（从数据库读取原始数据）
+  python CompetitorDailyWorkflow.py --only-ai
+  
+  # 只生成日报（从数据库读取AI结果和原始数据）
+  python CompetitorDailyWorkflow.py --only-report
+  
+  # 只发送日报（从数据库读取报告数据）
+  python CompetitorDailyWorkflow.py --only-send
+  
+  # 完整工作流但跳过某些步骤
+  python CompetitorDailyWorkflow.py --skip-ai --skip-send
+  
+  # 指定公司和日期
+  python CompetitorDailyWorkflow.py --only-scrape --companies voodoo homa --days-ago 2
+        """
+    )
     parser.add_argument("--input", "-i", help="输入JSON文件路径", default="/input/twitter_input.json")
     parser.add_argument("--days-ago", "-d", type=int, help="爬取多少天前的数据", default=1)
-    parser.add_argument("--skip-ai", action="store_true", help="跳过AI分析步骤")
-    parser.add_argument("--skip-send", action="store_true", help="跳过飞书推送")
     parser.add_argument("--companies", "-c", nargs="+", help="只处理指定的公司（可多个）", default=None)
+    
+    # 分段执行选项（互斥）
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--only-scrape", action="store_true", help="只执行爬虫步骤")
+    group.add_argument("--only-ai", action="store_true", help="只执行AI分析步骤（从数据库读取原始数据）")
+    group.add_argument("--only-report", action="store_true", help="只生成日报步骤（从数据库读取AI结果和原始数据）")
+    group.add_argument("--only-send", action="store_true", help="只发送日报步骤（从数据库读取报告数据）")
+    
+    # 完整工作流的跳过选项
+    parser.add_argument("--skip-ai", action="store_true", help="跳过AI分析步骤（仅在完整工作流中有效）")
+    parser.add_argument("--skip-send", action="store_true", help="跳过飞书推送（仅在完整工作流中有效）")
     
     args = parser.parse_args()
     
-    exit_code = run_daily_workflow(
-        input_path=args.input,
-        days_ago=args.days_ago,
-        skip_ai=args.skip_ai,
-        skip_send=args.skip_send,
-        target_companies=args.companies,
-    )
+    # 根据参数选择执行模式
+    if args.only_scrape:
+        exit_code = run_scrape_only(
+            input_path=args.input,
+            days_ago=args.days_ago,
+            target_companies=args.companies,
+        )
+    elif args.only_ai:
+        exit_code = run_ai_analysis_only(
+            input_path=args.input,
+            days_ago=args.days_ago,
+            target_companies=args.companies,
+        )
+    elif args.only_report:
+        exit_code = run_generate_reports_only(
+            input_path=args.input,
+            days_ago=args.days_ago,
+            target_companies=args.companies,
+        )
+    elif args.only_send:
+        exit_code = run_send_only(
+            input_path=args.input,
+            days_ago=args.days_ago,
+            target_companies=args.companies,
+        )
+    else:
+        # 完整工作流
+        exit_code = run_daily_workflow(
+            input_path=args.input,
+            days_ago=args.days_ago,
+            skip_ai=args.skip_ai,
+            skip_send=args.skip_send,
+            target_companies=args.companies,
+        )
     
     sys.exit(exit_code)

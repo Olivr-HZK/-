@@ -1,7 +1,6 @@
 """
 竞品监控历史数据库
 按日期和公司存储爬取数据和AI分析结果
-支持 JSON 文件和 SQLite 数据库两种存储方式
 """
 import json
 import os
@@ -11,54 +10,34 @@ from pathlib import Path
 
 
 class CompetitorHistoryDB:
-    """竞品历史数据库，支持 JSON 文件和 SQLite 数据库两种存储方式"""
+    """竞品历史数据库，使用JSON文件存储"""
     
-    def __init__(self, db_dir: str = None, use_database: bool = None):
+    def __init__(self, db_dir: str = None):
         """
         初始化数据库
         
         Args:
             db_dir: 数据库目录路径，默认为 /app/db 或项目根目录下的 db
-            use_database: 是否使用 SQLite 数据库，默认为 None（从环境变量读取，如果未设置则使用 JSON）
         """
-        # 决定使用数据库还是 JSON
-        if use_database is None:
-            use_database = os.environ.get("COMPETITOR_USE_DATABASE", "").lower() in ("true", "1", "yes")
+        if db_dir is None:
+            db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
+            if not os.path.exists(db_dir):
+                alt_dir = os.path.join(os.path.dirname(__file__), "db")
+                if os.path.exists(alt_dir):
+                    db_dir = alt_dir
+                else:
+                    # 创建默认目录
+                    db_dir = alt_dir
+        self.db_dir = db_dir
+        os.makedirs(self.db_dir, exist_ok=True)
         
-        self.use_database = use_database
-        
-        if self.use_database:
-            # 使用数据库模式
-            try:
-                from CompetitorDatabaseDB import CompetitorDatabaseDB
-                self.db = CompetitorDatabaseDB()
-                print("  ✓ 使用 SQLite 数据库模式")
-            except ImportError:
-                print("  ⚠️ 无法导入 CompetitorDatabaseDB，回退到 JSON 模式")
-                self.use_database = False
-                self.db = None
-        
-        if not self.use_database:
-            # 使用 JSON 文件模式
-            if db_dir is None:
-                db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
-                if not os.path.exists(db_dir):
-                    alt_dir = os.path.join(os.path.dirname(__file__), "db")
-                    if os.path.exists(alt_dir):
-                        db_dir = alt_dir
-                    else:
-                        # 创建默认目录
-                        db_dir = alt_dir
-            self.db_dir = db_dir
-            os.makedirs(self.db_dir, exist_ok=True)
-            
-            # 数据目录结构
-            self.raw_data_dir = os.path.join(self.db_dir, "raw_data")  # 原始爬取数据
-            self.ai_analysis_dir = os.path.join(self.db_dir, "ai_analysis")  # AI分析结果
-            self.daily_report_dir = os.path.join(self.db_dir, "daily_report")  # 日报JSON
-            os.makedirs(self.raw_data_dir, exist_ok=True)
-            os.makedirs(self.ai_analysis_dir, exist_ok=True)
-            os.makedirs(self.daily_report_dir, exist_ok=True)
+        # 数据目录结构
+        self.raw_data_dir = os.path.join(self.db_dir, "raw_data")  # 原始爬取数据
+        self.ai_analysis_dir = os.path.join(self.db_dir, "ai_analysis")  # AI分析结果
+        self.daily_report_dir = os.path.join(self.db_dir, "daily_report")  # 日报JSON
+        os.makedirs(self.raw_data_dir, exist_ok=True)
+        os.makedirs(self.ai_analysis_dir, exist_ok=True)
+        os.makedirs(self.daily_report_dir, exist_ok=True)
     
     def _get_date_str(self, dt: Optional[date] = None) -> str:
         """获取日期字符串 YYYY-MM-DD"""
@@ -68,8 +47,7 @@ class CompetitorHistoryDB:
     
     def _get_file_path(self, date_str: str, is_ai: bool = False) -> str:
         """
-        获取存储文件路径（按日期存储，每天一个文件）
-        注意：仅在 JSON 模式下使用
+        获取存储文件路径（按日期分文件夹存储，每天一个文件夹）
         
         Args:
             date_str: 日期字符串 YYYY-MM-DD
@@ -78,13 +56,12 @@ class CompetitorHistoryDB:
         Returns:
             文件路径
         """
-        if self.use_database:
-            # 数据库模式下不应该调用此方法
-            raise RuntimeError("_get_file_path 不应在数据库模式下调用")
-        
         base_dir = self.ai_analysis_dir if is_ai else self.raw_data_dir
+        # 按日期创建子文件夹
+        date_dir = os.path.join(base_dir, date_str)
+        os.makedirs(date_dir, exist_ok=True)
         filename = f"{date_str}.json"
-        return os.path.join(base_dir, filename)
+        return os.path.join(date_dir, filename)
     
     def save_raw_data(
         self, 
@@ -107,14 +84,8 @@ class CompetitorHistoryDB:
             fetch_date: 抓取日期，默认为今天
         
         Returns:
-            保存的文件路径或表名
+            保存的文件路径
         """
-        if self.use_database:
-            # 使用数据库模式
-            success = self.db.save_raw_data(company, platforms_data, fetch_date)
-            return self.db._get_table_name(company) if success else ""
-        
-        # 使用 JSON 文件模式
         date_str = self._get_date_str(fetch_date)
         file_path = self._get_file_path(date_str, is_ai=False)
         
@@ -183,11 +154,6 @@ class CompetitorHistoryDB:
         Returns:
             数据字典，如果不存在则返回None
         """
-        if self.use_database:
-            # 使用数据库模式
-            return self.db.load_raw_data_by_date(fetch_date)
-        
-        # 使用 JSON 文件模式
         date_str = self._get_date_str(fetch_date)
         file_path = self._get_file_path(date_str, is_ai=False)
         
@@ -212,11 +178,6 @@ class CompetitorHistoryDB:
         Returns:
             数据字典，如果不存在则返回None
         """
-        if self.use_database:
-            # 使用数据库模式
-            return self.db.load_raw_data(company, fetch_date)
-        
-        # 使用 JSON 文件模式
         all_data = self.load_raw_data_by_date(fetch_date)
         if not all_data:
             return None
@@ -344,11 +305,6 @@ class CompetitorHistoryDB:
         Returns:
             公司名称列表
         """
-        if self.use_database and not is_ai:
-            # 使用数据库模式（仅原始数据）
-            return self.db.get_companies_for_date(target_date)
-        
-        # 使用 JSON 文件模式
         date_str = self._get_date_str(target_date)
         
         if is_ai:
@@ -375,23 +331,23 @@ class CompetitorHistoryDB:
         Returns:
             日期字符串列表（YYYY-MM-DD）
         """
-        if self.use_database and not is_ai:
-            # 使用数据库模式（仅原始数据）
-            return self.db.get_all_dates_for_company(company)
-        
-        # 使用 JSON 文件模式
         base_dir = self.ai_analysis_dir if is_ai else self.raw_data_dir
         
         dates = []
         if os.path.exists(base_dir):
-            for filename in os.listdir(base_dir):
-                if filename.endswith(".json"):
-                    # 提取日期：YYYY-MM-DD.json
-                    date_part = filename[:-5]  # 移除.json
-                    if len(date_part) == 10 and date_part.count("-") == 2:
-                        # 检查该日期文件中是否包含该公司
-                        try:
-                            date_obj = date.fromisoformat(date_part)
+            # 扫描所有日期文件夹
+            for item in os.listdir(base_dir):
+                item_path = os.path.join(base_dir, item)
+                # 检查是否是日期格式的文件夹（YYYY-MM-DD）
+                if os.path.isdir(item_path) and len(item) == 10 and item.count("-") == 2:
+                    try:
+                        date_obj = date.fromisoformat(item)
+                        date_str = item
+                        
+                        # 检查该日期文件夹中是否有数据文件
+                        data_file = os.path.join(item_path, f"{date_str}.json")
+                        if os.path.exists(data_file):
+                            # 检查该日期文件中是否包含该公司
                             if is_ai:
                                 all_data = self.load_ai_analysis_by_date(date_obj)
                             else:
@@ -400,63 +356,11 @@ class CompetitorHistoryDB:
                             if all_data:
                                 companies_dict = all_data.get("companies", {})
                                 if company in companies_dict:
-                                    dates.append(date_part)
-                        except Exception:
-                            pass
+                                    dates.append(date_str)
+                    except Exception:
+                        pass
         
         return sorted(dates, reverse=True)  # 最新日期在前
-    
-    def get_platform_video_ids(
-        self,
-        company: str,
-        game: Optional[str],
-        platform_type: str,
-        url: str,
-        fetch_date: Optional[date] = None
-    ) -> set[str]:
-        """
-        获取指定平台在指定日期的所有视频ID（用于去重）
-        
-        Args:
-            company: 公司名称
-            game: 游戏名称（可选）
-            platform_type: 平台类型
-            url: 平台URL
-            fetch_date: 日期，默认为今天
-        
-        Returns:
-            video_id 集合
-        """
-        if self.use_database:
-            # 使用数据库模式
-            return self.db.get_platform_video_ids(company, game, platform_type, url, fetch_date)
-        
-        # 使用 JSON 文件模式
-        all_data = self.load_raw_data_by_date(fetch_date)
-        if not all_data:
-            return set()
-        
-        companies_dict = all_data.get("companies", {})
-        company_data = companies_dict.get(company)
-        if not company_data:
-            return set()
-        
-        platforms_dict = company_data.get("platforms", {})
-        video_ids = set()
-        
-        # 遍历所有平台数据，查找匹配的平台
-        for key, platform_data in platforms_dict.items():
-            # 检查是否匹配（平台类型和URL）
-            if (platform_data.get("platform_type", "").lower() == platform_type.lower() and
-                platform_data.get("url", "") == url):
-                posts = platform_data.get("posts", [])
-                for post in posts:
-                    # 提取 video_id（可能在不同字段中）
-                    vid = post.get("video_id") or post.get("videoId")
-                    if vid:
-                        video_ids.add(vid)
-        
-        return video_ids
 
 
 if __name__ == "__main__":

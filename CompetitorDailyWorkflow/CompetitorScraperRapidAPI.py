@@ -17,6 +17,10 @@ import env_loader  # noqa: F401  # 确保 .env 中的 RAPIDAPI_KEY 被加载
 
 # RapidAPI 配置
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
+RAPIDAPI_KEY_2 = os.getenv("RAPIDAPI_KEY_2", "")  # 备用 API key
+_current_api_key_index = 0  # 当前使用的 API key 索引（0=主key, 1=备用key）
+# 注意：一旦切换到备用 key，就会持续使用备用 key，不会换回主 key（只切换一次）
+
 RAPIDAPI_HOSTS = {
     "instagram": "instagram120.p.rapidapi.com",
     "tiktok": "tiktok-api23.p.rapidapi.com",
@@ -24,6 +28,178 @@ RAPIDAPI_HOSTS = {
     "youtube_shorts": "yt-api.p.rapidapi.com",  # YouTube Shorts 使用不同的 API
     "twitter": "twitter241.p.rapidapi.com",
 }
+
+
+def get_rapidapi_key() -> str:
+    """
+    获取当前使用的 RapidAPI key
+    优先使用主 key，如果主 key 不可用则使用备用 key
+    
+    注意：一旦切换到备用 key（通过 switch_to_backup_key()），
+    就会持续使用备用 key，不会换回主 key（只切换一次）
+    """
+    global _current_api_key_index
+    
+    if _current_api_key_index == 0:
+        # 使用主 key
+        if RAPIDAPI_KEY:
+            return RAPIDAPI_KEY
+        elif RAPIDAPI_KEY_2:
+            # 主 key 未配置，自动使用备用 key
+            print("  ⚠️ 主 API key 未配置，使用备用 key")
+            _current_api_key_index = 1
+            return RAPIDAPI_KEY_2
+    else:
+        # 已经切换到备用 key，持续使用备用 key（不会换回主 key）
+        if RAPIDAPI_KEY_2:
+            return RAPIDAPI_KEY_2
+    
+    return ""
+
+
+def switch_to_backup_key():
+    """
+    切换到备用 API key（只切换一次）
+    
+    一旦切换到备用 key，就会持续使用备用 key，不会换回主 key。
+    如果已经切换到备用 key，此函数不会再次切换。
+    
+    Returns:
+        True 如果成功切换到备用 key，False 如果已经使用备用 key 或备用 key 不可用
+    """
+    global _current_api_key_index
+    if _current_api_key_index == 0 and RAPIDAPI_KEY_2:
+        print("  ⚠️ 检测到 API key 限制，切换到备用 key (RAPIDAPI_KEY_2)")
+        print("  ℹ️ 后续所有 API 调用将使用备用 key，不会换回主 key")
+        _current_api_key_index = 1
+        return True
+    return False
+
+
+def is_api_limit_error(response: requests.Response, exception: Exception = None) -> bool:
+    """
+    检测是否是 API 限制相关的错误
+    
+    Args:
+        response: HTTP 响应对象（如果可用）
+        exception: 异常对象（如果可用）
+    
+    Returns:
+        如果是 API 限制错误则返回 True
+    """
+    # 检查 HTTP 状态码
+    if response is not None:
+        status_code = response.status_code
+        if status_code in (401, 403, 429):
+            return True
+        
+        # 检查响应内容中的错误信息
+        try:
+            error_data = response.json()
+            error_text = json.dumps(error_data).lower()
+            limit_keywords = ["quota", "limit", "exceeded", "rate limit", "unauthorized", "forbidden"]
+            if any(keyword in error_text for keyword in limit_keywords):
+                return True
+        except Exception:
+            # 如果无法解析 JSON，检查响应文本
+            response_text = response.text.lower()
+            limit_keywords = ["quota", "limit", "exceeded", "rate limit", "unauthorized", "forbidden"]
+            if any(keyword in response_text for keyword in limit_keywords):
+                return True
+    
+    # 检查异常信息
+    if exception is not None:
+        error_msg = str(exception).lower()
+        limit_keywords = ["quota", "limit", "exceeded", "rate limit", "401", "403", "429"]
+        if any(keyword in error_msg for keyword in limit_keywords):
+            return True
+    
+    return False
+
+
+def make_rapidapi_request(
+    method: str,
+    url: str,
+    headers: dict,
+    params: dict = None,
+    json_data: dict = None,
+    timeout: int = 30,
+    retry_with_backup: bool = True
+) -> requests.Response:
+    """
+    执行 RapidAPI 请求，如果失败且检测到 API 限制错误，自动切换到备用 key 重试
+    
+    注意：一旦切换到备用 key，后续所有 API 调用都会使用备用 key，不会换回主 key。
+    切换只发生一次，确保不会在主 key 和备用 key 之间反复切换。
+    
+    Args:
+        method: HTTP 方法 ('GET' 或 'POST')
+        url: 请求 URL
+        headers: 请求头（会自动添加 x-rapidapi-key）
+        params: GET 请求参数
+        json_data: POST 请求的 JSON 数据
+        timeout: 超时时间
+        retry_with_backup: 是否在失败时尝试使用备用 key
+    
+    Returns:
+        Response 对象
+    
+    Raises:
+        requests.exceptions.RequestException: 如果请求失败
+    """
+    global _current_api_key_index
+    
+    # 更新 headers 中的 API key
+    current_key = get_rapidapi_key()
+    if not current_key:
+        raise ValueError("未配置 RapidAPI key (RAPIDAPI_KEY 或 RAPIDAPI_KEY_2)")
+    
+    headers = headers.copy()
+    headers['x-rapidapi-key'] = current_key
+    
+    # 第一次尝试
+    try:
+        if method.upper() == 'GET':
+            response = requests.get(url, params=params, headers=headers, timeout=timeout)
+        elif method.upper() == 'POST':
+            response = requests.post(url, json=json_data, headers=headers, timeout=timeout)
+        else:
+            raise ValueError(f"不支持的 HTTP 方法: {method}")
+        
+        # 检查是否是 API 限制错误（即使状态码是 200，也要检查响应内容）
+        if retry_with_backup and is_api_limit_error(response):
+            if switch_to_backup_key():
+                # 使用备用 key 重试
+                headers['x-rapidapi-key'] = get_rapidapi_key()
+                if method.upper() == 'GET':
+                    response = requests.get(url, params=params, headers=headers, timeout=timeout)
+                else:
+                    response = requests.post(url, json=json_data, headers=headers, timeout=timeout)
+                # 重试后再次检查错误
+                if is_api_limit_error(response):
+                    # 备用 key 也遇到限制，抛出异常
+                    response.raise_for_status()
+        
+        return response
+        
+    except requests.exceptions.HTTPError as e:
+        # 检查是否是 API 限制错误
+        if retry_with_backup and is_api_limit_error(e.response if hasattr(e, 'response') else None, e):
+            if switch_to_backup_key():
+                # 使用备用 key 重试
+                headers['x-rapidapi-key'] = get_rapidapi_key()
+                try:
+                    if method.upper() == 'GET':
+                        response = requests.get(url, params=params, headers=headers, timeout=timeout)
+                    else:
+                        response = requests.post(url, json=json_data, headers=headers, timeout=timeout)
+                    return response
+                except Exception as retry_exc:
+                    raise retry_exc
+        raise
+    except Exception as e:
+        # 其他异常直接抛出
+        raise
 
 
 def load_config() -> Dict[str, Any]:
@@ -165,15 +341,15 @@ def get_posts_from_instagram(username: str, days_ago: int = None, original_usern
         days_ago: 相对今天的天数，如果为None则不过滤日期
         original_username: 原始用户名（用于构建post_url），如果为None则使用username
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return []
     
     host = RAPIDAPI_HOSTS["instagram"]
     url = f"https://{host}/api/instagram/posts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host,
         'Content-Type': 'application/json'
     }
@@ -181,7 +357,7 @@ def get_posts_from_instagram(username: str, days_ago: int = None, original_usern
     payload = {"username": username, "maxId": ""}
     
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        response = make_rapidapi_request('POST', url, headers, json_data=payload, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -288,22 +464,22 @@ def get_tiktok_secuid_from_username(username: str) -> Optional[str]:
     从 username (uniqueId) 获取 TikTok secUid
     使用 RapidAPI: /api/user/info?uniqueId=xxx
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return None
     
     host = RAPIDAPI_HOSTS["tiktok"]
     url = f"https://{host}/api/user/info"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
     params = {"uniqueId": username}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -345,15 +521,15 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
         days_ago: 日期过滤（None 表示不过滤）
         original_username: 原始 username（用于生成 post_url），如果为 None 则从 API 响应中提取
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return []
     
     host = RAPIDAPI_HOSTS["tiktok"]
     url = f"https://{host}/api/user/posts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
@@ -380,7 +556,7 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
     }
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -456,8 +632,9 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
 
 def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Optional[str]:
     """通过 handle/@username 获取 YouTube channel ID"""
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return None
     
     host = RAPIDAPI_HOSTS["youtube"]
@@ -473,14 +650,13 @@ def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Opti
     url = f"https://{host}/channel/details/"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
     params = {"handle": handle_clean}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         if response.status_code == 200:
             data = response.json()
             if debug:
@@ -503,15 +679,15 @@ def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Opti
 
 def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List[Dict[str, Any]]:
     """使用 RapidAPI 获取 YouTube 视频"""
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return []
     
     host = RAPIDAPI_HOSTS["youtube"]
     url = f"https://{host}/channel/videos/"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
@@ -540,7 +716,7 @@ def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List
     }
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -607,15 +783,15 @@ def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
     通过 handle/@username 获取 YouTube channel ID（用于 Shorts API）
     使用 Shorts API 的 meta 信息来获取 channel ID
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return None
     
     host = RAPIDAPI_HOSTS["youtube_shorts"]
     url = f"https://{host}/channel/shorts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
@@ -626,7 +802,7 @@ def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
     params = {"id": handle_clean}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         if response.status_code == 200:
             data = response.json()
             # 从 meta 中提取 channelId
@@ -658,15 +834,15 @@ def get_youtube_shorts_from_channel(
     Returns:
         Shorts 列表，只返回不在历史数据中的新 Shorts
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return []
     
     host = RAPIDAPI_HOSTS["youtube_shorts"]
     url = f"https://{host}/channel/shorts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
@@ -690,7 +866,7 @@ def get_youtube_shorts_from_channel(
     params = {"id": channel_id}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -774,7 +950,6 @@ def load_historical_youtube_shorts(
 ) -> set[str]:
     """
     从历史数据库中加载指定频道的 Shorts video IDs
-    支持从 SQLite 数据库或 JSON 文件读取
     
     Args:
         company: 公司名称
@@ -793,12 +968,7 @@ def load_historical_youtube_shorts(
         db = CompetitorHistoryDB()
         target_date = date.today() - timedelta(days=days_ago)
         
-        # 如果使用数据库模式，直接调用 get_platform_video_ids
-        if db.use_database:
-            video_ids = db.get_platform_video_ids(company, game, platform_type, url, target_date)
-            return video_ids
-        
-        # 使用 JSON 文件模式
+        # 加载历史数据
         raw_data = db.load_raw_data_by_date(target_date)
         if not raw_data:
             return set()
@@ -832,29 +1002,27 @@ def load_historical_youtube_shorts(
         return video_ids
     except Exception as e:
         print(f"  ⚠️ 加载历史数据失败: {e}")
-        import traceback
-        print(f"  [调试] 错误详情: {traceback.format_exc()}")
         return set()
 
 
 def get_twitter_user_id_from_username(username: str, debug: bool = False) -> Optional[str]:
     """通过 username 获取 Twitter user ID"""
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return None
     
     host = RAPIDAPI_HOSTS["twitter"]
     url = f"https://{host}/user"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
     params = {"username": username}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
         response.raise_for_status()
         data = response.json()
         
@@ -991,8 +1159,9 @@ def get_posts_from_twitter(
     - days_ago=None: 不做日期过滤，返回最新 count 条（解析到多少返回多少）
     - days_ago=int: 仅返回该天(相对今天)的推文（按 UTC 日历日）
     """
-    if not RAPIDAPI_KEY:
-        print("  ❌ 未配置 RAPIDAPI_KEY")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2")
         return []
     
     host = RAPIDAPI_HOSTS["twitter"]
@@ -1011,7 +1180,6 @@ def get_posts_from_twitter(
     
     url = f"https://{host}/user-tweets"
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
         'x-rapidapi-host': host
     }
     
@@ -1038,7 +1206,7 @@ def get_posts_from_twitter(
 
         while True:
             page += 1
-            resp = requests.get(url, params=params, headers=headers, timeout=30)
+            resp = make_rapidapi_request('GET', url, headers, params=params, timeout=30)
             resp.raise_for_status()
             data = resp.json()
 
@@ -1191,8 +1359,9 @@ def scrape_posts_with_rapidapi(
 
 def scrape_competitor_social_with_rapidapi() -> None:
     """主函数：使用 RapidAPI 抓取竞品社媒帖子"""
-    if not RAPIDAPI_KEY:
-        print("❌ 未配置 RAPIDAPI_KEY，请在 .env 文件中设置")
+    current_key = get_rapidapi_key()
+    if not current_key:
+        print("❌ 未配置 RAPIDAPI_KEY 或 RAPIDAPI_KEY_2，请在 .env 文件中设置")
         return
     
     cfg = load_config()
