@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 import requests
 
 import env_loader  # noqa: F401
-from CompetitorScraperRapidAPI import RAPIDAPI_KEY, RAPIDAPI_HOSTS
+from CompetitorScraperRapidAPI import get_rapidapi_key, RAPIDAPI_HOSTS
 
 
 def load_input_json(input_path: str = "/app/input/twitter_input.json") -> Dict[str, Any]:
@@ -107,13 +107,14 @@ def parse_facebook_accounts(data: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 def _fetch_facebook_raw(page_id: str) -> Dict[str, Any]:
     """调用 RapidAPI 获取 Facebook page 原始 JSON"""
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return {}
     host = RAPIDAPI_HOSTS.get("facebook") or "facebook-scraper3.p.rapidapi.com"
     url = f"https://{host}/page/posts"
     headers = {
-        "x-rapidapi-key": RAPIDAPI_KEY,
+        "x-rapidapi-key": api_key,
         "x-rapidapi-host": host,
     }
     params = {"page_id": page_id}

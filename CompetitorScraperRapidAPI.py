@@ -16,7 +16,179 @@ import env_loader  # noqa: F401  # 确保 .env 中的 RAPIDAPI_KEY 被加载
 
 
 # RapidAPI 配置
-RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
+# 支持多个 API Key，用分号(;)或逗号(,)分隔（自动识别全角和半角逗号）
+# 例如：RAPIDAPI_KEY=key1;key2;key3 或 RAPIDAPI_KEY=key1,key2,key3 或 RAPIDAPI_KEY=key1，key2，key3
+_rapidapi_keys_str = os.getenv("RAPIDAPI_KEY", "")
+_rapidapi_keys = []
+if _rapidapi_keys_str:
+    # 将全角逗号转换为半角逗号
+    normalized_str = _rapidapi_keys_str.replace("，", ",")  # 全角逗号 -> 半角逗号
+    # 支持分号和逗号分隔
+    if ";" in normalized_str:
+        _rapidapi_keys = [k.strip() for k in normalized_str.split(";") if k.strip()]
+    elif "," in normalized_str:
+        _rapidapi_keys = [k.strip() for k in normalized_str.split(",") if k.strip()]
+    else:
+        _rapidapi_keys = [normalized_str.strip()] if normalized_str.strip() else []
+    
+    # 验证并清理 API keys，确保只包含 ASCII 字符
+    cleaned_keys = []
+    for key in _rapidapi_keys:
+        # 移除任何不可见字符和空格
+        cleaned_key = ''.join(c for c in key if c.isprintable() and ord(c) < 128)
+        cleaned_key = cleaned_key.strip()
+        if cleaned_key:
+            cleaned_keys.append(cleaned_key)
+    
+    _rapidapi_keys = cleaned_keys
+    
+    # 如果清理后没有有效的 key，给出警告
+    if not _rapidapi_keys and _rapidapi_keys_str.strip():
+        print(f"⚠️  警告：RAPIDAPI_KEY 中包含非 ASCII 字符，已自动清理。请检查 .env 文件中的 API key 配置。")
+        print(f"   原始值（前50字符）: {_rapidapi_keys_str[:50]}")
+
+# 当前使用的 API Key 索引
+_current_key_index = 0
+
+def get_rapidapi_key() -> str:
+    """获取当前可用的 RapidAPI Key（支持多个 Key 轮换）"""
+    global _current_key_index
+    if not _rapidapi_keys:
+        return ""
+    # 返回当前索引的 Key
+    return _rapidapi_keys[_current_key_index % len(_rapidapi_keys)]
+
+def switch_to_next_rapidapi_key() -> bool:
+    """切换到下一个 RapidAPI Key，用于 429 错误时"""
+    global _current_key_index
+    if len(_rapidapi_keys) <= 1:
+        return False  # 没有备用 Key
+    _current_key_index = (_current_key_index + 1) % len(_rapidapi_keys)
+    return True
+
+def get_all_rapidapi_keys_count() -> int:
+    """获取配置的 API Key 数量"""
+    return len(_rapidapi_keys)
+
+def _make_rapidapi_request(
+    method: str,
+    url: str,
+    host: str,
+    headers: Optional[Dict[str, Any]] = None,
+    params: Optional[Dict[str, Any]] = None,
+    json_data: Optional[Dict[str, Any]] = None,
+    max_retries: int = 1,
+    timeout: int = 30
+) -> Optional[requests.Response]:
+    """
+    统一的 RapidAPI 请求包装函数，自动处理 429 错误和 API Key 轮换
+    
+    Args:
+        method: HTTP 方法 ('GET' 或 'POST')
+        url: 请求 URL
+        host: RapidAPI host（用于 headers）
+        headers: 请求头（如果不提供则自动构建）
+        params: GET 请求参数
+        json_data: POST 请求的 JSON 数据
+        max_retries: 最大重试次数（遇到 429 时）
+        timeout: 请求超时时间
+    
+    Returns:
+        响应对象，如果失败则返回 None
+    """
+    if headers is None:
+        api_key = get_rapidapi_key()
+        if not api_key:
+            print("  ❌ 未配置 RAPIDAPI_KEY")
+            return None
+        
+        # 确保 API key 是 ASCII 字符串（避免编码错误）
+        if isinstance(api_key, str):
+            # 只保留 ASCII 字符，确保可以用于 HTTP 请求头
+            api_key = ''.join(c for c in api_key if ord(c) < 128).strip()
+            if not api_key:
+                print("  ❌ RAPIDAPI_KEY 包含无效字符")
+                return None
+        
+        headers = {
+            'x-rapidapi-key': api_key,
+            'x-rapidapi-host': host
+        }
+        if json_data is not None:
+            headers['Content-Type'] = 'application/json'
+    
+    # 额外检查：确保所有 headers 值都是 ASCII 字符串
+    cleaned_headers = {}
+    for key, value in headers.items():
+        if isinstance(value, str):
+            # 确保 header 值只包含 ASCII 字符
+            cleaned_value = ''.join(c for c in value if ord(c) < 128).strip()
+            cleaned_headers[key] = cleaned_value
+        else:
+            cleaned_headers[key] = value
+    headers = cleaned_headers
+    
+    retry_count = 0
+    last_response = None
+    
+    while retry_count <= max_retries:
+        try:
+            if method.upper() == 'GET':
+                response = requests.get(url, params=params, headers=headers, timeout=timeout)
+            elif method.upper() == 'POST':
+                response = requests.post(url, json=json_data, headers=headers, timeout=timeout)
+            else:
+                print(f"  ❌ 不支持的 HTTP 方法: {method}")
+                return None
+            
+            # 处理 429 错误
+            if response.status_code == 429:
+                error_msg = response.text
+                print(f"  ⚠️ API 限流 (429 Too Many Requests)")
+                
+                # 尝试切换到备用 API Key
+                key_count = get_all_rapidapi_keys_count()
+                if key_count > 1 and retry_count < max_retries:
+                    print(f"  🔄 检测到多个 API Key（共 {key_count} 个），尝试切换...")
+                    if switch_to_next_rapidapi_key():
+                        new_key = get_rapidapi_key()
+                        headers['x-rapidapi-key'] = new_key
+                        print(f"  ✓ 已切换到备用 Key（索引: {_current_key_index % len(_rapidapi_keys) + 1}/{key_count}）")
+                        retry_count += 1
+                        continue  # 重试请求
+                    else:
+                        print(f"  ⚠️ 无法切换到备用 Key")
+                else:
+                    if key_count <= 1:
+                        print(f"  💡 建议：配置多个 API Key（在 .env 中用分号分隔，如：RAPIDAPI_KEY=key1;key2;key3）")
+                
+                if "quota" in error_msg.lower() or "limit" in error_msg.lower():
+                    print(f"  [错误详情] {error_msg[:200]}")
+                
+                last_response = response
+                break  # 429 错误且无法切换 key，退出循环
+            
+            # 非 429 错误，直接返回响应
+            return response
+            
+        except requests.exceptions.HTTPError as exc:
+            # 检查是否是 429 错误
+            if hasattr(exc, 'response') and exc.response and exc.response.status_code == 429:
+                # 429 错误已在上面处理，这里应该不会到达
+                last_response = exc.response
+                break
+            # 其他 HTTP 错误，直接抛出
+            raise
+        except Exception as exc:
+            # 其他异常，直接抛出
+            raise
+    
+    # 如果所有重试都失败，返回最后的响应（通常是 429）
+    return last_response
+
+# 为了兼容旧代码，保留 RAPIDAPI_KEY 变量（但会在运行时动态获取）
+# 注意：所有使用 RAPIDAPI_KEY 的地方都会自动使用 get_rapidapi_key() 获取当前 Key
+
 RAPIDAPI_HOSTS = {
     "instagram": "instagram120.p.rapidapi.com",
     "tiktok": "tiktok-api23.p.rapidapi.com",
@@ -165,7 +337,8 @@ def get_posts_from_instagram(username: str, days_ago: int = None, original_usern
         days_ago: 相对今天的天数，如果为None则不过滤日期
         original_username: 原始用户名（用于构建post_url），如果为None则使用username
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
     
@@ -173,7 +346,7 @@ def get_posts_from_instagram(username: str, days_ago: int = None, original_usern
     url = f"https://{host}/api/instagram/posts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host,
         'Content-Type': 'application/json'
     }
@@ -181,7 +354,9 @@ def get_posts_from_instagram(username: str, days_ago: int = None, original_usern
     payload = {"username": username, "maxId": ""}
     
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        response = _make_rapidapi_request('POST', url, host, headers=headers, json_data=payload, max_retries=2, timeout=30)
+        if response is None:
+            return []
         response.raise_for_status()
         data = response.json()
         
@@ -288,7 +463,8 @@ def get_tiktok_secuid_from_username(username: str) -> Optional[str]:
     从 username (uniqueId) 获取 TikTok secUid
     使用 RapidAPI: /api/user/info?uniqueId=xxx
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return None
     
@@ -296,16 +472,37 @@ def get_tiktok_secuid_from_username(username: str) -> Optional[str]:
     url = f"https://{host}/api/user/info"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
     params = {"uniqueId": username}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return None
+        
+        if response.status_code == 429:
+            print(f"  ❌ TikTok API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return None
+        
         response.raise_for_status()
-        data = response.json()
+        
+        # 检查响应内容是否为空
+        response_text = response.text.strip()
+        if not response_text:
+            print(f"  ❌ TikTok API 返回空响应（状态码: {response.status_code}）")
+            return None
+        
+        # 尝试解析 JSON
+        try:
+            data = response.json()
+        except ValueError as json_exc:
+            print(f"  ❌ TikTok API 返回非 JSON 响应（状态码: {response.status_code}）")
+            print(f"  [响应内容类型] {response.headers.get('Content-Type', 'unknown')}")
+            print(f"  [响应内容预览] {response_text[:200]}...")
+            return None
         
         # 从响应中提取 secUid
         # 响应结构: userInfo.user.secUid
@@ -345,7 +542,8 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
         days_ago: 日期过滤（None 表示不过滤）
         original_username: 原始 username（用于生成 post_url），如果为 None 则从 API 响应中提取
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
     
@@ -353,7 +551,7 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
     url = f"https://{host}/api/user/posts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
@@ -380,9 +578,41 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
     }
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return []
+        
+        # 如果仍然是 429 错误，返回空列表
+        if response.status_code == 429:
+            print(f"  ❌ TikTok API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return []
+        
         response.raise_for_status()
-        data = response.json()
+        
+        # 检查响应内容是否为空
+        response_text = response.text.strip()
+        if not response_text:
+            print(f"  ❌ TikTok API 返回空响应（状态码: {response.status_code}）")
+            return []
+        
+        # 尝试解析 JSON，提供更详细的错误信息
+        try:
+            data = response.json()
+        except ValueError as json_exc:
+            # JSON 解析失败，可能是 API 返回了非 JSON 格式的响应
+            print(f"  ❌ TikTok API 返回非 JSON 响应（状态码: {response.status_code}）")
+            print(f"  [响应内容类型] {response.headers.get('Content-Type', 'unknown')}")
+            print(f"  [响应内容预览] {response_text[:200]}...")
+            
+            # 尝试判断响应类型
+            if response_text.startswith('<!DOCTYPE') or response_text.startswith('<html'):
+                print(f"  💡 响应看起来是 HTML 页面（可能是错误页面）")
+            elif response_text.startswith('{') or response_text.startswith('['):
+                print(f"  💡 响应以 JSON 字符开头但解析失败，可能是格式错误")
+            else:
+                print(f"  💡 响应可能是纯文本错误消息")
+            
+            return []
         
         # 调试：打印 API 响应结构
         print(f"  [调试] TikTok API 响应状态码: {response.status_code}")
@@ -449,6 +679,13 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
         
         return posts
     
+    except requests.exceptions.HTTPError as exc:
+        if exc.response and exc.response.status_code == 429:
+            print(f"  ⚠️ TikTok API 限流 (429 Too Many Requests)")
+            print(f"  💡 请求过于频繁，请稍后重试")
+        else:
+            print(f"  ❌ TikTok API 调用失败: {exc}")
+        return []
     except Exception as exc:
         print(f"  ❌ TikTok API 调用失败: {exc}")
         return []
@@ -456,7 +693,9 @@ def get_posts_from_tiktok(username_or_secuid: str, days_ago: int = 1, original_u
 
 def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Optional[str]:
     """通过 handle/@username 获取 YouTube channel ID"""
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return None
     
@@ -473,24 +712,28 @@ def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Opti
     url = f"https://{host}/channel/details/"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
     params = {"handle": handle_clean}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
-        if response.status_code == 200:
-            data = response.json()
-            if debug:
-                print(f"  [调试] channel/details 响应: {json.dumps(data, indent=2, ensure_ascii=False)[:500]}...")
-            # 尝试从响应中提取 channel ID
-            # 这里需要根据实际 API 响应格式调整
-            channel_id = data.get("channelId") or data.get("id") or data.get("channel", {}).get("id")
-            if channel_id:
-                print(f"  ✓ 获取到 channel ID: {channel_id} (handle: {handle_clean})")
-                return channel_id
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None or response.status_code != 200:
+            if debug and response and response.status_code == 429:
+                print(f"  [调试] channel/details 调用失败: 429 Too Many Requests")
+            return None
+        
+        data = response.json()
+        if debug:
+            print(f"  [调试] channel/details 响应: {json.dumps(data, indent=2, ensure_ascii=False)[:500]}...")
+        # 尝试从响应中提取 channel ID
+        # 这里需要根据实际 API 响应格式调整
+        channel_id = data.get("channelId") or data.get("id") or data.get("channel", {}).get("id")
+        if channel_id:
+            print(f"  ✓ 获取到 channel ID: {channel_id} (handle: {handle_clean})")
+            return channel_id
     except Exception as e:
         if debug:
             print(f"  [调试] channel/details 调用失败: {e}")
@@ -503,7 +746,9 @@ def get_youtube_channel_id_from_handle(handle: str, debug: bool = False) -> Opti
 
 def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List[Dict[str, Any]]:
     """使用 RapidAPI 获取 YouTube 视频"""
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
     
@@ -511,7 +756,7 @@ def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List
     url = f"https://{host}/channel/videos/"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
@@ -540,7 +785,14 @@ def get_posts_from_youtube(channel_id_or_handle: str, days_ago: int = 1) -> List
     }
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return []
+        
+        if response.status_code == 429:
+            print(f"  ❌ YouTube API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return []
+        
         response.raise_for_status()
         data = response.json()
         
@@ -607,7 +859,9 @@ def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
     通过 handle/@username 获取 YouTube channel ID（用于 Shorts API）
     使用 Shorts API 的 meta 信息来获取 channel ID
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return None
     
@@ -615,7 +869,7 @@ def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
     url = f"https://{host}/channel/shorts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
@@ -626,15 +880,19 @@ def get_youtube_channel_id_from_handle_for_shorts(handle: str) -> Optional[str]:
     params = {"id": handle_clean}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
-        if response.status_code == 200:
-            data = response.json()
-            # 从 meta 中提取 channelId
-            meta = data.get("meta", {})
-            channel_id = meta.get("channelId")
-            if channel_id:
-                print(f"  ✓ 获取到 channel ID: {channel_id} (handle: {handle_clean})")
-                return channel_id
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None or response.status_code != 200:
+            if response and response.status_code == 429:
+                print(f"  [调试] Shorts API 调用失败: 429 Too Many Requests")
+            return None
+        
+        data = response.json()
+        # 从 meta 中提取 channelId
+        meta = data.get("meta", {})
+        channel_id = meta.get("channelId")
+        if channel_id:
+            print(f"  ✓ 获取到 channel ID: {channel_id} (handle: {handle_clean})")
+            return channel_id
     except Exception as e:
         print(f"  [调试] Shorts API 调用失败: {e}")
     
@@ -658,7 +916,9 @@ def get_youtube_shorts_from_channel(
     Returns:
         Shorts 列表，只返回不在历史数据中的新 Shorts
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
     
@@ -666,7 +926,7 @@ def get_youtube_shorts_from_channel(
     url = f"https://{host}/channel/shorts"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
@@ -690,7 +950,14 @@ def get_youtube_shorts_from_channel(
     params = {"id": channel_id}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return []
+        
+        if response.status_code == 429:
+            print(f"  ❌ YouTube Shorts API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return []
+        
         response.raise_for_status()
         data = response.json()
         
@@ -839,7 +1106,9 @@ def load_historical_youtube_shorts(
 
 def get_twitter_user_id_from_username(username: str, debug: bool = False) -> Optional[str]:
     """通过 username 获取 Twitter user ID"""
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return None
     
@@ -847,14 +1116,21 @@ def get_twitter_user_id_from_username(username: str, debug: bool = False) -> Opt
     url = f"https://{host}/user"
     
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
     params = {"username": username}
     
     try:
-        response = requests.get(url, params=params, headers=headers, timeout=30)
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return None
+        
+        if response.status_code == 429:
+            print(f"  ❌ Twitter API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return None
+        
         response.raise_for_status()
         data = response.json()
         
@@ -991,7 +1267,9 @@ def get_posts_from_twitter(
     - days_ago=None: 不做日期过滤，返回最新 count 条（解析到多少返回多少）
     - days_ago=int: 仅返回该天(相对今天)的推文（按 UTC 日历日）
     """
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("  ❌ 未配置 RAPIDAPI_KEY")
         return []
     
@@ -1011,7 +1289,7 @@ def get_posts_from_twitter(
     
     url = f"https://{host}/user-tweets"
     headers = {
-        'x-rapidapi-key': RAPIDAPI_KEY,
+        'x-rapidapi-key': api_key,
         'x-rapidapi-host': host
     }
     
@@ -1038,7 +1316,15 @@ def get_posts_from_twitter(
 
         while True:
             page += 1
-            resp = requests.get(url, params=params, headers=headers, timeout=30)
+            resp = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+            if resp is None:
+                print(f"  ⚠️ Twitter API 调用失败（第 {page} 页）")
+                break
+            
+            if resp.status_code == 429:
+                print(f"  ❌ Twitter API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+                break
+            
             resp.raise_for_status()
             data = resp.json()
 
@@ -1191,7 +1477,9 @@ def scrape_posts_with_rapidapi(
 
 def scrape_competitor_social_with_rapidapi() -> None:
     """主函数：使用 RapidAPI 抓取竞品社媒帖子"""
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+
+    if not api_key:
         print("❌ 未配置 RAPIDAPI_KEY，请在 .env 文件中设置")
         return
     

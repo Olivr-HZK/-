@@ -112,6 +112,35 @@ class CompetitorDatabaseDB:
                 )
             """)
             
+            # 创建周报表（用于存储生成的周报）
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS weekly_reports (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    company_name TEXT NOT NULL,
+                    start_date TEXT NOT NULL,
+                    end_date TEXT NOT NULL,
+                    report_content TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(company_name, start_date, end_date)
+                )
+            """)
+            
+            # 创建索引以提高查询性能
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_weekly_reports_company 
+                ON weekly_reports(company_name)
+            """)
+            
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_weekly_reports_dates 
+                ON weekly_reports(start_date, end_date)
+            """)
+            
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_weekly_reports_created 
+                ON weekly_reports(created_at)
+            """)
+            
             conn.commit()
         finally:
             conn.close()
@@ -947,6 +976,147 @@ class CompetitorDatabaseDB:
         
         except Exception as exc:
             print(f"  ⚠️ 获取公司平台列表失败: {exc}")
+            return []
+        
+        finally:
+            conn.close()
+    
+    def save_weekly_report(
+        self,
+        company: str,
+        start_date: date,
+        end_date: date,
+        report_content: Dict[str, Any]
+    ) -> bool:
+        """
+        保存周报到数据库
+        
+        Args:
+            company: 公司名称
+            start_date: 开始日期
+            end_date: 结束日期
+            report_content: 周报内容（字典格式，会被转换为JSON字符串）
+        
+        Returns:
+            是否保存成功
+        """
+        conn = self._get_connection()
+        try:
+            # 将报告内容转换为JSON字符串
+            report_json = json.dumps(report_content, ensure_ascii=False, indent=2)
+            
+            # 转换为日期字符串
+            start_date_str = start_date.isoformat()
+            end_date_str = end_date.isoformat()
+            created_at = datetime.now().isoformat()
+            
+            # 使用 INSERT OR REPLACE 实现更新或插入
+            conn.execute("""
+                INSERT OR REPLACE INTO weekly_reports 
+                (company_name, start_date, end_date, report_content, created_at)
+                VALUES (?, ?, ?, ?, ?)
+            """, (company, start_date_str, end_date_str, report_json, created_at))
+            
+            conn.commit()
+            return True
+        
+        except Exception as exc:
+            print(f"  ⚠️ 保存周报到数据库失败: {exc}")
+            import traceback
+            print(f"  [调试] 错误详情: {traceback.format_exc()}")
+            conn.rollback()
+            return False
+        
+        finally:
+            conn.close()
+    
+    def get_weekly_report(
+        self,
+        company: str,
+        start_date: date,
+        end_date: date
+    ) -> Optional[Dict[str, Any]]:
+        """
+        从数据库获取周报
+        
+        Args:
+            company: 公司名称
+            start_date: 开始日期
+            end_date: 结束日期
+        
+        Returns:
+            周报内容（字典格式），如果不存在则返回 None
+        """
+        conn = self._get_connection()
+        try:
+            start_date_str = start_date.isoformat()
+            end_date_str = end_date.isoformat()
+            
+            cursor = conn.execute("""
+                SELECT report_content, created_at
+                FROM weekly_reports
+                WHERE company_name = ? AND start_date = ? AND end_date = ?
+            """, (company, start_date_str, end_date_str))
+            
+            row = cursor.fetchone()
+            if row:
+                report_content = json.loads(row["report_content"])
+                return {
+                    "report": report_content,
+                    "created_at": row["created_at"]
+                }
+            return None
+        
+        except Exception as exc:
+            print(f"  ⚠️ 获取周报失败: {exc}")
+            return None
+        
+        finally:
+            conn.close()
+    
+    def get_weekly_reports_by_company(
+        self,
+        company: str,
+        limit: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        获取指定公司的所有周报（按创建时间倒序）
+        
+        Args:
+            company: 公司名称
+            limit: 返回数量限制（可选）
+        
+        Returns:
+            周报列表
+        """
+        conn = self._get_connection()
+        try:
+            query = """
+                SELECT company_name, start_date, end_date, report_content, created_at
+                FROM weekly_reports
+                WHERE company_name = ?
+                ORDER BY created_at DESC
+            """
+            
+            if limit:
+                query += f" LIMIT {limit}"
+            
+            cursor = conn.execute(query, (company,))
+            
+            reports = []
+            for row in cursor.fetchall():
+                reports.append({
+                    "company": row["company_name"],
+                    "start_date": row["start_date"],
+                    "end_date": row["end_date"],
+                    "report": json.loads(row["report_content"]),
+                    "created_at": row["created_at"]
+                })
+            
+            return reports
+        
+        except Exception as exc:
+            print(f"  ⚠️ 获取公司周报列表失败: {exc}")
             return []
         
         finally:

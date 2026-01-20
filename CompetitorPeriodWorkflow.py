@@ -7,7 +7,7 @@ import os
 import sys
 import json
 import argparse
-from datetime import date, timedelta
+from datetime import date
 from typing import Optional
 
 import env_loader  # noqa: F401
@@ -31,7 +31,8 @@ def run_workflow(
     extracted_data_path: Optional[str] = None,
     analysis_result_path: Optional[str] = None,
     output_dir: Optional[str] = None,
-    skip_send: bool = False
+    skip_send: bool = False,
+    send_to_wework: bool = False
 ) -> int:
     """
     运行完整的工作流
@@ -48,6 +49,7 @@ def run_workflow(
         analysis_result_path: 分析结果的文件路径（如果跳过分析步骤，需要提供）
         output_dir: 输出目录
         skip_send: 是否跳过发送到飞书
+        send_to_wework: 是否发送到企业微信
     
     Returns:
         退出码（0表示成功）
@@ -91,24 +93,29 @@ def run_workflow(
         print()
     else:
         print("【第一部分】跳过数据提取")
-        if not extracted_data_path:
-            print("❌ 跳过数据提取步骤但未提供提取数据文件路径")
-            return 1
-        
-        print(f"📂 从文件读取提取数据: {extracted_data_path}")
-        try:
-            with open(extracted_data_path, "r", encoding="utf-8") as f:
-                extracted_data = json.load(f)
-        except Exception as e:
-            print(f"❌ 读取提取数据文件失败: {e}")
-            return 1
-        extracted_file_path = extracted_data_path
+        # 只有当需要执行第二部分（AI分析）时才需要提取数据文件
+        if not skip_analysis:
+            if not extracted_data_path:
+                print("❌ 跳过数据提取步骤但未提供提取数据文件路径（执行AI分析需要提取数据）")
+                return 1
+            
+            print(f"📂 从文件读取提取数据: {extracted_data_path}")
+            try:
+                with open(extracted_data_path, "r", encoding="utf-8") as f:
+                    extracted_data = json.load(f)
+            except Exception as e:
+                print(f"❌ 读取提取数据文件失败: {e}")
+                return 1
+            extracted_file_path = extracted_data_path
+        else:
+            print("   跳过（只执行报告生成，不需要提取数据）")
         print()
     
-    # 检查是否有数据
-    if not extracted_data or not extracted_data.get("companies"):
-        print("⚠️ 未找到任何数据，工作流终止")
-        return 0
+    # 检查是否有数据（仅在需要执行AI分析时检查）
+    if not skip_analysis:
+        if not extracted_data or not extracted_data.get("companies"):
+            print("⚠️ 未找到任何数据，工作流终止")
+            return 0
     
     # 第二部分：AI分析
     analysis_result = None
@@ -147,7 +154,8 @@ def run_workflow(
         reports = generate_period_reports(
             analysis_result=analysis_result,
             db_path=db_path,
-            skip_send=skip_send
+            skip_send=skip_send,
+            send_to_wework=send_to_wework
         )
         print()
     else:
@@ -260,6 +268,11 @@ def main():
         action="store_true",
         help="跳过发送到飞书，只生成报告文件"
     )
+    parser.add_argument(
+        "--send-to-wework",
+        action="store_true",
+        help="同时发送到企业微信（需要配置 WEWORK_WEBHOOK_URL）"
+    )
     
     args = parser.parse_args()
     
@@ -288,7 +301,8 @@ def main():
         extracted_data_path=args.extracted_data,
         analysis_result_path=args.analysis_result,
         output_dir=args.output_dir,
-        skip_send=args.skip_send
+        skip_send=args.skip_send,
+        send_to_wework=args.send_to_wework
     )
     
     return exit_code

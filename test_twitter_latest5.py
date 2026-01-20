@@ -22,7 +22,7 @@ from typing import Any, Dict, List
 
 import env_loader  # noqa: F401
 
-from CompetitorScraperRapidAPI import RAPIDAPI_KEY, get_posts_from_twitter
+from CompetitorScraperRapidAPI import get_rapidapi_key, get_posts_from_twitter
 
 
 def _safe_int(val: Any) -> int:
@@ -133,7 +133,8 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    if not RAPIDAPI_KEY:
+    api_key = get_rapidapi_key()
+    if not api_key:
         print("❌ 未配置 RAPIDAPI_KEY，请在 .env 设置 RAPIDAPI_KEY=...")
         return 2
 

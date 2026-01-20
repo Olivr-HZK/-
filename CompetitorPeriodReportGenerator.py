@@ -4,6 +4,7 @@
 """
 import json
 import os
+import re
 import time
 import yaml
 from typing import Dict, List, Any, Optional
@@ -68,12 +69,45 @@ def get_feishu_webhook() -> str:
         return ""
 
 
+def get_wework_webhook() -> tuple[str, str]:
+    """
+    获取企业微信webhook地址和消息类型
+    
+    Returns:
+        (webhook_url, msg_type) - webhook地址和消息类型（markdown/text）
+    """
+    # 优先从环境变量获取
+    webhook = os.environ.get("WEWORK_WEBHOOK_URL") or os.environ.get("WEWORK_URL") or ""
+    msg_type = os.environ.get("WEWORK_MSG_TYPE", "markdown")
+    
+    # 如果环境变量没有，从配置文件读取
+    if not webhook:
+        config_path = os.environ.get("CONFIG_PATH", "/app/config/config.yaml")
+        if not os.path.exists(config_path):
+            alt = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
+            if os.path.exists(alt):
+                config_path = alt
+            else:
+                return "", "markdown"
+        
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f) or {}
+            webhooks = cfg.get("notification", {}).get("webhooks", {})
+            webhook = webhooks.get("wework_url", "")
+            msg_type = webhooks.get("wework_msg_type", "markdown")
+        except Exception:
+            return "", "markdown"
+    
+    return webhook, msg_type
+
+
 def get_company_platforms_from_db(
     db: CompetitorDatabaseDB,
     company: str
 ) -> List[Dict[str, Any]]:
     """
-    从数据库获取公司监控的所有平台信息
+    从数据库获取公司监控的所有平台信息（包括公司级和游戏级）
     
     Args:
         db: 数据库实例
@@ -92,10 +126,54 @@ def get_company_platforms_from_db(
             ...
         ]
     """
-    platforms = db.get_company_platforms(company, enabled_only=False)
+    # 获取公司级平台（game_name=None）
+    company_platforms = db.get_company_platforms(company, game_name=None, enabled_only=False)
+    
+    # 获取所有游戏级平台（需要直接查询数据库，因为get_company_platforms在game_name=None时会过滤掉游戏级平台）
+    conn = db._get_connection()
+    game_platforms = []
+    try:
+        cursor = conn.execute("""
+            SELECT game_name, platform_type, username, url, user_id, page_id,
+                   channel_id, handle, sec_uid, enabled, priority
+            FROM company_platforms
+            WHERE company_name = ? AND game_name IS NOT NULL
+            ORDER BY platform_type
+        """, (company,))
+        
+        rows = cursor.fetchall()
+        for row in rows:
+            platform = {
+                "type": row["platform_type"],
+                "enabled": bool(row["enabled"])
+            }
+            if row["game_name"]:
+                platform["game"] = row["game_name"]
+            if row["username"]:
+                platform["username"] = row["username"]
+            if row["url"]:
+                platform["url"] = row["url"]
+            if row["user_id"]:
+                platform["user_id"] = row["user_id"]
+            if row["page_id"]:
+                platform["page_id"] = row["page_id"]
+            if row["channel_id"]:
+                platform["channel_id"] = row["channel_id"]
+            if row["handle"]:
+                platform["handle"] = row["handle"]
+            if row["sec_uid"]:
+                platform["sec_uid"] = row["sec_uid"]
+            if row["priority"]:
+                platform["priority"] = row["priority"]
+            game_platforms.append(platform)
+    finally:
+        conn.close()
+    
+    # 合并公司级和游戏级平台
+    all_platforms = company_platforms + game_platforms
     
     result = []
-    for platform in platforms:
+    for platform in all_platforms:
         result.append({
             "type": platform.get("type", ""),
             "game": platform.get("game"),
@@ -405,18 +483,163 @@ def send_company_period_report_to_feishu(
     return False
 
 
+def convert_feishu_card_to_wework_markdown(
+    company: str,
+    card: Dict[str, Any]
+) -> str:
+    """
+    将飞书卡片转换为企业微信markdown格式
+    
+    Args:
+        company: 公司名称
+        card: 飞书卡片字典
+    
+    Returns:
+        企业微信markdown格式的字符串
+    """
+    header = card.get("header", {})
+    title = header.get("title", {}).get("content", f"🏁 竞品监控 · {company}")
+    elements = card.get("elements", [])
+    
+    markdown_lines = [f"# {title}\n"]
+    
+    for element in elements:
+        tag = element.get("tag", "")
+        
+        if tag == "hr":
+            markdown_lines.append("---")
+        
+        elif tag == "div":
+            # 处理文本内容
+            text = element.get("text", {})
+            if text:
+                content = text.get("content", "")
+                if content:
+                    markdown_lines.append(content)
+            
+            # 处理字段
+            fields = element.get("fields", [])
+            if fields:
+                for field in fields:
+                    field_text = field.get("text", {})
+                    if field_text:
+                        content = field_text.get("content", "")
+                        if content:
+                            markdown_lines.append(content)
+    
+    return "\n".join(markdown_lines)
+
+
+def send_company_period_report_to_wework(
+    company: str,
+    card: Dict[str, Any]
+) -> bool:
+    """
+    发送公司时间段报告到企业微信
+    
+    Args:
+        company: 公司名称
+        card: 飞书卡片（会被转换为markdown格式）
+    
+    Returns:
+        是否发送成功
+    """
+    webhook, msg_type = get_wework_webhook()
+    
+    if not webhook:
+        print(f"  ⚠️ 未找到企业微信webhook，跳过推送")
+        return False
+    
+    # 转换为企业微信格式
+    if msg_type.lower() == "markdown":
+        # markdown格式
+        markdown_content = convert_feishu_card_to_wework_markdown(company, card)
+        payload = {
+            "msgtype": "markdown",
+            "markdown": {
+                "content": markdown_content
+            }
+        }
+    else:
+        # text格式（简化版）
+        header = card.get("header", {})
+        title = header.get("title", {}).get("content", f"竞品监控 · {company}")
+        elements = card.get("elements", [])
+        
+        text_lines = [title, ""]
+        for element in elements:
+            tag = element.get("tag", "")
+            if tag == "hr":
+                text_lines.append("-" * 20)
+            elif tag == "div":
+                text = element.get("text", {})
+                if text:
+                    content = text.get("content", "")
+                    # 移除markdown格式，只保留文本
+                    content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)  # 移除加粗
+                    content = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', content)  # 移除链接，保留文本
+                    if content:
+                        text_lines.append(content)
+                fields = element.get("fields", [])
+                if fields:
+                    for field in fields:
+                        field_text = field.get("text", {})
+                        if field_text:
+                            content = field_text.get("content", "")
+                            content = re.sub(r'\*\*(.*?)\*\*', r'\1', content)
+                            content = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', content)
+                            if content:
+                                text_lines.append(content)
+        
+        text_content = "\n".join(text_lines)
+        payload = {
+            "msgtype": "text",
+            "text": {
+                "content": text_content
+            }
+        }
+    
+    sent = False
+    for attempt in range(3):
+        try:
+            resp = requests.post(webhook, json=payload, timeout=20)
+            resp_data = {}
+            try:
+                resp_data = resp.json()
+            except Exception:
+                resp_data = {}
+            
+            # 企业微信返回格式：{"errcode": 0, "errmsg": "ok"}
+            errcode = resp_data.get("errcode", -1)
+            if resp.status_code == 200 and errcode == 0:
+                print(f"  ✓ {company} 时间段报告已推送到企业微信")
+                return True
+            else:
+                errmsg = resp_data.get("errmsg", resp.text[:200])
+                print(f"  ❌ 企业微信推送失败 (尝试 {attempt + 1}/3): {errmsg}")
+        except Exception as exc:
+            print(f"  ❌ 企业微信推送异常 (尝试 {attempt + 1}/3): {exc}")
+        
+        if attempt < 2:
+            time.sleep(2)
+    
+    return False
+
+
 def generate_period_reports(
     analysis_result: Dict[str, Any],
     db_path: Optional[str] = None,
-    skip_send: bool = False
+    skip_send: bool = False,
+    send_to_wework: bool = False
 ) -> Dict[str, Any]:
     """
-    生成时间段报告并发送到飞书
+    生成时间段报告并发送到飞书/企业微信
     
     Args:
         analysis_result: AI分析结果（从CompetitorPeriodAnalysisAI生成）
         db_path: 数据库路径（用于获取监控平台信息）
         skip_send: 是否跳过发送到飞书
+        send_to_wework: 是否发送到企业微信
     
     Returns:
         报告生成结果
@@ -427,6 +650,16 @@ def generate_period_reports(
     print(f"📄 开始生成时间段报告")
     print(f"   时间段: {period.get('start_date')} 至 {period.get('end_date')}")
     print(f"   公司数: {len(companies_analysis)}")
+    
+    # 解析日期
+    start_date_str = period.get("start_date", "")
+    end_date_str = period.get("end_date", "")
+    try:
+        start_date_obj = date.fromisoformat(start_date_str) if start_date_str else None
+        end_date_obj = date.fromisoformat(end_date_str) if end_date_str else None
+    except ValueError:
+        start_date_obj = None
+        end_date_obj = None
     
     # 初始化数据库（用于获取监控平台信息）
     db = CompetitorDatabaseDB(db_path) if db_path else CompetitorDatabaseDB()
@@ -450,15 +683,53 @@ def generate_period_reports(
             monitored_platforms=monitored_platforms
         )
         
-        reports[company] = {
+        report_data = {
             "card": card,
             "platforms_count": len(platforms_analysis),
-            "monitored_platforms_count": len(monitored_platforms)
+            "monitored_platforms_count": len(monitored_platforms),
+            "platforms_analysis": platforms_analysis,
+            "monitored_platforms": monitored_platforms
         }
+        
+        reports[company] = report_data
         
         # 发送到飞书
         if not skip_send:
             send_company_period_report_to_feishu(company, card)
+        
+        # 发送到企业微信
+        if send_to_wework:
+            send_company_period_report_to_wework(company, card)
+        
+        # 保存周报到数据库
+        if start_date_obj and end_date_obj:
+            try:
+                # 构建要保存的报告内容（包含完整信息）
+                report_content = {
+                    "company": company,
+                    "start_date": start_date_str,
+                    "end_date": end_date_str,
+                    "period": period,
+                    "card": card,
+                    "platforms_count": len(platforms_analysis),
+                    "monitored_platforms_count": len(monitored_platforms),
+                    "platforms_analysis": platforms_analysis,
+                    "monitored_platforms": monitored_platforms
+                }
+                
+                save_success = db.save_weekly_report(
+                    company=company,
+                    start_date=start_date_obj,
+                    end_date=end_date_obj,
+                    report_content=report_content
+                )
+                
+                if save_success:
+                    print(f"    💾 周报已保存到数据库")
+                else:
+                    print(f"    ⚠️ 周报保存到数据库失败")
+            except Exception as exc:
+                print(f"    ⚠️ 保存周报到数据库时出错: {exc}")
     
     # 保存报告到文件
     output_dir = os.environ.get("OUTPUT_DIR")
@@ -466,19 +737,17 @@ def generate_period_reports(
         output_dir = os.path.join(os.path.dirname(__file__), "output")
         os.makedirs(output_dir, exist_ok=True)
     
-    start_date = period.get("start_date", "")
-    end_date = period.get("end_date", "")
     report_file = os.path.join(
         output_dir,
-        f"competitor_period_reports_{start_date}_to_{end_date}.json"
+        f"competitor_period_reports_{start_date_str}_to_{end_date_str}.json"
     )
     
     try:
         with open(report_file, "w", encoding="utf-8") as f:
             json.dump(reports, f, ensure_ascii=False, indent=2)
-        print(f"\n💾 报告已保存: {report_file}")
+        print(f"\n💾 报告已保存到文件: {report_file}")
     except Exception as exc:
-        print(f"⚠️ 保存报告失败: {exc}")
+        print(f"⚠️ 保存报告到文件失败: {exc}")
     
     print(f"\n✓ 报告生成完成，共 {len(reports)} 个公司")
     return reports
@@ -499,6 +768,11 @@ def main():
         "--skip-send",
         action="store_true",
         help="跳过发送到飞书，只生成报告文件"
+    )
+    parser.add_argument(
+        "--send-to-wework",
+        action="store_true",
+        help="同时发送到企业微信（需要配置 WEWORK_WEBHOOK_URL）"
     )
     parser.add_argument(
         "--db-path",
@@ -524,7 +798,8 @@ def main():
     reports = generate_period_reports(
         analysis_result=analysis_result,
         db_path=args.db_path,
-        skip_send=args.skip_send
+        skip_send=args.skip_send,
+        send_to_wework=args.send_to_wework
     )
     
     print(f"\n✅ 报告生成完成，共 {len(reports)} 个公司")
