@@ -195,6 +195,7 @@ RAPIDAPI_HOSTS = {
     "youtube": "youtube138.p.rapidapi.com",
     "youtube_shorts": "yt-api.p.rapidapi.com",  # YouTube Shorts 使用不同的 API
     "twitter": "twitter241.p.rapidapi.com",
+    "facebook": "facebook-scraper3.p.rapidapi.com",
 }
 
 
@@ -1552,6 +1553,155 @@ def scrape_competitor_social_with_rapidapi() -> None:
         print(f"\n✅ 竞品社媒原始数据已保存至: {out_path}")
     except Exception as exc:
         print(f"❌ 保存结果失败: {exc}")
+
+
+def get_posts_from_facebook(page_id: str, days_ago: int = None, count: int = 20) -> List[Dict[str, Any]]:
+    """
+    使用 RapidAPI 获取 Facebook 页面帖子
+    
+    Args:
+        page_id: Facebook 页面 ID
+        days_ago: 相对今天的天数，如果为None则不过滤日期
+        count: 获取的帖子数量（默认20）
+    
+    Returns:
+        帖子列表
+    """
+    api_key = get_rapidapi_key()
+    if not api_key:
+        print("  ❌ 未配置 RAPIDAPI_KEY")
+        return []
+    
+    host = RAPIDAPI_HOSTS["facebook"]
+    url = f"https://{host}/page/posts"
+    
+    headers = {
+        'x-rapidapi-key': api_key,
+        'x-rapidapi-host': host
+    }
+    
+    params = {
+        "page_id": page_id
+    }
+    
+    try:
+        response = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
+        if response is None:
+            return []
+        
+        if response.status_code == 429:
+            print(f"  ❌ Facebook API 调用失败: 429 Too Many Requests（所有 API Key 都已尝试）")
+            return []
+        
+        response.raise_for_status()
+        data = response.json()
+        
+        # 递归收集所有包含 post_id 和 timestamp 的对象
+        posts_raw: List[Dict[str, Any]] = []
+        
+        def _collect_posts_recursive(obj: Any) -> None:
+            """递归从任意 JSON 结构中收集包含 post_id 和 timestamp 的对象"""
+            if isinstance(obj, dict):
+                if "post_id" in obj and "timestamp" in obj:
+                    posts_raw.append(obj)
+                for v in obj.values():
+                    _collect_posts_recursive(v)
+            elif isinstance(obj, list):
+                for it in obj:
+                    _collect_posts_recursive(it)
+        
+        _collect_posts_recursive(data)
+        
+        # 计算日期过滤范围（如果指定了days_ago）
+        day_start_ts = None
+        day_end_ts = None
+        if days_ago is not None:
+            target_day = datetime.now(timezone.utc) - timedelta(days=days_ago)
+            day_start_ts = target_day.replace(hour=0, minute=0, second=0, microsecond=0).timestamp()
+            day_end_ts = target_day.replace(hour=23, minute=59, second=59, microsecond=999999).timestamp()
+        
+        posts: List[Dict[str, Any]] = []
+        for p in posts_raw:
+            ts = p.get("timestamp")
+            if not ts:
+                continue
+            
+            # 日期过滤（如果指定了days_ago）
+            if day_start_ts is not None and day_end_ts is not None:
+                try:
+                    ts_int = int(ts)
+                    if not (day_start_ts <= ts_int <= day_end_ts):
+                        continue
+                except Exception:
+                    continue
+            
+            # 格式化时间
+            try:
+                ts_int = int(ts)
+                time_iso = datetime.fromtimestamp(ts_int, tz=timezone.utc).isoformat().replace("+00:00", "Z")
+            except Exception:
+                time_iso = str(ts)
+            
+            # 提取标题
+            title = ""
+            author = p.get("author")
+            if isinstance(author, dict):
+                title = author.get("name") or p.get("author_title") or ""
+            if not title:
+                title = p.get("author_title") or ""
+            
+            # 提取文本内容
+            text = (
+                p.get("message")
+                or p.get("message_rich")
+                or p.get("story")
+                or p.get("description")
+                or ""
+            )
+            
+            # 提取链接
+            link = p.get("url") or p.get("external_url") or ""
+            
+            # 提取互动数据
+            like_count = p.get("like_count") or p.get("likes") or 0
+            comment_count = p.get("comment_count") or p.get("comments") or 0
+            share_count = p.get("share_count") or p.get("shares") or 0
+            
+            engagement = {
+                "like": like_count,
+                "comment": comment_count,
+                "share": share_count,
+            }
+            
+            # 构建帖子URL
+            post_id = p.get("post_id", "")
+            post_url = f"https://www.facebook.com/{post_id}" if post_id else link
+            
+            posts.append({
+                "post_id": post_id,
+                "post_url": post_url,
+                "time": time_iso,
+                "title": title,
+                "text": text,
+                "link": link,
+                "engagement": engagement,
+            })
+        
+        # 根据时间倒序排序，取前 count 条
+        posts.sort(key=lambda x: x.get("time", ""), reverse=True)
+        return posts[:count]
+    
+    except requests.exceptions.HTTPError as exc:
+        if exc.response and exc.response.status_code == 429:
+            print(f"  ❌ Facebook API 调用失败: 429 Too Many Requests")
+        else:
+            print(f"  ❌ Facebook API 调用失败: {exc}")
+        return []
+    except Exception as exc:
+        print(f"  ❌ Facebook 爬取失败: {exc}")
+        import traceback
+        print(f"  [调试] 错误详情: {traceback.format_exc()}")
+        return []
 
 
 if __name__ == "__main__":

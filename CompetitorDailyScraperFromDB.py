@@ -478,11 +478,100 @@ def scrape_company_platforms_from_db(
     return platforms_data
 
 
+def load_companies_from_json_to_database(
+    json_path: str = "input/twitter_input.json",
+    db: Optional[CompetitorDatabaseDB] = None,
+    db_path: Optional[str] = None
+) -> bool:
+    """
+    从 JSON 文件加载所有公司配置并更新到数据库
+    
+    Args:
+        json_path: JSON 文件路径
+        db: 数据库实例（如果提供，使用该实例；否则创建新实例）
+        db_path: 数据库路径（仅在 db 为 None 时使用）
+    
+    Returns:
+        是否加载成功
+    """
+    try:
+        if not os.path.exists(json_path):
+            print(f"⚠️ JSON 配置文件不存在: {json_path}，跳过配置更新")
+            return False
+        
+        print("\n" + "=" * 60)
+        print("📖 从 JSON 加载并更新公司配置到数据库")
+        print("=" * 60)
+        
+        # 读取 JSON 文件
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        competitors = data.get("competitors", [])
+        if not competitors:
+            print("⚠️ JSON 文件中未找到任何公司配置")
+            return False
+        
+        # 创建或使用数据库实例
+        if db is None:
+            db = CompetitorDatabaseDB(db_path)
+        
+        print(f"📋 找到 {len(competitors)} 个公司配置")
+        
+        success_count = 0
+        fail_count = 0
+        
+        # 更新每个公司的配置
+        for competitor in competitors:
+            company_name = competitor.get("name", "").strip()
+            if not company_name:
+                continue
+            
+            priority = competitor.get("priority", "high")
+            
+            # 构建社媒配置结构
+            social_media_config = {
+                "platforms": competitor.get("platforms", []),
+                "games": competitor.get("games", [])
+            }
+            
+            print(f"\n  📝 更新公司配置: {company_name}")
+            success = db.save_company_social_media_config(
+                company=company_name,
+                priority=priority,
+                social_media_config=social_media_config
+            )
+            
+            if success:
+                success_count += 1
+            else:
+                fail_count += 1
+                print(f"    ❌ {company_name} 配置更新失败")
+        
+        print("\n" + "=" * 60)
+        print("✅ 配置更新完成")
+        print("=" * 60)
+        print(f"  成功: {success_count} 个公司")
+        if fail_count > 0:
+            print(f"  失败: {fail_count} 个公司")
+        print("=" * 60)
+        
+        return success_count > 0
+    
+    except Exception as exc:
+        print(f"❌ 从 JSON 加载配置失败: {exc}")
+        import traceback
+        print(f"[调试] 错误详情: {traceback.format_exc()}")
+        return False
+
+
 def scrape_all_companies_to_database(
     db_path: Optional[str] = None,
     target_date: Optional[date] = None,
     days_ago: int = 0,
-    companies: Optional[List[str]] = None
+    companies: Optional[List[str]] = None,
+    load_from_json: bool = True,
+    json_path: str = "input/twitter_input.json"
 ) -> int:
     """
     从数据库读取所有公司配置，爬取数据并保存到数据库
@@ -492,6 +581,8 @@ def scrape_all_companies_to_database(
         target_date: 目标日期（如果指定，则使用该日期；否则使用 days_ago 计算）
         days_ago: 爬取多少天前的数据（0表示今天，1表示昨天）
         companies: 指定要爬取的公司列表，如果为None则爬取所有公司
+        load_from_json: 是否先从 JSON 加载并更新配置到数据库（默认: True）
+        json_path: JSON 配置文件路径（默认: input/twitter_input.json）
     
     Returns:
         退出码（0表示成功）
@@ -509,6 +600,11 @@ def scrape_all_companies_to_database(
     
     # 初始化数据库
     db = CompetitorDatabaseDB(db_path)
+    
+    # 步骤 0: 从 JSON 加载并更新配置到数据库（如果启用）
+    if load_from_json:
+        load_companies_from_json_to_database(json_path=json_path, db=db, db_path=db_path)
+        print()  # 空行分隔
     
     # 获取公司列表
     if companies is None:
@@ -615,6 +711,17 @@ def main():
         type=str,
         help="数据库文件路径（可选，默认为 db/competitor_data.db）"
     )
+    parser.add_argument(
+        "--skip-load-json",
+        action="store_true",
+        help="跳过从 JSON 加载配置到数据库的步骤（默认会先加载 JSON 更新配置）"
+    )
+    parser.add_argument(
+        "--json-path",
+        type=str,
+        default="input/twitter_input.json",
+        help="JSON 配置文件路径（默认: input/twitter_input.json）"
+    )
     
     args = parser.parse_args()
     
@@ -632,7 +739,9 @@ def main():
         db_path=args.db_path,
         target_date=target_date,
         days_ago=args.days_ago,
-        companies=args.companies
+        companies=args.companies,
+        load_from_json=not args.skip_load_json,
+        json_path=args.json_path
     )
     
     return exit_code

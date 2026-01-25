@@ -733,7 +733,11 @@ class CompetitorDatabaseDB:
         now: str
     ):
         """
-        保存单个平台记录
+        保存单个平台记录（支持去重和覆盖）
+        
+        去重规则：
+        - 公司名 + 游戏名（NULL 视为一致）+ 平台类型 一致时，覆盖原有配置
+        - URL 不作为去重条件（因为同一个平台可能有多个 URL）
         
         Args:
             conn: 数据库连接
@@ -750,44 +754,76 @@ class CompetitorDatabaseDB:
         enabled = 1 if platform.get("enabled", True) else 0
         url = platform.get("url", "")
         
-        # 检查记录是否已存在，以保留 created_at
+        # 检查记录是否已存在（基于：公司名 + 游戏名 + 平台类型）
+        # 注意：game_name 为 NULL 时，使用 IS NULL 进行匹配
         if game_name:
             cursor = conn.execute("""
-                SELECT created_at FROM company_platforms
-                WHERE company_name = ? AND game_name = ? AND platform_type = ? AND url = ?
-            """, (company, game_name, platform_type, url))
+                SELECT id, created_at FROM company_platforms
+                WHERE company_name = ? AND game_name = ? AND platform_type = ?
+            """, (company, game_name, platform_type))
         else:
             cursor = conn.execute("""
-                SELECT created_at FROM company_platforms
-                WHERE company_name = ? AND game_name IS NULL AND platform_type = ? AND url = ?
-            """, (company, platform_type, url))
+                SELECT id, created_at FROM company_platforms
+                WHERE company_name = ? AND game_name IS NULL AND platform_type = ?
+            """, (company, platform_type))
         
         existing_row = cursor.fetchone()
-        existing_created_at = existing_row["created_at"] if existing_row else now
         
-        # 插入或更新记录
-        conn.execute("""
-            INSERT OR REPLACE INTO company_platforms (
-                company_name, game_name, platform_type, username, url,
-                user_id, page_id, channel_id, handle, sec_uid, enabled, priority,
-                created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            company,
-            game_name,
-            platform_type,
-            platform.get("username"),
-            url,
-            platform.get("user_id"),
-            platform.get("page_id"),
-            platform.get("channel_id"),
-            platform.get("handle"),
-            platform.get("sec_uid"),
-            enabled,
-            company_priority,
-            existing_created_at,
-            now
-        ))
+        if existing_row:
+            # 记录已存在，更新（保留 created_at）
+            existing_created_at = existing_row["created_at"]
+            existing_id = existing_row["id"]
+            
+            conn.execute("""
+                UPDATE company_platforms SET
+                    username = ?,
+                    url = ?,
+                    user_id = ?,
+                    page_id = ?,
+                    channel_id = ?,
+                    handle = ?,
+                    sec_uid = ?,
+                    enabled = ?,
+                    priority = ?,
+                    updated_at = ?
+                WHERE id = ?
+            """, (
+                platform.get("username"),
+                url,
+                platform.get("user_id"),
+                platform.get("page_id"),
+                platform.get("channel_id"),
+                platform.get("handle"),
+                platform.get("sec_uid"),
+                enabled,
+                company_priority,
+                now,
+                existing_id
+            ))
+        else:
+            # 记录不存在，插入新记录
+            conn.execute("""
+                INSERT INTO company_platforms (
+                    company_name, game_name, platform_type, username, url,
+                    user_id, page_id, channel_id, handle, sec_uid, enabled, priority,
+                    created_at, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                company,
+                game_name,
+                platform_type,
+                platform.get("username"),
+                url,
+                platform.get("user_id"),
+                platform.get("page_id"),
+                platform.get("channel_id"),
+                platform.get("handle"),
+                platform.get("sec_uid"),
+                enabled,
+                company_priority,
+                now,
+                now
+            ))
     
     def load_company_social_media_config(self, company: str) -> Optional[Dict[str, Any]]:
         """
