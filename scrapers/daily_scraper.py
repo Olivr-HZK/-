@@ -1,6 +1,6 @@
 """
 从数据库读取竞品公司社媒配置，爬取当天的更新并保存到数据库
-支持 Twitter, TikTok, Instagram, YouTube (Shorts), Facebook
+支持 Twitter, TikTok, Instagram, Facebook
 """
 import os
 import sys
@@ -17,12 +17,8 @@ from scrapers.rapidapi import (
     get_posts_from_twitter,
     get_posts_from_tiktok,
     get_posts_from_instagram,
-    get_posts_from_youtube,
-    get_youtube_shorts_from_channel,
     get_twitter_user_id_from_username,
     get_tiktok_secuid_from_username,
-    get_youtube_channel_id_from_handle,
-    get_youtube_channel_id_from_handle_for_shorts,
     extract_username_from_url,
 )
 
@@ -173,127 +169,6 @@ def scrape_instagram_platform(
         }
     except Exception as exc:
         print(f"      ❌ Instagram爬取失败: {exc}")
-        return None
-
-
-def scrape_youtube_platform(
-    company: str,
-    game: Optional[str],
-    platform: Dict[str, Any],
-    db: CompetitorDatabaseDB,
-    days_ago: int = 0
-) -> Optional[Dict[str, Any]]:
-    """爬取YouTube平台数据（支持Shorts和普通视频）"""
-    channel_id = platform.get("channel_id", "")
-    handle = platform.get("handle", "")
-    url = platform.get("url", "")
-    
-    display_name = f"{company} - {game}" if game else company
-    
-    print(f"    [YouTube] {display_name}")
-    print(f"      URL: {url}")
-    
-    # 判断是否为Shorts
-    is_shorts = "/shorts" in url.lower() if url else False
-    
-    # 确定标识符
-    identifier = None
-    if channel_id:
-        identifier = channel_id
-    elif handle:
-        identifier = handle.lstrip("@")
-        # 如果没有channel_id，尝试获取
-        if not channel_id and handle:
-            print(f"      [调试] 未找到channel_id，正在获取...")
-            if is_shorts:
-                resolved_id = get_youtube_channel_id_from_handle_for_shorts(handle.lstrip("@"))
-            else:
-                resolved_id = get_youtube_channel_id_from_handle(handle.lstrip("@"))
-            if resolved_id:
-                channel_id = resolved_id
-                identifier = channel_id
-    
-    if not identifier:
-        print(f"      ❌ 无法确定YouTube标识符")
-        return None
-    
-    try:
-        if is_shorts:
-            # 获取历史video_ids用于去重
-            historical_video_ids = set()
-            table_name = db._get_table_name(company)
-            conn = db._get_connection()
-            try:
-                cursor = conn.execute("""
-                    SELECT name FROM sqlite_master 
-                    WHERE type='table' AND name=?
-                """, (table_name,))
-                
-                if cursor.fetchone():
-                    query = f"""
-                        SELECT posts_json FROM {table_name}
-                        WHERE platform_type = 'youtube' AND url = ?
-                    """
-                    params = [url]
-                    
-                    if game:
-                        query += " AND game = ?"
-                        params.append(game)
-                    else:
-                        query += " AND game IS NULL"
-                    
-                    cursor = conn.execute(query, params)
-                    rows = cursor.fetchall()
-                    
-                    for row in rows:
-                        try:
-                            posts = json.loads(row["posts_json"])
-                            for post in posts:
-                                video_id = (
-                                    post.get("video_id") or 
-                                    post.get("videoId") or 
-                                    post.get("id") or
-                                    ""
-                                )
-                                if video_id:
-                                    historical_video_ids.add(video_id)
-                                
-                                post_url = post.get("post_url", "")
-                                if "/shorts/" in post_url:
-                                    match = re.search(r'/shorts/([A-Za-z0-9_-]+)', post_url)
-                                    if match:
-                                        historical_video_ids.add(match.group(1))
-                        except Exception:
-                            continue
-            finally:
-                conn.close()
-            
-            print(f"      [YouTube Shorts] 历史数据中有 {len(historical_video_ids)} 个video_id")
-            
-            posts = get_youtube_shorts_from_channel(
-                identifier,
-                count=10,  # 获取最新的10条
-                historical_video_ids=historical_video_ids
-            )
-            print(f"      ✓ 获取到 {len(posts)} 条新 Shorts")
-        else:
-            posts = get_posts_from_youtube(identifier, days_ago=days_ago)
-            print(f"      ✓ 获取到 {len(posts)} 条视频")
-        
-        return {
-            "platform_type": "youtube",
-            "game": game,
-            "url": url,
-            "channel_id": channel_id,
-            "handle": handle,
-            "posts": posts,
-            "posts_count": len(posts),
-            "fetched_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        }
-    except Exception as exc:
-        print(f"      ❌ YouTube爬取失败: {exc}")
-        import traceback
-        print(f"      [调试] 错误详情: {traceback.format_exc()}")
         return None
 
 
@@ -458,7 +333,8 @@ def scrape_company_platforms_from_db(
             if result:
                 time.sleep(1.5)
         elif platform_type == "youtube":
-            result = scrape_youtube_platform(company, game, platform, db, days_ago)
+            print(f"    ⚠️ YouTube 爬虫已禁用，跳过")
+            continue
         elif platform_type == "facebook":
             result = scrape_facebook_platform(company, game, platform, db, days_ago)
         else:

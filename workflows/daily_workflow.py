@@ -15,11 +15,9 @@ from database.history_db import CompetitorHistoryDB
 from scrapers.rapidapi import (
     get_posts_from_twitter,
     get_posts_from_tiktok,
-    get_posts_from_youtube,
     get_posts_from_instagram,
     get_twitter_user_id_from_username,
     get_tiktok_secuid_from_username,
-    get_youtube_channel_id_from_handle,
 )
 from scrapers.facebook import (
     load_input_json,
@@ -80,9 +78,8 @@ def parse_all_platform_accounts(input_data: Dict[str, Any]) -> Dict[str, List[Di
                 account["url"] = (plat.get("url") or "").strip()
                 account["sec_uid"] = (plat.get("sec_uid") or "").strip()
             elif platform_type == "youtube":
-                account["channel_id"] = (plat.get("channel_id") or "").strip()
-                account["handle"] = (plat.get("handle") or "").strip().lstrip("@")
-                account["url"] = (plat.get("url") or "").strip()
+                # YouTube 爬虫已禁用，跳过
+                continue
             elif platform_type == "facebook":
                 account["url"] = (plat.get("url") or "").strip()
                 account["page_id"] = (plat.get("page_id") or plat.get("pageid") or "").strip()
@@ -127,9 +124,8 @@ def parse_all_platform_accounts(input_data: Dict[str, Any]) -> Dict[str, List[Di
                     account["url"] = (plat.get("url") or "").strip()
                     account["sec_uid"] = (plat.get("sec_uid") or "").strip()
                 elif platform_type == "youtube":
-                    account["channel_id"] = (plat.get("channel_id") or "").strip()
-                    account["handle"] = (plat.get("handle") or "").strip().lstrip("@")
-                    account["url"] = (plat.get("url") or "").strip()
+                    # YouTube 爬虫已禁用，跳过
+                    continue
                 elif platform_type == "facebook":
                     account["url"] = (plat.get("url") or "").strip()
                     account["page_id"] = (plat.get("page_id") or plat.get("pageid") or "").strip()
@@ -217,78 +213,6 @@ def scrape_tiktok_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[st
         }
     except Exception as exc:
         print(f"      ❌ TikTok爬取失败: {exc}")
-        return None
-
-
-def scrape_youtube_account(account: Dict[str, Any], days_ago: int = 1) -> Dict[str, Any]:
-    """
-    爬取YouTube频道的 Shorts（仅使用 Shorts API）
-    
-    由于 YouTube API 无法返回发布时间，我们通过比对历史数据来找出新 Shorts：
-    1. 获取最近 20 条 Shorts
-    2. 从历史数据库中加载前一天的视频 ID
-    3. 比对找出不在历史数据中的新 Shorts（即昨天发布的）
-    """
-    from scrapers.rapidapi import (
-        get_youtube_shorts_from_channel,
-        get_youtube_channel_id_from_handle_for_shorts,
-        load_historical_youtube_shorts,
-    )
-    
-    channel_id = account.get("channel_id", "")
-    handle = account.get("handle", "")
-    company = account.get("company", "")
-    game = account.get("game")
-    url = account.get("url", "")
-    platform_type = "youtube"
-    
-    print(f"    [YouTube Shorts] 频道ID: {channel_id or handle}")
-    
-    # 如果没有channel_id，尝试获取
-    if not channel_id and handle:
-        print(f"      [调试] 未找到缓存的channel_id，正在获取...")
-        channel_id = get_youtube_channel_id_from_handle_for_shorts(handle.lstrip("@"))
-        if channel_id:
-            account["channel_id"] = channel_id
-    
-    identifier = channel_id if channel_id else handle.lstrip("@")
-    if not identifier:
-        print(f"      ❌ 无法确定YouTube标识符")
-        return None
-    
-    try:
-        # 加载前一天的历史数据用于比对去重
-        historical_video_ids = load_historical_youtube_shorts(
-            company=company,
-            game=game,
-            platform_type=platform_type,
-            url=url,
-            days_ago=days_ago  # 加载前一天的数据
-        )
-        print(f"      [YouTube Shorts] 历史数据中有 {len(historical_video_ids)} 个视频ID（用于去重）")
-        
-        # 获取 Shorts（会自动过滤历史数据）
-        posts = get_youtube_shorts_from_channel(
-            identifier,
-            count=20,  # 获取最近 20 条用于比对
-            historical_video_ids=historical_video_ids
-        )
-        print(f"      ✓ 获取到 {len(posts)} 条新 Shorts（通过历史数据比对去重）")
-        
-        return {
-            "platform_type": "youtube",
-            "game": account.get("game"),
-            "url": account.get("url", ""),
-            "channel_id": channel_id,
-            "handle": handle,
-            "posts": posts,
-            "posts_count": len(posts),
-            "fetched_at": datetime.utcnow().isoformat() + "Z",
-        }
-    except Exception as exc:
-        print(f"      ❌ YouTube Shorts 爬取失败: {exc}")
-        import traceback
-        print(f"      [调试] 错误详情: {traceback.format_exc()}")
         return None
 
 

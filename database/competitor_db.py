@@ -22,15 +22,24 @@ class CompetitorDatabaseDB:
             db_path: 数据库文件路径，默认为 db/competitor_data.db
         """
         if db_path is None:
-            db_dir = os.environ.get("COMPETITOR_DB_DIR", "/app/db")
-            if not os.path.exists(db_dir):
-                alt_dir = os.path.join(os.path.dirname(__file__), "db")
-                if os.path.exists(alt_dir):
-                    db_dir = alt_dir
-                else:
-                    alt_dir = os.path.join(os.path.dirname(__file__), "db")
-                    os.makedirs(alt_dir, exist_ok=True)
-                    db_dir = alt_dir
+            # 优先使用环境变量指定的目录
+            db_dir = os.environ.get("COMPETITOR_DB_DIR")
+            if db_dir and os.path.exists(db_dir):
+                # 使用环境变量指定的目录
+                pass
+            else:
+                # 默认使用项目根目录下的 db/ 目录
+                # 获取项目根目录（database 目录的父目录）
+                project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                db_dir = os.path.join(project_root, "db")
+                # 如果项目根目录的 db 不存在，尝试 Docker 环境的 /app/db
+                if not os.path.exists(db_dir):
+                    docker_db_dir = "/app/db"
+                    if os.path.exists(docker_db_dir):
+                        db_dir = docker_db_dir
+                    else:
+                        # 都不存在，创建项目根目录下的 db
+                        os.makedirs(db_dir, exist_ok=True)
             db_path = os.path.join(db_dir, "competitor_data.db")
         
         self.db_path = db_path
