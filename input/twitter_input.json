@@ -8,7 +8,7 @@
           "username": "voodooplatform",
           "url": "https://x.com/voodooplatform",
           "type": "twitter",
-          "enabled": true,
+          "enabled": false,
           "user_id": "1471440541548224512"
         },
         {
@@ -70,7 +70,7 @@
         {
           "username": "dreamgames",
           "type": "twitter",
-          "enabled": true,
+          "enabled": false,
           "user_id": "1140560459449458688"
         },
         {
@@ -130,7 +130,7 @@
           "url": "https://x.com/King_Games",
           "type": "twitter",
           "user_id": "30028228",
-          "enabled": true
+          "enabled": false
         },
         {
           "username": "lifeatking",

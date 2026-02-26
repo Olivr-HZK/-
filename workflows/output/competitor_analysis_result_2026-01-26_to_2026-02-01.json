@@ -1,0 +1,98 @@
+{
+  "period": {
+    "start_date": "2026-01-26",
+    "end_date": "2026-02-01",
+    "days": 7
+  },
+  "companies": {
+    "Hungray Studio": {
+      "company": "Hungray Studio",
+      "company_analysis": {
+        "company": "Hungray Studio",
+        "weekly_score": 7.0,
+        "weekly_title": "正式启动跨区域对抗赛「BLOCK BLAST! CUP」，多点联动UGC互动",
+        "summary": "Hungray Studio 本周主要围绕核心产品《Block Blast》进行高强度的品牌运营与互动，重头戏是为期10天的北美vs欧洲跨区域对抗赛。通过对战机制激发玩家的地区荣誉感，并辅以TikTok动画内容和Twitter上的高分UGC转发，旨在提升产品长效留存并挖掘玩家社交裂变的潜力。",
+        "new_gameplay": "推出了名为「BLOCK BLAST! CUP」的限时区域对抗赛（NA vs EU）。玩家需选择代表北美（粉队）或欧洲（蓝队）参赛，在经典模式下获得20,000分以上的成绩即可为本区域贡献积分，活动截止日期为2月5日。",
+        "new_gameplay_post_urls": [
+          "https://www.instagram.com/p/DUAYER1jqB5/"
+        ],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "日常维护包括转发玩家1500万的高分记录进行社交背书（Social Proof），以及发布基于5秒规则梗的短视频内容进行趣味拉新。",
+        "direct_action_suggestions": "1. 效仿区域对抗机制：评估在自家消除类游戏中引入地理分区（如省份或国家）对抗赛，利用集体荣誉感提升用户每日活跃度（DAU）。2. 优化UGC激励：针对玩家晒高分、晒奖杯的行为进行RT（转发）激励，低成本构建活跃社区氛围。3. 内容营销切入：借鉴其「5秒规则」的视频对比营销手法，制作简易但具有共鸣性的生活梗与游戏结合的短视频进行投放测试。4. 关注赛事结果转换：在2月5日对抗赛结束后，监控其是否会推出优胜方限定皮肤或头像框，判断此类轻量级活动对氪金或广告转化的拉动作用。",
+        "posts_count": 9,
+        "period_days": 7
+      }
+    },
+    "King": {
+      "company": "King",
+      "company_analysis": {
+        "company": "King",
+        "weekly_score": 8.0,
+        "weekly_title": "合作新游戏「Crushable」上线 Yahoo Games + 抽奖活动",
+        "summary": "King 本周通过社媒密集发布其与 Yahoo Games 合作推出的全新日更益智小游戏「Crushable」，完成了从悬念预告到正式上线及玩法教学的全周期宣发，并辅以周边抽奖活动维持核心用户活跃度。",
+        "new_gameplay": "推出了名为「Crushable」的新益智游戏，定位为每日游玩的轻量级关卡（Daily Puzzle），并与第三方平台 Yahoo Games 深度绑定，强调“每日必玩”生活方式。",
+        "new_gameplay_post_urls": [
+          "https://www.instagram.com/p/DUGvs7yCVwV/",
+          "https://www.instagram.com/p/DUGbt2LgCYD/",
+          "https://www.instagram.com/p/DUGRa9dE9HI/",
+          "https://www.instagram.com/p/DUGNESRkco9/"
+        ],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "本周包含了福利抽奖（Giveaway）和互动问答帖，旨在维持基础社群权重。",
+        "direct_action_suggestions": [
+          "关注 Candy Crush 与 Yahoo Games 的跨平台流量置换模式，评估小游戏分发渠道对主App回馈流量的效果。",
+          "借鉴其“悬念预告（Stay Tuned）- 正式官宣 - 玩法教程 - 达人合作”的完整宣发节奏。",
+          "利用品牌周边抽奖（Merch Giveaway）收集用户对特定等级和物品的反馈，这是一种低成本的市场调研手段。",
+          "分析 #candycrushpartner 话题下的达人内容，评估 KOL/KOC 在推广其新游戏「Crushable」时的切入点和表现形式。"
+        ],
+        "posts_count": 8,
+        "period_days": 7
+      }
+    },
+    "vita studio": {
+      "company": "vita studio",
+      "company_analysis": {
+        "company": "vita studio",
+        "weekly_score": 2.0,
+        "weekly_title": "日常内容维护为主，侧重情感化与跨品类解谜引流",
+        "summary": "Vita Studio 本周在 TikTok 和 Facebook 平台保持高频同步更新，内容策略从单纯的游戏展示转向生活化、情感化叙事。通过融合烹饪感性内容、猫咪元素以及华容道等益智解谜机制，试图触达更广泛的高年龄段或女性轻度玩家群体，整体侧重品牌温情形象的塑造而非核心玩法的迭代。",
+        "new_gameplay": "无",
+        "new_gameplay_post_urls": [],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "本周均为常规宣传内容，涵盖了温馨家庭场景、美食烹饪、宠物互动以及跨类别的简单益智小游戏（华容道）展示。",
+        "direct_action_suggestions": [
+          "关注其‘非麻将玩法’（如华容道）的吸量效果，评估是否在买量端测试混合玩法素材。",
+          "借鉴其温情叙事风格（Reunion/Cozy vibes），针对中老年合家欢受众制作更具情感代入感的广告视频。",
+          "保持对 TikTok 评论区的监控，观察其猫咪和美食视频是否带来了显著的用户留存或品牌好感度提升。",
+          "复刻其双平台（TT+FB）同步更新策略，确保针对不同受众偏好的垂直内容（如益智解谜vs生活化内容）覆盖。"
+        ],
+        "posts_count": 9,
+        "period_days": 7
+      }
+    },
+    "voodoo": {
+      "company": "voodoo",
+      "company_analysis": {
+        "company": "voodoo",
+        "weekly_score": 5.0,
+        "weekly_title": "聚焦存量游戏社区互动，通过新资源与关卡挑战维持粘性",
+        "summary": "本周 Voodoo 的社媒动态集中在《Mob Control》和《Paper.io》两款老产品的运营维护上。重点通过展示核心资源（Ultimate Rainbowl）和角色（Captain Callie）引导 Instagram 用户通过 Emoji 进行互动，同时在 TikTok 端利用高难度挑战吸引动作解说类流量。",
+        "new_gameplay": "《Mob Control》展示了新的终极资源‘Ultimate Rainbowl’以及太空主题关卡内容。",
+        "new_gameplay_post_urls": [
+          "https://www.instagram.com/p/DUOJP1UDTuJ/",
+          "https://www.instagram.com/p/DUBIVPRjV2T/"
+        ],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "本周更新多为常规的评论区 Emoji 征集互动以及带标签的高难度挑战视频。 ",
+        "direct_action_suggestions": "1. 效仿其 Emoji 互动策略，在 Instagram 针对核心数值道具做收集向引导；\n2. 关注《Mob Control》太空主题后续是否有更大规模联动；\n3. 在 TikTok 端尝试投放类似‘Very hard’标签的高难度失败/挑战剪辑流素材；\n4. 针对其老游戏新版本的‘终极资源’设计思路进行数值体系回溯。",
+        "posts_count": 3,
+        "period_days": 7
+      }
+    }
+  },
+  "analyzed_at": "2026-02-16T12:34:59.159978Z"
+}

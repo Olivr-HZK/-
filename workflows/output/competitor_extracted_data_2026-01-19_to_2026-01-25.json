@@ -1,0 +1,1092 @@
+{
+  "period": {
+    "start_date": "2026-01-19",
+    "end_date": "2026-01-25",
+    "days": 7
+  },
+  "companies": {
+    "Hungray Studio": {
+      "company": "Hungray Studio",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-01-19",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "RT @DR4GP4TH: .@BlockBlastSquad ?????????????? https://t.co/CkmKec8cXj",
+              "published_at": "2026-01-19T02:19:31+00:00",
+              "published_at_display": "2026-01-19 02:19:31 UTC",
+              "post_url": "https://x.com/1822950649929105408/status/2013073806630486328",
+              "engagement": {
+                "like": 0,
+                "retweet": 1,
+                "reply": 0,
+                "quote": 0,
+                "bookmark": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-20T07:24:04.272757Z"
+        },
+        {
+          "fetch_date": "2026-01-20",
+          "platform_type": "tiktok",
+          "game": "Block Blast",
+          "url": "https://www.tiktok.com/@BlockBlastOfficial",
+          "username": "BlockBlastOfficial",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Today we're excited to share a milestone: 70M DAU and 300M MAU.",
+              "published_at": "2026-01-20T13:48:33",
+              "published_at_display": "2026-01-20 13:48:33",
+              "post_url": "https://www.tiktok.com/@BlockBlastOfficial/video/7597316467511545118",
+              "media_urls": [],
+              "engagement": {
+                "like": 38,
+                "comment": 8,
+                "share": 0,
+                "view": 4172
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-21T07:36:18.715148Z"
+        },
+        {
+          "fetch_date": "2026-01-21",
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "url": "https://www.instagram.com/blockblastglobal/",
+          "username": "blockblastglobal",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Today we're excited to share a milestone: 70M DAU and 300M MAU.\nBehind every number is a real player, a real moment, and a whole lot of trust.\nThank you to every player who made this possible.\n#hungrystudio #blockblast",
+              "published_at": "2026-01-21T11:28:56",
+              "published_at_display": "2026-01-21 11:28:56",
+              "post_url": "https://www.instagram.com/p/DTwfYT6jqxu/",
+              "media_urls": [
+                "https://instagram.fssg1-1.fna.fbcdn.net/v/t39.30808-6/615493536_122204690258472249_4621600848857930931_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ig_cache_key=MzgxNDY4Njg5NDQ3NTYxOTQzOA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTA4MC5zZHIuQzMifQ%3D%3D&_nc_ohc=eaoR4nbMeA4Q7kNvwGZV4nt&_nc_oc=Adlvrr5JqdWc2vgeao_Z9_nF3aJsUMuzWkcaOmsQoGZQh8R80BPO0ojsgp8RQCYjf6U&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fssg1-1.fna&_nc_gid=1ZNjy3ydlU42VMilwqoYcQ&oh=00_AfrECzDLM8-zBVe2qZVCKfOX1c27nHW0sALSoMoC-HvFsw&oe=69765FF6"
+              ],
+              "engagement": {
+                "like": 3,
+                "comment": 1
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-22T04:00:30.335015Z"
+        },
+        {
+          "fetch_date": "2026-01-21",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Today we're excited to share a milestone: 70M DAU and 300M MAU.\nBehind every number is a real player, a real moment, and a whole lot of trust.\nThank you to every player who made this possible.\n#hungrystudio #blockblast https://t.co/NguNtrN7sm",
+              "published_at": "2026-01-21T03:33:46+00:00",
+              "published_at_display": "2026-01-21 03:33:46 UTC",
+              "post_url": "https://x.com/1822950649929105408/status/2013817269059481604",
+              "engagement": {
+                "like": 1,
+                "retweet": 0,
+                "reply": 0,
+                "quote": 0,
+                "bookmark": 0,
+                "view": "130"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-22T04:00:46.064237Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "url": "https://www.instagram.com/blockblastglobal/",
+          "username": "blockblastglobal",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "：CREATE, POST, WIN\nwhat you need to do: \n a. Post 🥰ONE🥰 video related to Block Blast!,(your video need have  gameplay video  or ip characters)\nwhat you will get: \n a. win a chance to join creator plan\n  i. You will have a change to become an influencer\n b. build your own account with official boost\n  i. give your high-quality video a chance to be seen.,\nHow to join:\n a. create a video related to Block Blast! and with \"#blockblastgo\" (tiktok/youtube).\n b. over 1k video views (the more you created, the more chance you will get to be promoted)\n c. sparkcode, if you post your video, please follow the guide and get your sparkcode.\nhere is materials for making videos:\nhttps://docs.google.com/document/d/1c-bbnZvsmIZjC93f12aOv1fUzOyuhxagkwYK679YINc/edit?usp=sharing\nhere is the submission form :\nhttps://forms.gle/AJ6iNWa7uXCwSY6N9\n#blockblast #hungrystudio #creatorprogram #creators",
+              "published_at": "2026-01-23T14:52:11",
+              "published_at_display": "2026-01-23 14:52:11",
+              "post_url": "https://www.instagram.com/p/DT2AOwaF15U/",
+              "media_urls": [
+                "https://scontent-icn2-1.cdninstagram.com/v/t39.30808-6/617166445_122205054080472249_5113679823926668426_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ig_cache_key=MzgxNjIzODczNDEzMzExOTk5Mw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTA4MC5zZHIuQzMifQ%3D%3D&_nc_ohc=cvxs5_CP9hQQ7kNvwG1O0np&_nc_oc=AdkBld-Y2VQf7Fw2te8hm3jim2TvQvDc_s2GZEkz6pdrCX7WJzSo3mFj30vy-2tjTRM&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-icn2-1.cdninstagram.com&_nc_gid=qVrz15goz5R26ES06IRGTg&oh=00_Afr7aRimsR2lu1C_6ou95GHdrgk7CHhAAMpmbfRYa6V4RQ&oe=697BB093"
+              ],
+              "engagement": {
+                "like": 12,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:43:21.766388Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "CREATE, POST, WIN\nwhat you need to do:\n      a. Post 🥰ONE🥰 video related to Block Blast!,(your video need have  gameplay video  or ip characters)\n\nwhat you will get:\n    a. win a chance to join creator plan——You will have a change to become an influencer\n    b. build your own https://t.co/xnxdPb5TiX",
+              "published_at": "2026-01-23T06:54:47+00:00",
+              "published_at_display": "2026-01-23 06:54:47 UTC",
+              "post_url": "https://x.com/1822950649929105408/status/2014592632081809465",
+              "engagement": {
+                "like": 1,
+                "retweet": 1,
+                "reply": 0,
+                "quote": 0,
+                "bookmark": 1,
+                "view": "296"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:43:36.948752Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Fast, reliable internet no matter how remote.\n\nExperience speeds up to 400+ Mbps to enjoy streaming your favorite shows and sports, video calling, browsing forums and weather apps—even in the most rural areas.\n\nOrder online in under 2 minutes.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1822950649929105408/status/2015469462829326646",
+              "engagement": {
+                "like": 278,
+                "retweet": 68,
+                "reply": 8,
+                "quote": 1,
+                "bookmark": 19,
+                "view": "1755000"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:46:59.294772Z"
+        }
+      ],
+      "platforms_summary": {
+        "twitter_Block Blast": {
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "posts_count": 4,
+          "dates": [
+            "2026-01-19",
+            "2026-01-21",
+            "2026-01-23",
+            "2026-01-25"
+          ]
+        },
+        "tiktok_Block Blast": {
+          "platform_type": "tiktok",
+          "game": "Block Blast",
+          "posts_count": 1,
+          "dates": [
+            "2026-01-20"
+          ]
+        },
+        "instagram_Block Blast": {
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "posts_count": 2,
+          "dates": [
+            "2026-01-21",
+            "2026-01-23"
+          ]
+        }
+      }
+    },
+    "vita studio": {
+      "company": "vita studio",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-01-19",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-19T10:32:20Z",
+              "title": "Vita Mahjong",
+              "text": "👀 Mahjong-style eye exam! Can you spot them all? 🔍 \n\n#vitamahjong #mahjong #VisionChallenge #FunTest #TikTokGames #viral",
+              "link": "https://www.facebook.com/reel/1781878419143952/"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-20T07:24:23.462167Z"
+        },
+        {
+          "fetch_date": "2026-01-19",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "👀 Mahjong-style eye exam! Can you spot them all? 🔍 #vitamahjong #mahjong #VisionChallenge #FunTest #TikTokGames #viral",
+              "published_at": "2026-01-19T18:05:00",
+              "published_at_display": "2026-01-19 18:05:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7596995213827083533",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/oU3ezsAAqEHJhCzSAfQVE8Itf5Ed2CHkwDor2F/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=1762&bt=881&cs=0&ds=6&ft=-Csk_mDUPD12NnH3Od-UxJwFGY6e3wv25McAp&mime_type=video_mp4&qs=0&rc=Z2ZnNDk7OWZnNDZmaTQ5NEBpanJvaG45cnd4ODMzZzgzNEBeYWIwLWFjNjUxNDMuLi8zYSNjYGI1MmRzcGphLS1kLy9zcw%3D%3D&btag=e000b8000&expire=1769066683&l=20260120152424860B864747201A3CC7E6&ply_type=2&policy=2&signature=c89635fb767eb65ba45fb7da8f1b40c8&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 2,
+                "comment": 0,
+                "share": 1,
+                "view": 67
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-20T07:24:27.345984Z"
+        },
+        {
+          "fetch_date": "2026-01-20",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-20T10:10:02Z",
+              "title": "Vita Mahjong",
+              "text": "Some treasure isn’t found… it’s calculated! 💡💰\n\n#vitamahjong #mahjong #puzzlefun #mathchallenge #viralgame #gamersunite",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid02yv2qW6XJiu4HcmhFMF7sWbYX5YYCsB7kJLBEcBfX8tPi8ebqYm2nuVwT6qa2XUHNl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-21T07:36:49.273268Z"
+        },
+        {
+          "fetch_date": "2026-01-20",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Some treasure isn’t found… it’s calculated! 💡💰",
+              "published_at": "2026-01-20T18:10:00",
+              "published_at_display": "2026-01-20 18:10:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7597357413062282509",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/oE0xPpfJfABmK7DdCMgvx1Ig2FVhzbBq5SEQDM/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=514&bt=257&cs=0&ds=6&ft=-Csk_mv6PD12NQLrfd-Ux0tFSY6e3wv25scAp&mime_type=video_mp4&qs=0&rc=OGRpaTg4ZDk4OjMzODQ5OUBpM3RnaXI5cnFtODMzZzgzNEBeYGBgXi8uX2IxLmExYV9fYSMwbWNxMmRjbGthLS1kLy9zcw%3D%3D&btag=e000b0000&expire=1769153820&l=202601211536506B3CBF053BBCB399FBE9&ply_type=2&policy=2&signature=995af3bc5af10cf0d612ba9aa174b9b9&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 12,
+                "comment": 1,
+                "share": 0,
+                "view": 297
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-21T07:36:53.473837Z"
+        },
+        {
+          "fetch_date": "2026-01-21",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-21T10:10:22Z",
+              "title": "Vita Mahjong",
+              "text": "Mahjong spaceship ready for takeoff! 🚀🀄✨\n\n#vitamahjong #mahjong #spaceadventure #arcadefun #viralclip #gaminglife",
+              "link": "https://www.facebook.com/reel/1405437958042151/"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-22T04:02:18.702804Z"
+        },
+        {
+          "fetch_date": "2026-01-21",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Mahjong spaceship ready for takeoff! 🚀🀄✨",
+              "published_at": "2026-01-21T18:10:00",
+              "published_at_display": "2026-01-21 18:10:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7597695769788828942",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/ocugWLgIE2DAcSXFGzBFjp496DGDVCgqQeExfj/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=1886&bt=943&cs=0&ds=6&ft=-Csk_mH1PD12Nkctfd-UxQw2NY6e3wv25QcAp&mime_type=video_mp4&qs=0&rc=OjkzOWczOThmZDZkNmc7ZEBpanJxanc5cnc5ODMzZzgzNEA2YTNhXjI1Xy8xM14tXi1gYSNpMGguMmRrcmxhLS1kLy9zcw%3D%3D&btag=e000b8000&expire=1769227355&l=2026012212022025455F02EC42B2515527&ply_type=2&policy=2&signature=c01ddb62b167d47e485f220c825cd669&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 1,
+                "comment": 0,
+                "share": 0,
+                "view": 19
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-22T04:02:23.126246Z"
+        },
+        {
+          "fetch_date": "2026-01-22",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-22T10:10:04Z",
+              "title": "Vita Mahjong",
+              "text": "🔍 Spot the odd one out… Can you crack the challenge? 😏\n\n#vitamahjong #mahjong #brainchallenge #puzzlegame #findtheodd #gametime",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid02v4oovK8ApCYfp2hr2ZBSC1wMAQh3v2LqMaY415Zsv4NuWNQ1tVXZ1CCBsmBrKDDRl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-23T03:26:49.164450Z"
+        },
+        {
+          "fetch_date": "2026-01-22",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "🔍 Spot the odd one out… Can you crack the challenge? 😏",
+              "published_at": "2026-01-22T18:10:00",
+              "published_at_display": "2026-01-22 18:10:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7598025112360701239",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/o4iQBUIQgHASvf4eBbLkGlHKswbgeEA7GCzrRU/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=440&bt=220&cs=0&ds=6&ft=4fUEKMRh8Zmo0t9m9x4jVCh7ypWrKsd.&mime_type=video_mp4&qs=0&rc=NGUzNDY4NWY1NGQ8OjlpZkBpajMzZm85cndzODMzZzgzNEBgMF9hYmIxXzQxLy9eMGNfYSNhMjA0MmRzamxhLS1kLy9zcw%3D%3D&btag=e000b0000&expire=1769311621&l=20260123112650CD9C6368431A73A68D95&ply_type=2&policy=2&signature=8c857099136e9d9a10f2e0e38adac681&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 11,
+                "comment": 0,
+                "share": 0,
+                "view": 223
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-23T03:26:53.848353Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-23T10:20:18Z",
+              "title": "Vita Mahjong",
+              "text": "Tap the tiles, feel the rhythm! 🀄🎵⚡\n\n#vitamahjong #mahjong #arcadefun #rhythmgame #viralclip #gaminglife #trendalert",
+              "link": "https://www.facebook.com/reel/1788469905171829/"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:45:22.781900Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Tap the tiles, feel the rhythm! 🀄🎵⚡",
+              "published_at": "2026-01-23T18:10:00",
+              "published_at_display": "2026-01-23 18:10:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7598025745264381197",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/o0QUFLNfVpETdSDhBaDxevFZvErcgAkIP6nBEC/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=1086&bt=543&cs=0&ds=6&ft=I~da4ojBD12NvLqCj.IxRmk_HlBF-UjNS3opiX&mime_type=video_mp4&qs=0&rc=MztpZTM0NTc3ZDM1MzhpM0Bpam5vcmw5cmxzODMzZzgzNEAyLjA2NDE0NWAxNWBhNDItYSMzcGkwMmRza2xhLS1kLy9zcw%3D%3D&btag=e000b8000&expire=1769568354&l=20260126104528C3A164B55D5561C39AB7&ply_type=2&policy=2&signature=027653ea0663805031f431a69b81b4e5&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 10,
+                "comment": 1,
+                "share": 0,
+                "view": 155
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:45:31.923225Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-01-25T10:10:02Z",
+              "title": "Vita Mahjong",
+              "text": "Only the sharpest eyes get it right! Which one’s your pick? 👀✨\n\n#vitamahjong #mahjong #matchinggame #logicfun #wowmoment #viralhit",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid0vYYrMxHVQiEHuEG7WBAjcdCkXnUD1FKv6jLSg4aw4iMeXSfoSYXgwMJ23DEMWiJhl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:48:17.049345Z"
+        }
+      ],
+      "platforms_summary": {
+        "facebook_Vita Mahjong": {
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "posts_count": 6,
+          "dates": [
+            "2026-01-19",
+            "2026-01-20",
+            "2026-01-21",
+            "2026-01-22",
+            "2026-01-23",
+            "2026-01-25"
+          ]
+        },
+        "tiktok_Vita Mahjong": {
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "posts_count": 5,
+          "dates": [
+            "2026-01-19",
+            "2026-01-20",
+            "2026-01-21",
+            "2026-01-22",
+            "2026-01-23"
+          ]
+        }
+      }
+    },
+    "voodoo": {
+      "company": "voodoo",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-01-20",
+          "platform_type": "tiktok",
+          "game": "papers.io",
+          "url": "https://www.tiktok.com/@gamepaper.io2",
+          "username": "gamepaper.io2",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Who are you kidding 🤣🔥",
+              "published_at": "2026-01-20T16:44:33",
+              "published_at_display": "2026-01-20 16:44:33",
+              "post_url": "https://www.tiktok.com/@gamepaper.io2/video/7597361885020835094",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/no1a/tos-no1a-ve-0068c001-no/oMZDEFAFVQejJRSgFaEbp9IzlEQvDf6BkHjpYv/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=612&bt=306&cs=0&ds=6&ft=I~da4ouyD12NvKrKu.IxRyFNblBF-UjNS3opiX&mime_type=video_mp4&qs=0&rc=OTs2ZTppMzU6ZjY8aGRpZEBpM25sZWs5cnVtODMzbzczNUAtMDJjLS5gNV4xXy8zNi82YSNlaS5lMmRzcmthLS1kMTFzcw%3D%3D&btag=e000b8000&expire=1769153858&l=20260121153723584342B30715A94029B0&ply_type=2&policy=2&signature=5deb1778af7ab85e7a0225784e247e23&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 21,
+                "comment": 5,
+                "share": 0,
+                "view": 676
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-21T07:37:26.453689Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "instagram",
+          "game": "mob control",
+          "url": "https://www.instagram.com/mobcontrolgame/",
+          "username": "mobcontrolgame",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Battle through Adventures to find out what happens 👀#mobcontrol",
+              "published_at": "2026-01-23T05:50:00",
+              "published_at_display": "2026-01-23 05:50:00",
+              "post_url": "https://www.instagram.com/p/DT1CBl4jQj-/",
+              "media_urls": [
+                "https://scontent-dus1-1.cdninstagram.com/v/t51.71878-15/621078886_2306950999811339_2810920845982743996_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=100&ig_cache_key=MzgxNTk2NTE2NDc1NjA3Njc5OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjY0MHgxMTM2LnNkci5DMyJ9&_nc_ohc=NmWfAKKXXlYQ7kNvwEz_teb&_nc_oc=AdlYMM1sOWSmxMiPp5US5yrTiqDDw63f0kWVcnftkHzVBQtEi1nC1cZkOBhGv6FJRoZr3jhUBsKbNytqcPidPdZY&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-dus1-1.cdninstagram.com&_nc_gid=1IMIwXIao7W7-9CjyfCXqg&oh=00_AfoPNF2VsAwu4_oF9cnbWnAPsj-5MGl4OnWPTF3yrNomZA&oe=697B976C",
+                "https://scontent-dus1-1.cdninstagram.com/o1/v/t16/f2/m69/AQMyo_ClnCjR4Z48FSKHJ4ET4HRBPeJJBOXBlSdQbo2U0PuNHD1hsdI8hi4_97sqrQdE3sF394vLlcqdIGgbhZqN.mp4?strext=1&_nc_cat=108&_nc_sid=5e9851&_nc_ht=scontent-dus1-1.cdninstagram.com&_nc_ohc=dDsJXVz1EdsQ7kNvwHcGO6S&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc5MzY1MjEzNTkxMTc3MzcsImFzc2V0X2FnZV9kYXlzIjoyLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTEsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&vs=6846a5fbf34a59f4&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HQzJmNlNTTnRlWGlZZjRDQUd3TTljSm5hYTVkYnNwVEFRQUYVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyL0MwNEMwRDA1QTJGN0I5NTIxOEQwNEVFQTg3NDMwODlFX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbStu6B-srcPxUCKAJDMywXQCYAAAAAAAAYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=1IMIwXIao7W7-9CjyfCXqg&_nc_zt=28&oh=00_AfoD50Nei0RPnUUzdQpXa0yWFru-FEllavittBopxZix2Q&oe=697BA348"
+              ],
+              "engagement": {
+                "like": 101,
+                "comment": 9
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:45:54.465585Z"
+        },
+        {
+          "fetch_date": "2026-01-23",
+          "platform_type": "tiktok",
+          "game": "papers.io",
+          "url": "https://www.tiktok.com/@gamepaper.io2",
+          "username": "gamepaper.io2",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "👏 Just one more game",
+              "published_at": "2026-01-23T05:28:59",
+              "published_at_display": "2026-01-23 05:28:59",
+              "post_url": "https://www.tiktok.com/@gamepaper.io2/video/7598301088944540950",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/no1a/tos-no1a-ve-0068-no/oYqCnPUyRwJIBtzENx4iAfAylCuiIHVE0HUtSd/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=914&bt=457&cs=0&ds=6&ft=-Csk_mfMPD12Nsy.vd-Uxbc2hY6e3wv252cAp&mime_type=video_mp4&qs=0&rc=ODpkNGlmMzloOjVlNTk3M0Bpajo4a3I5cnk7ODMzbzczNUA2YzQ0XzQwNjIxYTBhMDQzYSNnLzNqMmQ0aG1hLS1kMTFzcw%3D%3D&btag=e000b8000&expire=1769568380&l=202601261046058877BEF1809848B910F5&ply_type=2&policy=2&signature=f44f85950201191e8f8217bb04f48f68&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 23,
+                "comment": 5,
+                "share": 1,
+                "view": 1014
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:46:08.670055Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "instagram",
+          "game": "mob control",
+          "url": "https://www.instagram.com/mobcontrolgame/",
+          "username": "mobcontrolgame",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "every single time 🥲 #mobcontrol",
+              "published_at": "2026-01-25T16:12:59",
+              "published_at_display": "2026-01-25 16:12:59",
+              "post_url": "https://www.instagram.com/p/DT7Syo1DXgI/",
+              "media_urls": [
+                "https://scontent-dus1-1.cdninstagram.com/v/t51.71878-15/622786502_823659254053876_7828962420758320424_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=111&ig_cache_key=MzgxNzcyNzc1Mzc3NzQxMjEwNA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjY0MHgxMTM2LnNkci5DMyJ9&_nc_ohc=E5nTvlDXr34Q7kNvwFkxSvz&_nc_oc=AdnV0DMTBqOZ7ntwCcH9a3NnPeYYDrmXWY51O6BtLmTDrODunl4b-Qu1J1x2BwoaUOy4I2SE46dS-1t03M7iWweW&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-dus1-1.cdninstagram.com&_nc_gid=1IMIwXIao7W7-9CjyfCXqg&oh=00_Afp7HEti1ht_mKKzxVg9W7KP2cJoH01PpdE2iGllzk1UMA&oe=697B96A6",
+                "https://scontent-dus1-1.cdninstagram.com/o1/v/t2/f2/m86/AQMEvYhw3TQBT04szbBB5sE07YXvHIanBGnbDd5plV8HkZWlQuUHZzabRXGuHphSRqWS_zaldPOU69z4xUB8lEH2f--Iyjkz2mnJoYw.mp4?_nc_cat=111&_nc_sid=5e9851&_nc_ht=scontent-dus1-1.cdninstagram.com&_nc_ohc=qcX5z30uMdoQ7kNvwHZ73Eo&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc5MzY5NzI2MzcxMTc3MzcsImFzc2V0X2FnZV9kYXlzIjowLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6NCwidXJsZ2VuX3NvdXJjZSI6Ind3dyJ9&ccb=17-1&vs=99908231e554e7be&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8yNjRFRkQxRDY4OERBQjgwRURFODk0QzNFNTNFRTU5OV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzVFNEVGMEUzOTkyRDUxQ0MzNUI2NUI0Qzg0QTVCRUFFX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbS9IymnOXcPxUCKAJDMywXQBAAAAAAAAAYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&_nc_gid=1IMIwXIao7W7-9CjyfCXqg&_nc_zt=28&oh=00_AfphMCzk0zgmeW1Q_hoQtn-eGGKy8MlZOv02pw-zOq4UeA&oe=6977B2D8"
+              ],
+              "engagement": {
+                "like": 6,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:48:40.608417Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "tiktok",
+          "game": "mob control",
+          "url": "https://www.tiktok.com/@gamemobcontrol",
+          "username": "gamemobcontrol",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "#mobcontrol #mobilegame #gaming ",
+              "published_at": "2026-01-25T16:04:03",
+              "published_at_display": "2026-01-25 16:04:03",
+              "post_url": "https://www.tiktok.com/@gamemobcontrol/video/7599206873245551894",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/no1a/tos-no1a-ve-0068-no/ogQGkQlAzktffrQrYWgek1uTofXGUA4XgnRbmO/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=1754&bt=877&cs=0&ds=6&ft=I~da4oA.D12Nv~UCj.IxR8GNWlBF-UjNSEopiX&mime_type=video_mp4&qs=0&rc=NjRpNzllZmRpOWloNjo8NkBpMzxkeXM5cmx2ODMzbzczNUAwXi8yMzZjXmExYzMtYDVeYSMvYzNjMmRrcG5hLS1kMTFzcw%3D%3D&btag=e000b0000&expire=1769568526&l=202601261048431A900B908E17C4CA2A44&ply_type=2&policy=2&signature=4c2a9a71ca7a09609221ffface3ed8ff&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 3,
+                "comment": 1,
+                "share": 0,
+                "view": 33
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:48:46.893750Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": null,
+          "url": "https://x.com/voodooplatform",
+          "username": "voodooplatform",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Stream. Scroll. Surf.\n\nGet speeds up to 400+ Mbps to connect with friends and family without delays.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1471440541548224512/status/2015469462837674084",
+              "engagement": {
+                "like": 67,
+                "retweet": 14,
+                "reply": 4,
+                "quote": 1,
+                "bookmark": 12,
+                "view": "1363039"
+              }
+            },
+            {
+              "text": "Starlink’s high-speed internet is available in your area.\n\nExperience speeds up to 400+ Mbps to stream your favorite shows and sports, work from home, browse social media and more.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1471440541548224512/status/2015469462808580414",
+              "engagement": {
+                "like": 75,
+                "retweet": 12,
+                "reply": 9,
+                "quote": 0,
+                "bookmark": 8,
+                "view": "1080571"
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-01-26T02:48:37.752010Z"
+        }
+      ],
+      "platforms_summary": {
+        "tiktok_papers.io": {
+          "platform_type": "tiktok",
+          "game": "papers.io",
+          "posts_count": 2,
+          "dates": [
+            "2026-01-20",
+            "2026-01-23"
+          ]
+        },
+        "instagram_mob control": {
+          "platform_type": "instagram",
+          "game": "mob control",
+          "posts_count": 2,
+          "dates": [
+            "2026-01-23",
+            "2026-01-25"
+          ]
+        },
+        "tiktok_mob control": {
+          "platform_type": "tiktok",
+          "game": "mob control",
+          "posts_count": 1,
+          "dates": [
+            "2026-01-25"
+          ]
+        },
+        "twitter_company": {
+          "platform_type": "twitter",
+          "game": null,
+          "posts_count": 2,
+          "dates": [
+            "2026-01-25"
+          ]
+        }
+      }
+    },
+    "King": {
+      "company": "King",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-01-21",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "No wrong answers here… just sweet ones 🍬\nLeft or right? 👇",
+              "published_at": "2026-01-21T02:00:12",
+              "published_at_display": "2026-01-21 02:00:12",
+              "post_url": "https://www.instagram.com/p/DTveRvFDBPs/",
+              "media_urls": [
+                "https://instagram.fsof11-1.fna.fbcdn.net/v/t51.82787-15/619811862_18556982185015545_2412034247708184187_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=101&ig_cache_key=MzgxNDQwMDU2OTU4MzA4MDQyOA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=Fg86dSIJENsQ7kNvwFimrti&_nc_oc=Adl6BtHQHeUECuxhZ21uiHOakpZ2sYEqm2y2z8l3l7tH-Vus9S38MR2uu9qqpp2Jn1s&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fsof11-1.fna&_nc_gid=A8w1I6-iL4zXrzrQIfLZ1Q&oh=00_Afr_bu48DAmwr1PU1-YK2onnjXWjb71rZ9R0HTthmzhnDw&oe=6977849A"
+              ],
+              "engagement": {
+                "like": 217,
+                "comment": 71
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-22T04:01:08.902530Z"
+        },
+        {
+          "fetch_date": "2026-01-22",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Something exciting is dropping next week… 👀",
+              "published_at": "2026-01-22T23:04:10",
+              "published_at_display": "2026-01-22 23:04:10",
+              "post_url": "https://www.instagram.com/p/DT0TuZ0jOKk/",
+              "media_urls": [
+                "https://scontent.cdninstagram.com/v/t51.82787-15/621169965_18557422363015545_2708713613686323010_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ig_cache_key=MzgxNTc2MTUzNTk5NDQ4NzQ2MA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEyNjh4MTU4NS5zZHIuQzMifQ%3D%3D&_nc_ohc=4YRcZXOWj9IQ7kNvwEBMu8I&_nc_oc=AdmQOSQsbc1izJLLtopRvjlrqGKOUGU89gwvoffNdUUltLOXUa-dOzzw7H1R6n0o1Cg&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=0isMCOvjRqmhpsz_pDoSRA&oh=00_AfpPpPXIKCoPFXisAwqT4jZPArv7OxKfk9Tb3sTBhFHQLQ&oe=6978A159"
+              ],
+              "engagement": {
+                "like": 159,
+                "comment": 36
+              }
+            },
+            {
+              "text": "Hello stranger...",
+              "published_at": "2026-01-22T02:04:10",
+              "published_at_display": "2026-01-22 02:04:10",
+              "post_url": "https://www.instagram.com/p/DTyDh87E-Vn/",
+              "media_urls": [
+                "https://scontent.cdninstagram.com/v/t51.82787-15/620361228_18557217781015545_172624149665192640_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=110&ig_cache_key=MzgxNTEyNzM2MTYzNDE2NjExOQ%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjE0NDB4MTQ0MC5zZHIuQzMifQ%3D%3D&_nc_ohc=FmeEK4E-7wQQ7kNvwFrD74q&_nc_oc=Adm28gZwyVoW3Am57ICs1suQyPXr7qS8fVvt5pJlM95yr2uFgEwbCs7mBVgp7OCB2lE&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&_nc_gid=0isMCOvjRqmhpsz_pDoSRA&oh=00_AfqudwjnR1CBloHXxSuwOvjNnKnIeAZDX3v7TWNKxRgYFg&oe=6978ADC8"
+              ],
+              "engagement": {
+                "like": 121,
+                "comment": 17
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-01-23T03:25:20.044931Z"
+        },
+        {
+          "fetch_date": "2026-01-24",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Only a Senior Product Manager would have favorite blockers 🤣 Which one is your fav (or least fav 🤭)? \n\nWatch John talk all about these and more in the latest episode of Crush & Tell, streaming now! Link in bio!",
+              "published_at": "2026-01-24T02:04:15",
+              "published_at_display": "2026-01-24 02:04:15",
+              "post_url": "https://www.instagram.com/p/DT3NIrckx6n/",
+              "media_urls": [
+                "https://instagram.fcnx2-1.fna.fbcdn.net/v/t51.82787-15/621010171_18557727133015545_7115982792960762711_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ig_cache_key=MzgxNjU3NjkxNDE3MDI5NDI4Nw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=eNlJVvqglZAQ7kNvwFbOLSt&_nc_oc=AdnnDqfXVVsa1JJatKhRoGJA48v61MGbbYAEWlIbNj8of2NPiHZAedSQHhQRNVoTOFiV7F_Sb1dR7gVHtOJ75CbC&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcnx2-1.fna&_nc_gid=i6vKwdbwQhrMJG3TxG4Dxg&oh=00_AfqjXl_xTMvTwGJ_BpUCZ2yw0hfAqfolKXotojiux5kHVw&oe=697BBC43"
+              ],
+              "engagement": {
+                "like": 164,
+                "comment": 20
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-25T08:33:23.583886Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "it’s called priorities 💅",
+              "published_at": "2026-01-25T02:04:13",
+              "published_at_display": "2026-01-25 02:04:13",
+              "post_url": "https://www.instagram.com/p/DT5x6ktk_4S/",
+              "media_urls": [
+                "https://instagram.fcnx2-1.fna.fbcdn.net/v/t51.82787-15/622290351_18557992735015545_8346635339957541973_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=111&ig_cache_key=MzgxNzMwMTY4ODYwMTI4MDAxOA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=XIaf4uJ_uncQ7kNvwGqlgCv&_nc_oc=AdlWPueSGJZQMoRK_kS7bRDL3EJBUJHkUYpTio04s8gSFZze8-ZHjdvJ0Sj72YWTPONdWZh2PCL9hhAmqqvp29rF&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fcnx2-1.fna&_nc_gid=i6vKwdbwQhrMJG3TxG4Dxg&oh=00_Afrhfcwug6hhTqnCAAcLlgbz3bwQSqarhFpLULnPOTcCJA&oe=697B9EB1"
+              ],
+              "engagement": {
+                "like": 123,
+                "comment": 12
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:47:16.428714Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": null,
+          "url": "https://x.com/King_Games",
+          "username": "King_Games",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "With more than 8,500 satellites in orbit, Starlink provides connectivity through harsh weather conditions and natural disasters.\n\nOrder online in under 2 minutes.",
+              "published_at": "2026-01-25T16:59:30+00:00",
+              "published_at_display": "2026-01-25 16:59:30 UTC",
+              "post_url": "https://x.com/30028228/status/2015469588562227414",
+              "engagement": {
+                "like": 88,
+                "retweet": 20,
+                "reply": 4,
+                "quote": 0,
+                "bookmark": 11,
+                "view": "1105363"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:47:12.375909Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": "Candy Crush Soda Saga",
+          "url": "https://x.com/CandyCrushSoda",
+          "username": "CandyCrushSoda",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Starlink’s high-speed internet is available in your area.\n\nExperience speeds up to 400+ Mbps to stream your favorite shows and sports, work from home, browse social media and more.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/2534567084/status/2015469462808580414",
+              "engagement": {
+                "like": 73,
+                "retweet": 12,
+                "reply": 9,
+                "quote": 0,
+                "bookmark": 8,
+                "view": "1078812"
+              }
+            },
+            {
+              "text": "Experience speeds up to 400+ Mbps to enjoy 4K streaming on multiple devices at once, working from home effectively, online gaming, social media browsing, and more.\n\nOrder online in under 2 minutes.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/2534567084/status/2015469462904803581",
+              "engagement": {
+                "like": 214,
+                "retweet": 55,
+                "reply": 6,
+                "quote": 0,
+                "bookmark": 21,
+                "view": "1856367"
+              }
+            },
+            {
+              "text": "Stream. Scroll. Surf.\n\nGet speeds up to 400+ Mbps to connect with friends and family without delays.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/2534567084/status/2015469462837674084",
+              "engagement": {
+                "like": 67,
+                "retweet": 14,
+                "reply": 4,
+                "quote": 1,
+                "bookmark": 12,
+                "view": "1361751"
+              }
+            }
+          ],
+          "posts_count": 3,
+          "fetched_at": "2026-01-26T02:47:37.811689Z"
+        },
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": "Farm Heroes Saga",
+          "url": "https://x.com/FarmHeroesSaga",
+          "username": "farmheroessaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Stream. Scroll. Surf.\n\nGet speeds up to 400+ Mbps to connect with friends and family without delays.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1229343619/status/2015469462837674084",
+              "engagement": {
+                "like": 67,
+                "retweet": 14,
+                "reply": 4,
+                "quote": 1,
+                "bookmark": 12,
+                "view": "1361751"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-01-26T02:47:49.344197Z"
+        }
+      ],
+      "platforms_summary": {
+        "instagram_Candy Crush Saga": {
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "posts_count": 5,
+          "dates": [
+            "2026-01-21",
+            "2026-01-22",
+            "2026-01-24",
+            "2026-01-25"
+          ]
+        },
+        "twitter_company": {
+          "platform_type": "twitter",
+          "game": null,
+          "posts_count": 1,
+          "dates": [
+            "2026-01-25"
+          ]
+        },
+        "twitter_Candy Crush Soda Saga": {
+          "platform_type": "twitter",
+          "game": "Candy Crush Soda Saga",
+          "posts_count": 3,
+          "dates": [
+            "2026-01-25"
+          ]
+        },
+        "twitter_Farm Heroes Saga": {
+          "platform_type": "twitter",
+          "game": "Farm Heroes Saga",
+          "posts_count": 1,
+          "dates": [
+            "2026-01-25"
+          ]
+        }
+      }
+    },
+    "dream games": {
+      "company": "dream games",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-01-25",
+          "platform_type": "twitter",
+          "game": null,
+          "url": "https://x.com/dreamgames",
+          "username": "dreamgames",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Stream. Scroll. Surf.\n\nGet speeds up to 400+ Mbps to connect with friends and family without delays.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1140560459449458688/status/2015469462837674084",
+              "engagement": {
+                "like": 67,
+                "retweet": 14,
+                "reply": 4,
+                "quote": 1,
+                "bookmark": 12,
+                "view": "1361751"
+              }
+            },
+            {
+              "text": "Starlink’s high-speed internet is available in your area.\n\nExperience speeds up to 400+ Mbps to stream your favorite shows and sports, work from home, browse social media and more.",
+              "published_at": "2026-01-25T16:59:00+00:00",
+              "published_at_display": "2026-01-25 16:59:00 UTC",
+              "post_url": "https://x.com/1140560459449458688/status/2015469462808580414",
+              "engagement": {
+                "like": 74,
+                "retweet": 12,
+                "reply": 9,
+                "quote": 0,
+                "bookmark": 8,
+                "view": "1079679"
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-01-26T02:48:01.203116Z"
+        }
+      ],
+      "platforms_summary": {
+        "twitter_company": {
+          "platform_type": "twitter",
+          "game": null,
+          "posts_count": 2,
+          "dates": [
+            "2026-01-25"
+          ]
+        }
+      }
+    }
+  },
+  "extracted_at": "2026-01-30"
+}

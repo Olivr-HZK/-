@@ -1,0 +1,634 @@
+{
+  "Hungray Studio": {
+    "card": {
+      "config": {
+        "wide_screen_mode": true
+      },
+      "header": {
+        "template": "turquoise",
+        "title": {
+          "tag": "plain_text",
+          "content": "🏁 竞品监控 · Hungray Studio · 重大用户里程碑达成，启动创作者激励计划"
+        }
+      },
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📅 **监控时间段**: 2026-01-19 至 2026-01-25 (共 7 天)\n📎 **监控平台** (4 个):\n   • 📷 INSTAGRAM - Block Blast ✅: [https://www.instagram.com/blockblastglobal/](https://www.instagram.com/blockblastglobal/)\n   • 🎵 TIKTOK - Block Blast ✅: [https://www.tiktok.com/@BlockBlastOfficial](https://www.tiktok.com/@BlockBlastOfficial)\n   • 🐦 TWITTER - Block Blast ✅: [https://x.com/BlockBlastSquad](https://x.com/BlockBlastSquad)\n   • ▶️ YOUTUBE - Block Blast ✅: [https://www.youtube.com/channel/UCk5NU_he9qgn_ny6m8vLrKw](https://www.youtube.com/channel/UCk5NU_he9qgn_ny6m8vLrKw)"
+          }
+        },
+        {
+          "tag": "hr"
+        },
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📌 **本周标题**: 重大用户里程碑达成，启动创作者激励计划\n\n📊 **周报评分**: 6/10 ⭐⭐⭐\n\n📝 **摘要**: Hungray Studio 在本周集中展示了旗下王牌产品 Block Blast 的惊人增长数据（70M DAU / 300M MAU），并同步在多平台发起「CREATE, POST, WIN」创作者激励活动，旨在通过官方扶持和流量曝光体系，进一步扩大 UGC 内容护城河及品牌影响力。\n\n🎮 **新玩法**: 启动了名为「CREATE, POST, WIN」的创作者激励活动，玩家通过发布包含游戏内 IP 角色或玩法视频的内容，可获得官方账号助推并有机会加入长期创作者计划。\n相关帖子链接:\n[https://www.instagram.com/p/DT2AOwaF15U/](https://www.instagram.com/p/DT2AOwaF15U/)  \n[https://x.com/1822950649929105408/status/2014592632081809465](https://x.com/1822950649929105408/status/2014592632081809465)\n\n🎪 **线下活动**: 无\n\n📌 **日常说明**: 本周进行了常规的用户里程碑宣传以及一条关于网络速度、疑似异业投放或特定环境下网络优化的推文，此外包含少量的粉丝互动转发。\n\n📊 **更新帖子数**: 7 条 (过去 7 天)\n\n✅ **建议动作**:\n- 密切关注其「创作者计划」产出的 UGC 视频内容风格，分析是否有新的高转化买量素材方向。\n- 针对其披露的 70M DAU 量级，评估竞品在超休闲/益智赛道的垄断地位，调研其近期在拉新与留存上的核心变动。\n- 借鉴其多平台同步宣发里程碑数据的社媒背书策略，提升核心玩家的品牌信任度。\n- 调研其在 X (Twitter) 上提到的远程网络加速相关内容，确认是否涉及新的技术出海或特定地区市场优化方案。"
+          }
+        }
+      ]
+    },
+    "monitored_platforms_count": 4,
+    "company_analysis": {
+      "company": "Hungray Studio",
+      "weekly_score": 6.0,
+      "weekly_title": "重大用户里程碑达成，启动创作者激励计划",
+      "summary": "Hungray Studio 在本周集中展示了旗下王牌产品 Block Blast 的惊人增长数据（70M DAU / 300M MAU），并同步在多平台发起「CREATE, POST, WIN」创作者激励活动，旨在通过官方扶持和流量曝光体系，进一步扩大 UGC 内容护城河及品牌影响力。",
+      "new_gameplay": "启动了名为「CREATE, POST, WIN」的创作者激励活动，玩家通过发布包含游戏内 IP 角色或玩法视频的内容，可获得官方账号助推并有机会加入长期创作者计划。",
+      "new_gameplay_post_urls": [
+        "https://www.instagram.com/p/DT2AOwaF15U/",
+        "https://x.com/1822950649929105408/status/2014592632081809465"
+      ],
+      "offline_events": "无",
+      "offline_event_post_urls": [],
+      "routine_note": "本周进行了常规的用户里程碑宣传以及一条关于网络速度、疑似异业投放或特定环境下网络优化的推文，此外包含少量的粉丝互动转发。",
+      "direct_action_suggestions": "- 密切关注其「创作者计划」产出的 UGC 视频内容风格，分析是否有新的高转化买量素材方向。\n- 针对其披露的 70M DAU 量级，评估竞品在超休闲/益智赛道的垄断地位，调研其近期在拉新与留存上的核心变动。\n- 借鉴其多平台同步宣发里程碑数据的社媒背书策略，提升核心玩家的品牌信任度。\n- 调研其在 X (Twitter) 上提到的远程网络加速相关内容，确认是否涉及新的技术出海或特定地区市场优化方案。",
+      "posts_count": 7,
+      "period_days": 7
+    },
+    "monitored_platforms": [
+      {
+        "type": "instagram",
+        "game": "Block Blast",
+        "url": "",
+        "username": "blockblastglobal",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "tiktok",
+        "game": "Block Blast",
+        "url": "",
+        "username": "BlockBlastOfficial",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": "Block Blast",
+        "url": "",
+        "username": "BlockBlastSquad",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "Block Blast",
+        "url": "",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCk5NU_he9qgn_ny6m8vLrKw",
+        "handle": null,
+        "enabled": true
+      }
+    ]
+  },
+  "vita studio": {
+    "card": {
+      "config": {
+        "wide_screen_mode": true
+      },
+      "header": {
+        "template": "green",
+        "title": {
+          "tag": "plain_text",
+          "content": "🏁 竞品监控 · vita studio · 日常运营为主，无重大动作"
+        }
+      },
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📅 **监控时间段**: 2026-01-19 至 2026-01-25 (共 7 天)\n📎 **监控平台** (2 个):\n   • 📘 FACEBOOK - Vita Mahjong ✅: [https://www.facebook.com/p/Vita-Mahjong-61561738276462/](https://www.facebook.com/p/Vita-Mahjong-61561738276462/)\n   • 🎵 TIKTOK - Vita Mahjong ✅: [https://www.tiktok.com/@vitamahjong_official](https://www.tiktok.com/@vitamahjong_official)"
+          }
+        },
+        {
+          "tag": "hr"
+        },
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📌 **本周标题**: 日常运营为主，无重大动作\n\n📊 **周报评分**: 2/10 ⭐\n\n📝 **摘要**: Vita Studio 在过去 7 天主要围绕 Vita Mahjong 进行高频的跨平台同步宣发。主要内容倾向于互动式小测试、视觉挑战以及带有节奏感的短视频，旨在通过轻互动（如寻物、找不同）提升社媒账号的活跃度与用户粘性，暂未涉及核心机制的重大更新或品牌大动作。\n\n🎮 **新玩法**: 无\n\n🎪 **线下活动**: 无\n\n📌 **日常说明**: 本周发布内容全部为常规互动机型视频和视觉挑战类贴文，多平台（TikTok/Facebook）内容镜像分发。\n\n📊 **更新帖子数**: 11 条 (过去 7 天)\n\n✅ **建议动作**:\n  - 关注其发出的‘Mahjong-style eye exam’等互动素材的评论区，评估目标用户（中老年群体）对此类视觉挑战素材的参与热情，可复刻相关素材进行素材测吸量。\n  - 由于其在 TikTok 和 Facebook 保持每日更新的节奏，我方应监控其近期是否在通过这些互动素材为特定节日活动（如新春或情人节）进行用户心智预热。\n  - 建议尝试其提到的‘Rhythm’（节奏感）元素与麻将消除结合的素材方向，观察该类偏街机风格的宣传语是否对转化率有正面影响。"
+          }
+        }
+      ]
+    },
+    "monitored_platforms_count": 2,
+    "company_analysis": {
+      "company": "vita studio",
+      "weekly_score": 2.0,
+      "weekly_title": "日常运营为主，无重大动作",
+      "summary": "Vita Studio 在过去 7 天主要围绕 Vita Mahjong 进行高频的跨平台同步宣发。主要内容倾向于互动式小测试、视觉挑战以及带有节奏感的短视频，旨在通过轻互动（如寻物、找不同）提升社媒账号的活跃度与用户粘性，暂未涉及核心机制的重大更新或品牌大动作。",
+      "new_gameplay": "无",
+      "new_gameplay_post_urls": [],
+      "offline_events": "无",
+      "offline_event_post_urls": [],
+      "routine_note": "本周发布内容全部为常规互动机型视频和视觉挑战类贴文，多平台（TikTok/Facebook）内容镜像分发。",
+      "direct_action_suggestions": [
+        "关注其发出的‘Mahjong-style eye exam’等互动素材的评论区，评估目标用户（中老年群体）对此类视觉挑战素材的参与热情，可复刻相关素材进行素材测吸量。",
+        "由于其在 TikTok 和 Facebook 保持每日更新的节奏，我方应监控其近期是否在通过这些互动素材为特定节日活动（如新春或情人节）进行用户心智预热。",
+        "建议尝试其提到的‘Rhythm’（节奏感）元素与麻将消除结合的素材方向，观察该类偏街机风格的宣传语是否对转化率有正面影响。"
+      ],
+      "posts_count": 11,
+      "period_days": 7
+    },
+    "monitored_platforms": [
+      {
+        "type": "facebook",
+        "game": "Vita Mahjong",
+        "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+        "username": null,
+        "page_id": "61561738276462",
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "tiktok",
+        "game": "Vita Mahjong",
+        "url": "",
+        "username": "vitamahjong_official",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      }
+    ]
+  },
+  "voodoo": {
+    "card": {
+      "config": {
+        "wide_screen_mode": true
+      },
+      "header": {
+        "template": "purple",
+        "title": {
+          "tag": "plain_text",
+          "content": "🏁 竞品监控 · voodoo · 由于测试 Starlink 业务导致混乱，游戏侧仅维持常规买量素材更新"
+        }
+      },
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📅 **监控时间段**: 2026-01-19 至 2026-01-25 (共 7 天)\n📎 **监控平台** (8 个):\n   • 📷 INSTAGRAM ✅: [https://www.instagram.com/voodoo.io/](https://www.instagram.com/voodoo.io/)\n   • 📷 INSTAGRAM - mob control ✅: [https://www.instagram.com/mobcontrolgame/](https://www.instagram.com/mobcontrolgame/)\n   • 📷 INSTAGRAM - papers.io ✅: [https://www.instagram.com/paper.io2game/](https://www.instagram.com/paper.io2game/)\n   • 🎵 TIKTOK - mob control ✅: [https://www.tiktok.com/@gamemobcontrol](https://www.tiktok.com/@gamemobcontrol)\n   • 🎵 TIKTOK - papers.io ✅: [https://www.tiktok.com/@gamepaper.io2](https://www.tiktok.com/@gamepaper.io2)\n   • 🐦 TWITTER ✅: [https://x.com/voodooplatform](https://x.com/voodooplatform)\n   • ▶️ YOUTUBE - mob control ✅: [https://www.youtube.com/channel/UCQs6Z88WlGFyMtuZeCv62Dg](https://www.youtube.com/channel/UCQs6Z88WlGFyMtuZeCv62Dg)\n   • ▶️ YOUTUBE - papers.io ✅: [https://www.youtube.com/channel/UC7JNRW7j8oHqiGBNfXeJn4Q](https://www.youtube.com/channel/UC7JNRW7j8oHqiGBNfXeJn4Q)"
+          }
+        },
+        {
+          "tag": "hr"
+        },
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📌 **本周标题**: 由于测试 Starlink 业务导致混乱，游戏侧仅维持常规买量素材更新\n\n📊 **周报评分**: 2/10 ⭐\n\n📝 **摘要**: 本周 Voodoo 的社媒表现较为异常且分散。其在 Twitter 平台发布了多条与游戏无关的 Starlink 宽带业务推广内容，疑似在进行跨领域分发测试或账号共用；而在 Instagram 和 TikTok 侧，其核心产品群《Mob Control》以及《Paper.io 2》持续发布短视频素材，均为基于游戏现有机制的情绪化表达（Meme）或关卡展示。\n\n🎮 **新玩法**: 无\n\n🎪 **线下活动**: 无\n\n📌 **日常说明**: 本周更新多为基于《Mob Control》和《Paper.io 2》的常规短视频维护，主要利用玩家共鸣（如‘just one more game’）进行简单的社媒占位。\n\n📊 **更新帖子数**: 7 条 (过去 7 天)\n\n✅ **建议动作**:\n1. 密切观察 Voodoo 在 Twitter (X) 账号推广 Starlink 业务的后续，明确是否为资源置换或账号转型预警。\n2. 学习《Mob Control》在 TikTok 的 Meme 化叙事风格，将游戏内的受挫感或成就感转化为短视频梗（如帖子3）。\n3. 监控其在《Mob Control》中提到的'Adventures'章节是否有新一轮的奖励调整或叙事元素加入。\n4. 关注其短视频的高频发布节奏，作为买量策略的风向标而非玩法创新的参考。"
+          }
+        }
+      ]
+    },
+    "monitored_platforms_count": 8,
+    "company_analysis": {
+      "company": "voodoo",
+      "weekly_score": 2.0,
+      "weekly_title": "由于测试 Starlink 业务导致混乱，游戏侧仅维持常规买量素材更新",
+      "summary": "本周 Voodoo 的社媒表现较为异常且分散。其在 Twitter 平台发布了多条与游戏无关的 Starlink 宽带业务推广内容，疑似在进行跨领域分发测试或账号共用；而在 Instagram 和 TikTok 侧，其核心产品群《Mob Control》以及《Paper.io 2》持续发布短视频素材，均为基于游戏现有机制的情绪化表达（Meme）或关卡展示。",
+      "new_gameplay": "无",
+      "new_gameplay_post_urls": [],
+      "offline_events": "无",
+      "offline_event_post_urls": [],
+      "routine_note": "本周更新多为基于《Mob Control》和《Paper.io 2》的常规短视频维护，主要利用玩家共鸣（如‘just one more game’）进行简单的社媒占位。",
+      "direct_action_suggestions": "1. 密切观察 Voodoo 在 Twitter (X) 账号推广 Starlink 业务的后续，明确是否为资源置换或账号转型预警。\n2. 学习《Mob Control》在 TikTok 的 Meme 化叙事风格，将游戏内的受挫感或成就感转化为短视频梗（如帖子3）。\n3. 监控其在《Mob Control》中提到的'Adventures'章节是否有新一轮的奖励调整或叙事元素加入。\n4. 关注其短视频的高频发布节奏，作为买量策略的风向标而非玩法创新的参考。",
+      "posts_count": 7,
+      "period_days": 7
+    },
+    "monitored_platforms": [
+      {
+        "type": "instagram",
+        "game": null,
+        "url": "https://www.instagram.com/voodoo.io/",
+        "username": "voodoo.io",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": null,
+        "url": "https://x.com/voodooplatform",
+        "username": "voodooplatform",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "instagram",
+        "game": "mob control",
+        "url": "",
+        "username": "mobcontrolgame",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "instagram",
+        "game": "papers.io",
+        "url": "",
+        "username": "paper.io2game",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "tiktok",
+        "game": "mob control",
+        "url": "",
+        "username": "gamemobcontrol",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "tiktok",
+        "game": "papers.io",
+        "url": "",
+        "username": "gamepaper.io2",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "mob control",
+        "url": "",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCQs6Z88WlGFyMtuZeCv62Dg",
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "papers.io",
+        "url": "",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UC7JNRW7j8oHqiGBNfXeJn4Q",
+        "handle": null,
+        "enabled": true
+      }
+    ]
+  },
+  "King": {
+    "card": {
+      "config": {
+        "wide_screen_mode": true
+      },
+      "header": {
+        "template": "yellow",
+        "title": {
+          "tag": "plain_text",
+          "content": "🏁 竞品监控 · King · 多平台跨界广告异常投放，核心产品处于活动预热阶段"
+        }
+      },
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📅 **监控时间段**: 2026-01-19 至 2026-01-25 (共 7 天)\n📎 **监控平台** (17 个):\n   • 📘 FACEBOOK ⏸️: [https://www.facebook.com/King](https://www.facebook.com/King)\n   • 📘 FACEBOOK - Candy Crush Saga ⏸️: [https://www.facebook.com/CandyCrushSaga](https://www.facebook.com/CandyCrushSaga)\n   • 📘 FACEBOOK - Candy Crush Soda Saga ⏸️: [https://www.facebook.com/CandyCrushSodaSaga](https://www.facebook.com/CandyCrushSodaSaga)\n   • 📘 FACEBOOK - Farm Heroes Saga ⏸️: [https://www.facebook.com/FarmHeroes](https://www.facebook.com/FarmHeroes)\n   • 📷 INSTAGRAM ✅: [https://www.instagram.com/lifeatking/](https://www.instagram.com/lifeatking/)\n   • 📷 INSTAGRAM - Candy Crush Saga ✅: [https://www.instagram.com/candycrushsaga](https://www.instagram.com/candycrushsaga)\n   • 📷 INSTAGRAM - Candy Crush Soda Saga ✅: [https://www.instagram.com/candysodasaga](https://www.instagram.com/candysodasaga)\n   • 📷 INSTAGRAM - Farm Heroes Saga ✅: [https://www.instagram.com/farmheroessaga](https://www.instagram.com/farmheroessaga)\n   • 🌐 LINKEDIN ⏸️: [https://www.linkedin.com/company/king](https://www.linkedin.com/company/king)\n   • 🐦 TWITTER ✅: [https://x.com/King_Games](https://x.com/King_Games)\n   • 🐦 TWITTER - Candy Crush Saga ✅: [https://x.com/CandyCrushSaga](https://x.com/CandyCrushSaga)\n   • 🐦 TWITTER - Candy Crush Soda Saga ✅: [https://x.com/CandyCrushSoda](https://x.com/CandyCrushSoda)\n   • 🐦 TWITTER - Farm Heroes Saga ✅: [https://x.com/FarmHeroesSaga](https://x.com/FarmHeroesSaga)\n   • ▶️ YOUTUBE ✅: [https://www.youtube.com/@KingOnlineGames](https://www.youtube.com/@KingOnlineGames)\n   • ▶️ YOUTUBE - Candy Crush Saga ✅: [https://www.youtube.com/@CandyCrushSagaOfficial](https://www.youtube.com/@CandyCrushSagaOfficial)\n   • ▶️ YOUTUBE - Candy Crush Soda Saga ✅: [https://www.youtube.com/@CandyCrushSagaOfficial](https://www.youtube.com/@CandyCrushSagaOfficial)\n   • ▶️ YOUTUBE - Farm Heroes Saga ⏸️: [https://www.youtube.com/user/FarmHeroesOfficial](https://www.youtube.com/user/FarmHeroesOfficial)"
+          }
+        },
+        {
+          "tag": "hr"
+        },
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📌 **本周标题**: 多平台跨界广告异常投放，核心产品处于活动预热阶段\n\n📊 **周报评分**: 3/10 ⭐⭐\n\n📝 **摘要**: King在本周的社媒动态呈现出明显的两极分化：Twitter账号疑似遭受大规模Starlink跨界广告投放或异常灌水，偏离了游戏本体内容；而Instagram平台聚焦于《Candy Crush Saga》的日常运营，通过开发者访谈及悬念海报为下周的新活动进行预热。\n\n🎮 **新玩法**: 无\n\n🎪 **线下活动**: 无\n\n📌 **日常说明**: 本周包含常规的玩家互动问答（二选一）、开发者访谈视频（Crush & Tell）宣传以及常规的品牌心理调侃帖子。\n\n📊 **更新帖子数**: 10 条 (过去 7 天)\n\n✅ **建议动作**:\n  - 针对《Candy Crush Saga》1月22日发布的预热贴（Something exciting is dropping next week），建议下周一重点监控其是否有大版本更新或大型品牌联动上线。\n  - 关注其『Crush & Tell』系列视频中的研发人员分享，收集关于Blockers（障碍物）的设计思路，用于调优我方关卡难度与趣味平衡。\n  - 警惕其在Twitter平台上异常的Starlink广告内容，分析是否为买量策略尝试或账号被盗/误操作，避免我方账号出现类似内容失控。\n  - 复刻其Instagram的高互动率问答形式（如『No wrong answers... Left or right?』），这种低成本的视觉互动能有效提升社区活跃度。"
+          }
+        }
+      ]
+    },
+    "monitored_platforms_count": 17,
+    "company_analysis": {
+      "company": "King",
+      "weekly_score": 3.0,
+      "weekly_title": "多平台跨界广告异常投放，核心产品处于活动预热阶段",
+      "summary": "King在本周的社媒动态呈现出明显的两极分化：Twitter账号疑似遭受大规模Starlink跨界广告投放或异常灌水，偏离了游戏本体内容；而Instagram平台聚焦于《Candy Crush Saga》的日常运营，通过开发者访谈及悬念海报为下周的新活动进行预热。",
+      "new_gameplay": "无",
+      "new_gameplay_post_urls": [],
+      "offline_events": "无",
+      "offline_event_post_urls": [],
+      "routine_note": "本周包含常规的玩家互动问答（二选一）、开发者访谈视频（Crush & Tell）宣传以及常规的品牌心理调侃帖子。",
+      "direct_action_suggestions": [
+        "针对《Candy Crush Saga》1月22日发布的预热贴（Something exciting is dropping next week），建议下周一重点监控其是否有大版本更新或大型品牌联动上线。",
+        "关注其『Crush & Tell』系列视频中的研发人员分享，收集关于Blockers（障碍物）的设计思路，用于调优我方关卡难度与趣味平衡。",
+        "警惕其在Twitter平台上异常的Starlink广告内容，分析是否为买量策略尝试或账号被盗/误操作，避免我方账号出现类似内容失控。",
+        "复刻其Instagram的高互动率问答形式（如『No wrong answers... Left or right?』），这种低成本的视觉互动能有效提升社区活跃度。"
+      ],
+      "posts_count": 10,
+      "period_days": 7
+    },
+    "monitored_platforms": [
+      {
+        "type": "facebook",
+        "game": null,
+        "url": "https://www.facebook.com/King",
+        "username": null,
+        "page_id": "405162889610751",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "instagram",
+        "game": null,
+        "url": "",
+        "username": "lifeatking",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "linkedin",
+        "game": null,
+        "url": "https://www.linkedin.com/company/king",
+        "username": null,
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "twitter",
+        "game": null,
+        "url": "https://x.com/King_Games",
+        "username": "King_Games",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": null,
+        "url": "https://www.youtube.com/@KingOnlineGames",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCw_LCWreyWaFKRGBuORlaFw",
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "facebook",
+        "game": "Candy Crush Saga",
+        "url": "https://www.facebook.com/CandyCrushSaga",
+        "username": null,
+        "page_id": "244944385603396",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "facebook",
+        "game": "Candy Crush Soda Saga",
+        "url": "https://www.facebook.com/CandyCrushSodaSaga",
+        "username": null,
+        "page_id": "669947926411298",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "facebook",
+        "game": "Farm Heroes Saga",
+        "url": "https://www.facebook.com/FarmHeroes",
+        "username": null,
+        "page_id": "416898068399728",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "instagram",
+        "game": "Candy Crush Saga",
+        "url": "https://www.instagram.com/candycrushsaga",
+        "username": "candycrushsaga",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "instagram",
+        "game": "Candy Crush Soda Saga",
+        "url": "https://www.instagram.com/candysodasaga",
+        "username": "candysodasaga",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "instagram",
+        "game": "Farm Heroes Saga",
+        "url": "https://www.instagram.com/farmheroessaga",
+        "username": "farmheroessaga",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": "Candy Crush Saga",
+        "url": "https://x.com/CandyCrushSaga",
+        "username": "CandyCrushSaga",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": "Candy Crush Soda Saga",
+        "url": "https://x.com/CandyCrushSoda",
+        "username": "CandyCrushSoda",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": "Farm Heroes Saga",
+        "url": "https://x.com/FarmHeroesSaga",
+        "username": "farmheroessaga",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "Candy Crush Saga",
+        "url": "https://www.youtube.com/@CandyCrushSagaOfficial",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCOUh2z8YkidOzPLBXPMv33A",
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "Candy Crush Soda Saga",
+        "url": "https://www.youtube.com/@CandyCrushSagaOfficial",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCOUh2z8YkidOzPLBXPMv33A",
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "Farm Heroes Saga",
+        "url": "https://www.youtube.com/user/FarmHeroesOfficial",
+        "username": null,
+        "page_id": null,
+        "channel_id": "UCO9FCipLjcyNOPKzO7CuPug",
+        "handle": null,
+        "enabled": false
+      }
+    ]
+  },
+  "dream games": {
+    "card": {
+      "config": {
+        "wide_screen_mode": true
+      },
+      "header": {
+        "template": "blue",
+        "title": {
+          "tag": "plain_text",
+          "content": "🏁 竞品监控 · dream games · 日常业务宣传，无重大游戏性更新"
+        }
+      },
+      "elements": [
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📅 **监控时间段**: 2026-01-19 至 2026-01-25 (共 7 天)\n📎 **监控平台** (6 个):\n   • 📘 FACEBOOK ⏸️: [https://www.facebook.com/351200148924894](https://www.facebook.com/351200148924894)\n   • 📘 FACEBOOK - royal match ⏸️: [https://www.facebook.com/634112870563430](https://www.facebook.com/634112870563430)\n   • 📷 INSTAGRAM ✅: [https://www.instagram.com/dreamgames/](https://www.instagram.com/dreamgames/)\n   • 📷 INSTAGRAM - royal match ✅: [https://www.instagram.com/Royal Match/](https://www.instagram.com/Royal Match/)\n   • 🐦 TWITTER ✅: [https://x.com/dreamgames](https://x.com/dreamgames)\n   • ▶️ YOUTUBE - Royal Kingdom ✅: [https://www.youtube.com/channel/UCCqjDoaMWl5I5-xHeLJHEig](https://www.youtube.com/channel/UCCqjDoaMWl5I5-xHeLJHEig)"
+          }
+        },
+        {
+          "tag": "hr"
+        },
+        {
+          "tag": "div",
+          "text": {
+            "tag": "lark_md",
+            "content": "📌 **本周标题**: 日常业务宣传，无重大游戏性更新\n\n📊 **周报评分**: 2/10 ⭐\n\n📝 **摘要**: Dream Games 本周社媒动态主要聚焦于其关联服务的硬件与网络性能推广。发布内容高度一致，强调 Starlink 带来的高带宽、低延迟连接能力及居家办公场景应用，属于纯粹的业务宣传与分发动作。\n\n🎮 **新玩法**: 无\n\n🎪 **线下活动**: 无\n\n📌 **日常说明**: 本周仅包含两篇关于高速网络（400+ Mbps）的标准化宣传文案，属于常规业务维护与社媒同步。\n\n📊 **更新帖子数**: 2 条 (过去 7 天)\n\n✅ **建议动作**:\n1. 持续监测其社媒是否会联动游戏内特定高并发/在线竞技玩法进行此类网络促销；\n2. 关注 Dream Games 母体视角下的硬件生态布局，尤其是星链等跨平台设施对全球边缘市场用户的覆盖潜力；\n3. 由于本周无游戏本体内容更新，我方研发与运营团队可按原节奏推进，无需启动针对性竞品防御预案。"
+          }
+        }
+      ]
+    },
+    "monitored_platforms_count": 6,
+    "company_analysis": {
+      "company": "dream games",
+      "weekly_score": 2.0,
+      "weekly_title": "日常业务宣传，无重大游戏性更新",
+      "summary": "Dream Games 本周社媒动态主要聚焦于其关联服务的硬件与网络性能推广。发布内容高度一致，强调 Starlink 带来的高带宽、低延迟连接能力及居家办公场景应用，属于纯粹的业务宣传与分发动作。",
+      "new_gameplay": "无",
+      "new_gameplay_post_urls": [],
+      "offline_events": "无",
+      "offline_event_post_urls": [],
+      "routine_note": "本周仅包含两篇关于高速网络（400+ Mbps）的标准化宣传文案，属于常规业务维护与社媒同步。",
+      "direct_action_suggestions": "1. 持续监测其社媒是否会联动游戏内特定高并发/在线竞技玩法进行此类网络促销；\n2. 关注 Dream Games 母体视角下的硬件生态布局，尤其是星链等跨平台设施对全球边缘市场用户的覆盖潜力；\n3. 由于本周无游戏本体内容更新，我方研发与运营团队可按原节奏推进，无需启动针对性竞品防御预案。",
+      "posts_count": 2,
+      "period_days": 7
+    },
+    "monitored_platforms": [
+      {
+        "type": "facebook",
+        "game": null,
+        "url": "",
+        "username": "dreamgames",
+        "page_id": "351200148924894",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "instagram",
+        "game": null,
+        "url": "",
+        "username": "dreamgames",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "twitter",
+        "game": null,
+        "url": "",
+        "username": "dreamgames",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "facebook",
+        "game": "royal match",
+        "url": "",
+        "username": "Royal Match",
+        "page_id": "634112870563430",
+        "channel_id": null,
+        "handle": null,
+        "enabled": false
+      },
+      {
+        "type": "instagram",
+        "game": "royal match",
+        "url": "",
+        "username": "Royal Match",
+        "page_id": null,
+        "channel_id": null,
+        "handle": null,
+        "enabled": true
+      },
+      {
+        "type": "youtube",
+        "game": "Royal Kingdom",
+        "url": "",
+        "username": "RoyalKingdom",
+        "page_id": null,
+        "channel_id": "UCCqjDoaMWl5I5-xHeLJHEig",
+        "handle": null,
+        "enabled": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+notification:
+  webhooks:
+    # 飞书机器人 Webhook 地址（与 .env 中 FEISHU_WEBHOOK_URL 二选一即可）
+    feishu_url: "https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+reporting:
+  # 可选：默认输出目录，可与 OUTPUT_DIR 环境变量配合使用
+  output_dir: "output"
+
+  # 可选：周期周报在数据库中的保存策略
+  # - overwrite: 覆盖同周期已有周报
+  # - use_cached: 若已有同周期周报则不覆盖
+  default_period_save_mode: "overwrite"
+

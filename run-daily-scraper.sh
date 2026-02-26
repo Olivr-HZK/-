@@ -11,7 +11,7 @@ export PYTHONPATH="$(pwd):$PYTHONPATH"
 
 # 激活虚拟环境（如果使用虚拟环境）
 # 如果使用虚拟环境，取消下面这行的注释并修改路径
-# source .venv/bin/activate
+source .venv/bin/activate
 
 # 日志文件路径
 LOG_DIR="logs"

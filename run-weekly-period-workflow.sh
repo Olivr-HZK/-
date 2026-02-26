@@ -1,45 +1,65 @@
 #!/bin/bash
 # Bash脚本：每周定时运行时间段工作流
-# 用于 macOS/Linux Cron 任务
-# 功能：生成上周的竞品周报
+# 用于 macOS/Linux Cron 任务（建议 crontab：每周一 10:30）
+# 功能：生成指定时间段或上周的竞品周报
+#
+# 用法：
+#   ./run-weekly-period-workflow.sh                    # 默认：上周一至上周日
+#   ./run-weekly-period-workflow.sh --start-date 2026-01-13 --end-date 2026-01-19
 
-# 切换到脚本所在目录
-cd "$(dirname "$0")"
+# 切换到脚本所在目录（项目根）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 
-# 设置 Python 路径，确保能找到项目根目录的模块（如 env_loader）
-export PYTHONPATH="$(pwd):$PYTHONPATH"
+# 解析可选参数：--start-date YYYY-MM-DD --end-date YYYY-MM-DD
+CUSTOM_START=""
+CUSTOM_END=""
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --start-date)
+            CUSTOM_START="$2"
+            shift 2
+            ;;
+        --end-date)
+            CUSTOM_END="$2"
+            shift 2
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
 
-# 激活虚拟环境（如果使用虚拟环境）
-# 如果使用虚拟环境，取消下面这行的注释并修改路径
-# source .venv/bin/activate
+# 设置 Python 路径，确保能找到项目根目录的模块
+export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
+
+# 激活虚拟环境（若存在），cron 下可正确找到 python3 和依赖
+if [ -f "$SCRIPT_DIR/.venv/bin/activate" ]; then
+    # shellcheck source=/dev/null
+    source "$SCRIPT_DIR/.venv/bin/activate"
+fi
 
 # 日志文件路径
 LOG_DIR="logs"
 mkdir -p "$LOG_DIR"
 
-# 计算上周的日期范围（周一到周日）
-# macOS 和 Linux 的日期计算方式不同
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    # 获取今天是星期几（0=周日, 1=周一, ..., 6=周六）
-    DAY_OF_WEEK=$(date +%w)
-    if [ "$DAY_OF_WEEK" -eq 0 ]; then
-        DAY_OF_WEEK=7  # 周日转换为7
-    fi
-    # 上周的结束日期（上周日）= 今天 - DAY_OF_WEEK 天
-    LAST_WEEK_END=$(date -v-${DAY_OF_WEEK}d +%Y-%m-%d)
-    # 上周的开始日期（上周一）= 上周日 - 6 天
-    LAST_WEEK_START=$(date -v-$(($DAY_OF_WEEK + 6))d +%Y-%m-%d)
+# 确定日期范围：若指定了起止日期则用指定的，否则计算上周
+if [ -n "$CUSTOM_START" ] && [ -n "$CUSTOM_END" ]; then
+    LAST_WEEK_START="$CUSTOM_START"
+    LAST_WEEK_END="$CUSTOM_END"
 else
-    # Linux
-    DAY_OF_WEEK=$(date +%w)
-    if [ "$DAY_OF_WEEK" -eq 0 ]; then
-        DAY_OF_WEEK=7  # 周日转换为7
+    # 计算上周的日期范围（周一到周日）
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        DAY_OF_WEEK=$(date +%w)
+        [ "$DAY_OF_WEEK" -eq 0 ] && DAY_OF_WEEK=7
+        LAST_WEEK_END=$(date -v-${DAY_OF_WEEK}d +%Y-%m-%d)
+        LAST_WEEK_START=$(date -v-$(($DAY_OF_WEEK + 6))d +%Y-%m-%d)
+    else
+        DAY_OF_WEEK=$(date +%w)
+        [ "$DAY_OF_WEEK" -eq 0 ] && DAY_OF_WEEK=7
+        LAST_WEEK_END=$(date -d "$DAY_OF_WEEK days ago" +%Y-%m-%d)
+        LAST_WEEK_START=$(date -d "$(($DAY_OF_WEEK + 6)) days ago" +%Y-%m-%d)
     fi
-    # 上周的结束日期（上周日）
-    LAST_WEEK_END=$(date -d "$DAY_OF_WEEK days ago" +%Y-%m-%d)
-    # 上周的开始日期（上周一）
-    LAST_WEEK_START=$(date -d "$(($DAY_OF_WEEK + 6)) days ago" +%Y-%m-%d)
 fi
 
 LOG_FILE="$LOG_DIR/weekly_period_workflow_$(date +%Y-%m-%d).log"
@@ -49,7 +69,6 @@ START_TIME=$(date)
 
 echo "========================================" | tee -a "$LOG_FILE"
 echo "开始执行每周时间段工作流任务" | tee -a "$LOG_FILE"
-echo "目标: 生成上周的竞品周报" | tee -a "$LOG_FILE"
 echo "时间段: $LAST_WEEK_START 至 $LAST_WEEK_END" | tee -a "$LOG_FILE"
 echo "时间: $START_TIME" | tee -a "$LOG_FILE"
 echo "========================================" | tee -a "$LOG_FILE"

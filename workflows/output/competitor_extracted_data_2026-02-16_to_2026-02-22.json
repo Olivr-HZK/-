@@ -1,0 +1,763 @@
+{
+  "period": {
+    "start_date": "2026-02-16",
+    "end_date": "2026-02-22",
+    "days": 7
+  },
+  "companies": {
+    "Hungray Studio": {
+      "company": "Hungray Studio",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-02-16",
+          "platform_type": "tiktok",
+          "game": "Block Blast",
+          "url": "https://www.tiktok.com/@BlockBlastOfficial",
+          "username": "BlockBlastOfficial",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Gong Hei Fat Choy! Block Blast! wish you a Happy Chinese new year ##blockblast #chinesenewyear #blockblastph",
+              "published_at": "2026-02-16T22:20:33",
+              "published_at_display": "2026-02-16 22:20:33",
+              "post_url": "https://www.tiktok.com/@BlockBlastOfficial/video/7607467639216147742",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/o4kTebDOQFAcIrBkugEVdTCLEhy8fVbmpE3cAJ/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=6414&bt=3207&cs=0&ds=3&ft=-Csk_mfMPD12NpKNRd-Ux_OvXY6e3wv25ycAp&mime_type=video_mp4&qs=0&rc=OGhlNGVoZzY5ZDk1aWdpOEBpajdwM2o5cjZsOTMzaTgzNEA1Mi1jLTNgNWMxLi1hMTYwYSNvZ2VtMmRrYjZhLS1kLzJzcw%3D%3D&btag=e000b8000&expire=1771601906&l=202602182338129F6A2B479C75AE4F59F6&ply_type=2&policy=2&signature=0c53d0234470e83450a78102a864a0ed&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 206,
+                "comment": 95,
+                "share": 1,
+                "view": 12300
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:38:15.034785Z"
+        },
+        {
+          "fetch_date": "2026-02-17",
+          "platform_type": "tiktok",
+          "game": "Block Blast",
+          "url": "https://www.tiktok.com/@BlockBlastOfficial",
+          "username": "BlockBlastOfficial",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Block Blast! miss you so much in Manila #blockblast #blockblastph #chinesenewyear",
+              "published_at": "2026-02-17T19:30:00",
+              "published_at_display": "2026-02-17 19:30:00",
+              "post_url": "https://www.tiktok.com/@BlockBlastOfficial/video/7607468686781271326",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/oAfQuVKyypnZIAELKTIFeC7DBABUkEVThwVAQE/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=3838&bt=1919&cs=0&ds=3&ft=I~da4oKyD12Nv4Rvf.IxRRc_glBF-UjNS8opiX&mime_type=video_mp4&qs=0&rc=ZzpnNjQ1M2k3ODlkZjdlM0BpM29mPHI5cm5sOTMzaTgzNEBeYC9jYi40Ni0xMjFhLTM1YSNeZG5jMmQ0ZDZhLS1kLzJzcw%3D%3D&btag=e000b0000&expire=1771600449&l=20260218231402E21249E79F1B2CD8EF74&ply_type=2&policy=2&signature=a789659aeab3d91102639d7a34469dd8&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 173,
+                "comment": 354,
+                "share": 49,
+                "view": 25600
+              }
+            },
+            {
+              "text": "Big guy, big guy~ Block Blast! with you in Manila #blockblast #manila #blockblastph #chinesenewyear",
+              "published_at": "2026-02-17T08:30:00",
+              "published_at_display": "2026-02-17 08:30:00",
+              "post_url": "https://www.tiktok.com/@BlockBlastOfficial/video/7607468315107183902",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/o8GIfFDVFGaEJKTRmrskACoE8evIEqQfATksKE/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=5392&bt=2696&cs=0&ds=3&ft=I~da4oKyD12Nv4Rvf.IxRRc_glBF-UjNS8opiX&mime_type=video_mp4&qs=0&rc=O2hpOWgzZTozZDZoODVmNUBpM3R4ZXg5cmtsOTMzaTgzNEBjYDNiLi8zNTQxLjIzMV8yYSNmZDJyMmQ0YzZhLS1kLzJzcw%3D%3D&btag=e000b8000&expire=1771600462&l=20260218231402E21249E79F1B2CD8EF74&ply_type=2&policy=2&signature=e9fdd38166affed955959654b8fe7356&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 183,
+                "comment": 133,
+                "share": 6,
+                "view": 14900
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-02-18T15:14:05.756937Z"
+        },
+        {
+          "fetch_date": "2026-02-17",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "I am feeling good~ #blockblast #feelinggood #peace https://t.co/cuKW6GAfFv",
+              "published_at": "2026-02-17T11:00:01+00:00",
+              "published_at_display": "2026-02-17 11:00:01 UTC",
+              "post_url": "https://x.com/BlockBlastSquad/status/2023714042548834764",
+              "engagement": {
+                "like": 1,
+                "retweet": 0,
+                "reply": 2,
+                "quote": 0,
+                "bookmark": 0,
+                "view": "215"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:14:15.177970Z"
+        },
+        {
+          "fetch_date": "2026-02-18",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "I am feeling good~ #blockblast #feelinggood #peace https://t.co/cuKW6GAfFv",
+              "published_at": "2026-02-17T11:00:01+00:00",
+              "published_at_display": "2026-02-17 11:00:01 UTC",
+              "post_url": "https://x.com/BlockBlastSquad/status/2023714042548834764",
+              "engagement": {
+                "like": 1,
+                "retweet": 0,
+                "reply": 4,
+                "quote": 0,
+                "bookmark": 0,
+                "view": "402"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:13:09.337797Z"
+        },
+        {
+          "fetch_date": "2026-02-19",
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "url": "https://www.instagram.com/blockblastglobal/",
+          "username": "blockblastglobal",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Revive and get this, colorful block~ #tet #blockblast #interactive #highscore",
+              "published_at": "2026-02-19T17:47:13",
+              "published_at_display": "2026-02-19 17:47:13",
+              "post_url": "https://www.instagram.com/p/DU71renFbXs/",
+              "media_urls": [
+                "https://instagram.fdel15-1.fna.fbcdn.net/v/t51.82787-15/628762102_17912794797305642_8917211695277519378_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=108&ig_cache_key=MzgzNTg5NTU5MTkwNjY4NjQ0NDE3OTEyNzk0Nzk0MzA1NjQy.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTkyMC5zZHIuQzMifQ%3D%3D&_nc_ohc=mdlhXT9SniwQ7kNvwG00JFT&_nc_oc=Adk3vWs-yynM6ba-E7RyHDBfsw7XkXTjCl-FLq6lQK2MlTJUEDJZCtjYiafbVqnCpMc&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fdel15-1.fna&_nc_gid=XUv3Z7VSG4khVaEWm_mSDw&oh=00_AfvE3Pow7VCq4C-aEjsacQeaseXR_hQq7njYRxBsjIMaFw&oe=69A237CA",
+                "https://instagram.fdel15-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQM2pnOao5p6fWWcD0bhUdU9R5IgxK2d2bjODT-I_TclM6zbAz4xzjk8kTdP62NiPlrGx6mua5e3AvSsoVoakj0dBxR_ndKSPJtbWD4.mp4?_nc_cat=102&_nc_oc=AdnbMeqAs6tuoLSE79nhzYcfATHeoUfBbv02YhE0lH1mS-31LMOt9mMDRCcKVayOGj0&_nc_sid=5e9851&_nc_ht=instagram.fdel15-1.fna.fbcdn.net&_nc_ohc=dQusxQ2jiGwQ7kNvwEi-cge&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc4NzQ0ODgzNTI1MzA4MDUsImFzc2V0X2FnZV9kYXlzIjo0LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTIsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&_nc_gid=XUv3Z7VSG4khVaEWm_mSDw&_nc_zt=28&vs=ae979a44f0290b67&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC8wRTQ5NUVFNDc3OThCNUI1MDBFQkFGNzI5QzlFNDY4RF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzI3NEM0RjIwMjFFRUQ1RUY5N0UyQkZDNzE1QjRDRUE3X2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbqhduMlLDAPxUCKAJDMywXQCfdsi0OVgQYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&oh=00_Afvnc0LkWOYSJafEZwDMer2eS3Xxi9kuA0QnitbD-dD0xA&oe=699E56F3"
+              ],
+              "engagement": {
+                "like": 5,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:12:24.031426Z"
+        },
+        {
+          "fetch_date": "2026-02-20",
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "url": "https://www.instagram.com/blockblastglobal/",
+          "username": "blockblastglobal",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Pick one picture and check whether you can clear the board #blockblast #interactive",
+              "published_at": "2026-02-20T18:59:31",
+              "published_at_display": "2026-02-20 18:59:31",
+              "post_url": "https://www.instagram.com/p/DU-iwhtlPAR/",
+              "media_urls": [
+                "https://instagram.fdel15-1.fna.fbcdn.net/v/t51.82787-15/637695615_17912936256305642_4049519862670945217_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=109&ig_cache_key=MzgzNjY1NjgwMDg4MDcxNzg0MTE3OTEyOTM2MjUwMzA1NjQy.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=XT6ZjMPnD8AQ7kNvwGFR4Rq&_nc_oc=AdlRcV4K9qVCO6kJ1DukOTVK3WSNcget6C38nsC7bb_DVVktw-IDyp34Iio-o-bYbfk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fdel15-1.fna&_nc_gid=XUv3Z7VSG4khVaEWm_mSDw&oh=00_AftLQi8-rt7sas0yEYtGxsB2zq30X2JbzXj80CI1eXrfFw&oe=69A25954",
+                "https://instagram.fdel15-1.fna.fbcdn.net/o1/v/t2/f2/m86/AQP6ntTRMsqlQnV5FSbWB7qPsyKU3tpmQYgLDKYBoqCFiLFkNSkqgOFqG-H0jwF2iy2BEwVUz44owb5ruGG5juBA-BleuneAP2sbt9w.mp4?_nc_cat=104&_nc_oc=AdkgAVCWc02rJFFcEIMwBeWIhNhe1We5x0XRfaFesYY4VSwkCyBtkdAr5i8VpUdXmKg&_nc_sid=5e9851&_nc_ht=instagram.fdel15-1.fna.fbcdn.net&_nc_ohc=7TB_S--quXIQ7kNvwGe-0ke&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc4NzQ2NjM2MzA1MzA4MDUsImFzc2V0X2FnZV9kYXlzIjozLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTMsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&_nc_gid=XUv3Z7VSG4khVaEWm_mSDw&_nc_zt=28&vs=4b10350010f35b66&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9DQzQ2RUYyQUNDMTFDMUMyOENGMEMyMTg4MjNBNkFCMF92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzY4NEVGRkU2RUM1NTVFRkE2RjBENkM1REQyMDVBREI5X2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbqo-uCrrrAPxUCKAJDMywXQCsQ5WBBiTcYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&oh=00_Afv2KsEi-q8zGQacebyo2tBGK1wNKvn-gM4_gGYWOWn-dQ&oe=699E593D"
+              ],
+              "engagement": {
+                "like": 16,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:11:52.332411Z"
+        },
+        {
+          "fetch_date": "2026-02-20",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Revive and get this, colorful block~ #tet #blockblast #interactive #highscore https://t.co/EcUPz5Ymfw",
+              "published_at": "2026-02-19T11:00:01+00:00",
+              "published_at_display": "2026-02-19 11:00:01 UTC",
+              "post_url": "https://x.com/BlockBlastSquad/status/2024438820507136327",
+              "engagement": {
+                "like": 0,
+                "retweet": 0,
+                "reply": 3,
+                "quote": 0,
+                "bookmark": 0,
+                "view": "310"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:12:07.707680Z"
+        },
+        {
+          "fetch_date": "2026-02-21",
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "url": "https://www.instagram.com/blockblastglobal/",
+          "username": "blockblastglobal",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "new breakthrough #blockblast #highscore show me yours",
+              "published_at": "2026-02-21T19:00:40",
+              "published_at_display": "2026-02-21 19:00:40",
+              "post_url": "https://www.instagram.com/p/DVBHt_wiYCw/",
+              "media_urls": [
+                "https://instagram.fdel15-1.fna.fbcdn.net/v/t39.30808-6/631647862_122208291104472249_4881264248243272151_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=100&ig_cache_key=MzgzNzM4MjMwNDY1ODQ1Njc1Mg%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjMzMng0MTUuc2RyLkMzIn0%3D&_nc_ohc=V-jQQcWB0xYQ7kNvwF4fU8X&_nc_oc=Adk3IMbMhVKsLCQPbOfbLkuBfgzv_WShUsmgGDcbouVUzWyUH6xE2nHnyTuZ2Z8OPj0&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fdel15-1.fna&_nc_gid=XUv3Z7VSG4khVaEWm_mSDw&oh=00_Afto8DIVc0sybQdXv9-Geyjlw1eAIwfMr4dlt4OWglKEdw&oe=69A2690B"
+              ],
+              "engagement": {
+                "like": 4,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:10:23.872750Z"
+        },
+        {
+          "fetch_date": "2026-02-22",
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "url": "https://x.com/BlockBlastSquad",
+          "username": "BlockBlastSquad",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "blockblastglobal Pick one picture and check whether you\ncan clear the board #blockblast #interactive https://t.co/CO2DV1FGNY",
+              "published_at": "2026-02-21T11:00:02+00:00",
+              "published_at_display": "2026-02-21 11:00:02 UTC",
+              "post_url": "https://x.com/BlockBlastSquad/status/2025163600705503431",
+              "engagement": {
+                "like": 0,
+                "retweet": 0,
+                "reply": 0,
+                "quote": 0,
+                "bookmark": 0,
+                "view": "193"
+              }
+            },
+            {
+              "text": "Starlink’s high-speed internet is available in your area.\n\nExperience speeds up to 400+ Mbps to stream your favorite shows and sports, work from home, browse social media and more.",
+              "published_at": "2026-02-21T02:27:01+00:00",
+              "published_at_display": "2026-02-21 02:27:01 UTC",
+              "post_url": "https://x.com/BlockBlastSquad/status/2025034496677188074",
+              "engagement": {
+                "like": 715,
+                "retweet": 107,
+                "reply": 32,
+                "quote": 5,
+                "bookmark": 115,
+                "view": "7267946"
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-02-23T16:10:21.590707Z"
+        }
+      ],
+      "platforms_summary": {
+        "tiktok_Block Blast": {
+          "platform_type": "tiktok",
+          "game": "Block Blast",
+          "posts_count": 3,
+          "dates": [
+            "2026-02-16",
+            "2026-02-17"
+          ]
+        },
+        "twitter_Block Blast": {
+          "platform_type": "twitter",
+          "game": "Block Blast",
+          "posts_count": 5,
+          "dates": [
+            "2026-02-17",
+            "2026-02-18",
+            "2026-02-20",
+            "2026-02-22"
+          ]
+        },
+        "instagram_Block Blast": {
+          "platform_type": "instagram",
+          "game": "Block Blast",
+          "posts_count": 3,
+          "dates": [
+            "2026-02-19",
+            "2026-02-20",
+            "2026-02-21"
+          ]
+        }
+      }
+    },
+    "King": {
+      "company": "King",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-02-16",
+          "platform_type": "instagram",
+          "game": null,
+          "url": "https://www.instagram.com/lifeatking/",
+          "username": "lifeatking",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Simon takes his art from sketchbook to screen 🎨\n \nFrom drawing portraits outside of work to designing characters in the New Games team, he looks to human interactions for inspiration in his role as Senior Art Director.\n\nMaybe you were in line for a coffee and inspired the next King character... 👀\n \nCurious where your creativity could take you? ✨ Tap the link in bio. \n \n#LifeAtKing #MakingTheWorldPlayful #NewGames",
+              "published_at": "2026-02-16T15:58:33",
+              "published_at_display": "2026-02-16 15:58:33",
+              "post_url": "https://www.instagram.com/p/DUz62byFCvt/",
+              "media_urls": [
+                "https://instagram.ffjr1-4.fna.fbcdn.net/v/t51.82787-15/634893212_18561206167027300_7100996815835765282_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=106&ig_cache_key=MzgzMzY2NjUzNTIwMzAyMzg1MzE4NTYxMjA2MTYxMDI3MzAw.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTkyMC5zZHIuQzMifQ%3D%3D&_nc_ohc=5I44uk0yoqsQ7kNvwHdT-QH&_nc_oc=AdkPwf2AVPq4GjeioUuZoKgLW5OIBz-Xn4dPpY5o5k4O_j9fTYikATLEu23PXkNoolk&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.ffjr1-4.fna&_nc_gid=4ZrvM7KhSHw8mPIN2oU7bQ&oh=00_Aft35EZl8hBxaLr13CEu_UHzkMdbtwOGqYrYWY8sV-jweA&oe=699BBA47",
+                "https://instagram.ffjr1-4.fna.fbcdn.net/o1/v/t2/f2/m86/AQODv_Vtd7bMlHOSxjBEWyfKNwtcoaJvZ0yXDGbhiStXFF9TFW52PnL9P2OkaGbm_KE6v6aNqsNVVGSWpT0JF4AghQ1yCrk4J-xubdk.mp4?_nc_cat=107&_nc_oc=Adk4-NA6zGP7_H2XtLd3x-IpWMLGn-YnYi1ZGMIuDWqjPFwSJU5v6Wgg41zmrqKdAtk&_nc_sid=5e9851&_nc_ht=instagram.ffjr1-4.fna.fbcdn.net&_nc_ohc=s04ciaRMQFcQ7kNvwFLXOUB&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc5NDk1ODY2NzExMDAwMDYsImFzc2V0X2FnZV9kYXlzIjoyLCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6ODQsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&_nc_gid=4ZrvM7KhSHw8mPIN2oU7bQ&_nc_zt=28&vs=916bfa3982481ad4&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC9GNDRCRjlGOEEwOEU5QzRDRUJCOEI3RENBNkE4NDY4MV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzBENDNENDZDNkNBNDk2NUI5QjhEN0VFMERERTExNTgzX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbMgauWusPiPxUCKAJDMywXQFUj1wo9cKQYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&oh=00_Afs1w76z-R1fxAjvo7mSxsgwqZl-iBadWVP3INm_DMBsMQ&oe=6997A32C"
+              ],
+              "engagement": {
+                "like": 55,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:38:28.232474Z"
+        },
+        {
+          "fetch_date": "2026-02-19",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Is it cake 🍰… or is it candy? 🍬🤭",
+              "published_at": "2026-02-19T23:00:34",
+              "published_at_display": "2026-02-19 23:00:34",
+              "post_url": "https://www.instagram.com/p/DU8ZikSjB3r/",
+              "media_urls": [
+                "https://scontent-vie1-1.cdninstagram.com/v/t51.82787-15/632963410_18567051424015545_894297274204384256_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=109&ig_cache_key=MzgzNjA1MzMwOTIwMzY4NDg0MzE4NTY3MDUxNDIxMDE1NTQ1.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTkyMC5zZHIuQzMifQ%3D%3D&_nc_ohc=Zw84RLcNehIQ7kNvwG1y4Hr&_nc_oc=AdkGQPSZ4LZnPaQPjMfRbbjFSCgGoEgbE4QUHhcSNg0Ug0zW478q3eQGI7hac5wMK9k&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-vie1-1.cdninstagram.com&_nc_gid=hWDVRTmjT0ilDM23kies6Q&oh=00_Afs7X3LXHc_zs3_7KCJAdjI-rUdAeQsyczhCNY-_NKn7TQ&oe=69A23B9F",
+                "https://scontent-vie1-1.cdninstagram.com/o1/v/t2/f2/m86/AQOtUmf2WSBw9LqDfw4l7xrPfuDtZ07pXPRerHcXFy92KbPAxqF108hm91ZgQKpQ9OnoFKJqa7gmy_gAWSnLyzcnnTdnSKBG9ewXe7g.mp4?_nc_cat=100&_nc_sid=5e9851&_nc_ht=scontent-vie1-1.cdninstagram.com&_nc_ohc=sM0BpApbU8gQ7kNvwH3LRUf&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc5NDQ5ODc5ODAxMDg5NDcsImFzc2V0X2FnZV9kYXlzIjo0LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTYsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&_nc_gid=hWDVRTmjT0ilDM23kies6Q&_nc_zt=28&vs=97425faa637b5e49&_nc_vs=HBksFQIYUmlnX3hwdl9yZWVsc19wZXJtYW5lbnRfc3JfcHJvZC85NDQwMjVGQ0NBNDg0NTE2NzkxNDc3Nzk2MjNFMzE5QV92aWRlb19kYXNoaW5pdC5tcDQVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyLzFCNDU1ODVGRjJBMTQzQUMxMkE0OTVDQ0E2MTI5OThFX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACam0uyg47fgPxUCKAJDMywXQDAqfvnbItEYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&oh=00_Afs6o2FgIXmr6oonL3M3YIfnw3favGcjWZwHWqihqASFug&oe=699E6F15"
+              ],
+              "engagement": {
+                "like": 152,
+                "comment": 19
+              }
+            },
+            {
+              "text": "You can tell a lot about someone by their final move… What’s yours? 😎👇",
+              "published_at": "2026-02-19T06:00:14",
+              "published_at_display": "2026-02-19 06:00:14",
+              "post_url": "https://www.instagram.com/p/DU6kz7ijBu-/",
+              "media_urls": [
+                "https://scontent-vie1-1.cdninstagram.com/v/t51.82787-15/637704602_18566426722015545_9095693526461062995_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=105&ig_cache_key=MzgzNTUzOTg1Njk5NTUzMDQ4NA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=fL8guC4EnKkQ7kNvwHvTQoT&_nc_oc=AdmU6-_BOn579nSwE8fOaMGeyEf-fSuRgQ3k4YHrg-4H5Pw4QV_rK_RBiq4tbbXwkWI&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-vie1-1.cdninstagram.com&_nc_gid=hWDVRTmjT0ilDM23kies6Q&oh=00_AfvwOPTMk8Fyc395xlMhG3EWho2AFBRO5p0SI1XZD12m8Q&oe=69A2442F"
+              ],
+              "engagement": {
+                "like": 199,
+                "comment": 72
+              }
+            }
+          ],
+          "posts_count": 2,
+          "fetched_at": "2026-02-23T16:12:45.846164Z"
+        },
+        {
+          "fetch_date": "2026-02-20",
+          "platform_type": "instagram",
+          "game": null,
+          "url": "https://www.instagram.com/lifeatking/",
+          "username": "lifeatking",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "The Kingdom is ringing in Lunar New Year 🧧\n\nFrom trying Chinese calligraphy to cracking open fortune cookies and hunting down hidden Red Envelopes, Kingsters across The Kingdom came together to celebrate the Year of the Horse with creativity and connection.\n\nWishing a joyful and prosperous year to all who celebrate. 🐎\n\n#MakingTheWorldPlayful #LifeAtKing",
+              "published_at": "2026-02-20T21:17:32",
+              "published_at_display": "2026-02-20 21:17:32",
+              "post_url": "https://www.instagram.com/p/DU-ykJ8AXtA/",
+              "media_urls": [
+                "https://instagram.fmdz2-1.fna.fbcdn.net/v/t51.82787-15/637259511_18563868880027300_1539317295589713015_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=101&ig_cache_key=MzgzNjcyNTU1OTE0NTg4OTIxMA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=sAIO0nbY05AQ7kNvwH0pVs_&_nc_oc=AdmPM8q-cNH-xcdM5FwXP6B8Hq8fJ6LYpPn82tk4T1Um2v15QrrN9q-cM7QZ3DwtJF740bBpbw0emgnlWe3pnKfK&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.fmdz2-1.fna&_nc_gid=jyUXDcU9DEj-xkaz_TQc0Q&oh=00_AfunvRqO_HqHVTEja7r6FfpBAr4utEZaNMLiP6H_8QpKVw&oe=69A23374"
+              ],
+              "engagement": {
+                "like": 36,
+                "comment": 0
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:12:10.598828Z"
+        },
+        {
+          "fetch_date": "2026-02-21",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Wrong answers only. 🍭👀 How do you clear an impossible level?👇\n\nSweet talk the Color Bomb?\nThreaten your phone a little?",
+              "published_at": "2026-02-21T00:00:12",
+              "published_at_display": "2026-02-21 00:00:12",
+              "post_url": "https://www.instagram.com/p/DU_FMBNDR4K/",
+              "media_urls": [
+                "https://scontent-vie1-1.cdninstagram.com/v/t51.82787-15/639754363_18567951610015545_8251598345161588490_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=109&ig_cache_key=MzgzNjgwODIyMzcwMTkzMzU3OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=Mt-WpkMlLYQQ7kNvwF7lljl&_nc_oc=AdmpS3QU29PgZ2oMqwoelGZ5CmkD9AG_8O4Td7S5YAO57i2GsHO2p4KraZKVHcAMLoE&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-vie1-1.cdninstagram.com&_nc_gid=hWDVRTmjT0ilDM23kies6Q&oh=00_AftAECYfZHoXGBSXBrV8r6gAjDUsksiO4d2zlyiZjzH3GA&oe=69A241E6"
+              ],
+              "engagement": {
+                "like": 133,
+                "comment": 29
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:10:46.030670Z"
+        },
+        {
+          "fetch_date": "2026-02-22",
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "url": "https://www.instagram.com/candycrushsaga",
+          "username": "candycrushsaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "If you could change your favorite Booster… how would you make it better? 🍬✨ \n\nThe players with the most creative answers will win 50 Gold Bars. 💛",
+              "published_at": "2026-02-22T02:00:12",
+              "published_at_display": "2026-02-22 02:00:12",
+              "post_url": "https://www.instagram.com/p/DVB3txtjtO6/",
+              "media_urls": [
+                "https://scontent-vie1-1.cdninstagram.com/v/t51.82787-15/637716633_18569032393015545_3585063249597862543_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=102&ig_cache_key=MzgzNzU5MzM5NTgwODYyMTQ5OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwODB4MTM1MC5zZHIuQzMifQ%3D%3D&_nc_ohc=tBizF-QX6I8Q7kNvwHKWZ7W&_nc_oc=AdlpwTR-LAn8-sGclPz2u4QVuW6L4PYyDNhU81claYHUH-bvp2xigFfF29lel2ecOjs&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-vie1-1.cdninstagram.com&_nc_gid=hWDVRTmjT0ilDM23kies6Q&oh=00_AfsoR6423XwaCrUDbg5nrAmE_a9fL1MrOQXSILqqnfF8ZA&oe=69A246E6"
+              ],
+              "engagement": {
+                "like": 138,
+                "comment": 45
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:10:28.799477Z"
+        },
+        {
+          "fetch_date": "2026-02-22",
+          "platform_type": "twitter",
+          "game": "Farm Heroes Saga",
+          "url": "https://x.com/FarmHeroesSaga",
+          "username": "farmheroessaga",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Starlink’s high-speed internet is available in your area.\n\nExperience speeds up to 400+ Mbps to stream your favorite shows and sports, work from home, browse social media and more.",
+              "published_at": "2026-02-21T02:27:01+00:00",
+              "published_at_display": "2026-02-21 02:27:01 UTC",
+              "post_url": "https://x.com/farmheroessaga/status/2025034496677188074",
+              "engagement": {
+                "like": 716,
+                "retweet": 107,
+                "reply": 32,
+                "quote": 5,
+                "bookmark": 115,
+                "view": "7270605"
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:10:58.979079Z"
+        }
+      ],
+      "platforms_summary": {
+        "instagram_company": {
+          "platform_type": "instagram",
+          "game": null,
+          "posts_count": 2,
+          "dates": [
+            "2026-02-16",
+            "2026-02-20"
+          ]
+        },
+        "instagram_Candy Crush Saga": {
+          "platform_type": "instagram",
+          "game": "Candy Crush Saga",
+          "posts_count": 4,
+          "dates": [
+            "2026-02-19",
+            "2026-02-21",
+            "2026-02-22"
+          ]
+        },
+        "twitter_Farm Heroes Saga": {
+          "platform_type": "twitter",
+          "game": "Farm Heroes Saga",
+          "posts_count": 1,
+          "dates": [
+            "2026-02-22"
+          ]
+        }
+      }
+    },
+    "vita studio": {
+      "company": "vita studio",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-02-16",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-02-16T10:00:03Z",
+              "title": "Vita Mahjong",
+              "text": "Looking back at Earth: this is what life’s about. 🌍✨🚀\n\n#vitamahjong #mahjong #spaceview #moonadventure #viralvideo #trendnow #wowmoment",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid01AM6xQdAEJjLyeiUZAMePcwr72sdWhXP2sb7u4wbUwrrwgjauWSffrzEgY4NLEWtl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:39:13.231131Z"
+        },
+        {
+          "fetch_date": "2026-02-16",
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "url": "https://www.tiktok.com/@vitamahjong_official",
+          "username": "vitamahjong_official",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Looking back at Earth: this is what life’s about. 🌍✨🚀",
+              "published_at": "2026-02-16T18:00:00",
+              "published_at_display": "2026-02-16 18:00:00",
+              "post_url": "https://www.tiktok.com/@vitamahjong_official/video/7605161485416893710",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/maliva/tos-maliva-ve-0068c799-us/o0B8A9cijFeRrCvOQpEDppfsIcp7gZagDSKQbV/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=704&bt=352&cs=0&ds=3&ft=-Csk_m.MPD12NB7NRd-Uxiw5PY6e3wv25ocAp&mime_type=video_mp4&qs=0&rc=M2dlZGdpM2k1MzU4Mzg3OEBpM2hudm45cm5pOTMzZzgzNEBhLzVgNi42NmAxM2MvMF5jYSNfby5uMmQ0YDJhLS1kLy9zcw%3D%3D&btag=e000b0000&expire=1771601965&l=20260218233914F0B1F48A323B74510ED1&ply_type=2&policy=2&signature=acc163d9e9ce9f49c4de5469e50092f3&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 3,
+                "comment": 2,
+                "share": 0,
+                "view": 349
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:39:17.874519Z"
+        },
+        {
+          "fetch_date": "2026-02-18",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-02-18T10:00:13Z",
+              "title": "Vita Mahjong",
+              "text": "Ready for some brain tea? Solve this! 🍵🧩💡\n\n#vitamahjong #mahjong #puzzlegame #mindgames #viralclip #trendfun #gametime",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid021VfGFjSsanh3MEVAB3fYRNLDcUPBkDdPpvT7kQtXVhRDZyt2dVHebKkp8wk7QYAl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:13:58.857414Z"
+        },
+        {
+          "fetch_date": "2026-02-20",
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "url": "https://www.facebook.com/p/Vita-Mahjong-61561738276462/",
+          "username": null,
+          "page_id": "61561738276462",
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "time": "2026-02-20T10:00:23Z",
+              "title": "Vita Mahjong",
+              "text": "Sharp eyes challenge! How many differences can you spot? 👀🃏\n\n#vitamahjong #mahjong #findthedifference #puzzlegame #viralclip #trendalert #funchallenge",
+              "link": "https://www.facebook.com/permalink.php?story_fbid=pfbid02EALQypFdJKkVbW7p1rnoS4tFCsM57VoZRQt9VX1WFkk3RM9rFZsXnjSMshteMvcJl&id=61561738276462"
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:13:00.319145Z"
+        }
+      ],
+      "platforms_summary": {
+        "facebook_Vita Mahjong": {
+          "platform_type": "facebook",
+          "game": "Vita Mahjong",
+          "posts_count": 3,
+          "dates": [
+            "2026-02-16",
+            "2026-02-18",
+            "2026-02-20"
+          ]
+        },
+        "tiktok_Vita Mahjong": {
+          "platform_type": "tiktok",
+          "game": "Vita Mahjong",
+          "posts_count": 1,
+          "dates": [
+            "2026-02-16"
+          ]
+        }
+      }
+    },
+    "voodoo": {
+      "company": "voodoo",
+      "platforms_data": [
+        {
+          "fetch_date": "2026-02-16",
+          "platform_type": "tiktok",
+          "game": "mob control",
+          "url": "https://www.tiktok.com/@gamemobcontrol",
+          "username": "gamemobcontrol",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Who’s that with Normie? 👀 Grab your Valentine’s Avatar from the Mob Shop!",
+              "published_at": "2026-02-16T14:31:49",
+              "published_at_display": "2026-02-16 14:31:49",
+              "post_url": "https://www.tiktok.com/@gamemobcontrol/video/7607346984168492310",
+              "media_urls": [
+                "https://v16-webapp-prime.tiktok.com/video/tos/no1a/tos-no1a-ve-0068c001-no/oQRBmFFFgXAfMtkJepWLAkklQAQEIGuEDrc0Eg/?a=1988&bti=ODszNWYuMDE6&ch=0&cr=3&dr=0&lr=all&cd=0%7C0%7C0%7C&cv=1&br=2050&bt=1025&cs=0&ds=6&ft=-Csk_mwKPD12N67NRd-UxtGFVY6e3wv25LcAp&mime_type=video_mp4&qs=0&rc=ODQ2NDs2ZWlkZDw6aTNpM0BpM3Q8ZHA5cjNlOTMzbzczNUBjLV9hNjIyNl8xMDZeX2AuYSM2YnBmMmQ0ZzZhLS1kMTFzcw%3D%3D&btag=e000b8000&expire=1771601990&l=20260218233926C8EC50BD2631F69291D2&ply_type=2&policy=2&signature=667241fa2d43ed9be537286ad090dc5e&tk=tt_chain_token"
+              ],
+              "engagement": {
+                "like": 21,
+                "comment": 2,
+                "share": 1,
+                "view": 999
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:39:29.944219Z"
+        },
+        {
+          "fetch_date": "2026-02-17",
+          "platform_type": "instagram",
+          "game": "mob control",
+          "url": "https://www.instagram.com/mobcontrolgame/",
+          "username": "mobcontrolgame",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "You and which mob? Tell us in the comments ⭐️",
+              "published_at": "2026-02-17T04:47:13",
+              "published_at_display": "2026-02-17 04:47:13",
+              "post_url": "https://www.instagram.com/p/DU1S0PxjcQ0/",
+              "media_urls": [
+                "https://scontent-hbe1-1.cdninstagram.com/v/t51.82787-15/632063457_17977126427985762_6543649299507852415_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=106&ig_cache_key=MzgzNDA1MzQxMjk2MzMzNzI2OA%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjEwMjR4MTAyNC5zZHIuQzMifQ%3D%3D&_nc_ohc=pGxZI02sgrkQ7kNvwGUTm0C&_nc_oc=AdkHN_MuuODW94vnVXitotOA5G0JLVaL0HO70O5vf1h_QtVhW9SB1sU3eEVzA90egKg&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=scontent-hbe1-1.cdninstagram.com&_nc_gid=xUM0P1ND9f8sHXYX0c6NOA&oh=00_AfuNCAAduOmuqRRSEDBxB0X_TypWqHiBOHWzL04GVNr3Gg&oe=699B97B4"
+              ],
+              "engagement": {
+                "like": 21,
+                "comment": 7
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-18T15:15:31.831733Z"
+        },
+        {
+          "fetch_date": "2026-02-18",
+          "platform_type": "instagram",
+          "game": "mob control",
+          "url": "https://www.instagram.com/mobcontrolgame/",
+          "username": "mobcontrolgame",
+          "page_id": null,
+          "channel_id": null,
+          "handle": null,
+          "posts": [
+            {
+              "text": "Mobsters! This is your chance to unlock and level up the newest cards in the game! Grab your Blueprint Season pass to collect Blueprints and Cards for Lootboxer, Raccoon, Champion Overdrive, Railshot, and Rainbowl! ⭐️",
+              "published_at": "2026-02-18T23:12:50",
+              "published_at_display": "2026-02-18 23:12:50",
+              "post_url": "https://www.instagram.com/p/DU51_VHDV1L/",
+              "media_urls": [
+                "https://instagram.faep14-2.fna.fbcdn.net/v/t51.71878-15/631614163_2348336875671563_479066827114767665_n.jpg?stp=dst-jpg_e15_tt6&_nc_cat=110&ig_cache_key=MzgzNTMzNDAwNjE0MTcwNTU0Nw%3D%3D.3-ccb7-5&ccb=7-5&_nc_sid=58cdad&efg=eyJ2ZW5jb2RlX3RhZyI6InhwaWRzLjY0MHgxMTM2LnNkci5DMyJ9&_nc_ohc=mqLwjBAoxFQQ7kNvwGjI0xU&_nc_oc=Adlf7yOBq9HPXjGcjmwY00h3A2yr_EcwHBTJ8_liMPC6ayMm2j63G3pj2aW3cQGtu7CtA783KhUCMu8s14uq1F4c&_nc_ad=z-m&_nc_cid=0&_nc_zt=23&_nc_ht=instagram.faep14-2.fna&_nc_gid=CHxLUEAsGX2Du-II1YXe_A&oh=00_AfsgnDjKQ5Dpi67cdNPm2L9ygsGGKG1Ay41N-j7s4im3Ew&oe=69A25333",
+                "https://instagram.faep14-2.fna.fbcdn.net/o1/v/t16/f2/m69/AQMIWHwr9fdYZ7FMatid7f7XgdcDfxMZkJjWXqz0EB97Xa5gLtxiR9I_K0gqQNaiGzozDvfVqYE3iCxZRcFtuqw9.mp4?strext=1&_nc_cat=103&_nc_oc=AdnDjsWDThvL7lnq8W6unrlRJkcPgJM4hFJDRm3F2DOHSNht24iUZtnWkm1jBnY37c6TXd2BK1Tpcniye00NDfSC&_nc_sid=5e9851&_nc_ht=instagram.faep14-2.fna.fbcdn.net&_nc_ohc=u0gjGVbtquYQ7kNvwGk8HYZ&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5JTlNUQUdSQU0uQ0xJUFMuQzMuNzIwLmRhc2hfYmFzZWxpbmVfMV92MSIsInhwdl9hc3NldF9pZCI6MTc5NDE2MDI1NzYxMTc3MzcsImFzc2V0X2FnZV9kYXlzIjo1LCJ2aV91c2VjYXNlX2lkIjoxMDA5OSwiZHVyYXRpb25fcyI6MTAsInVybGdlbl9zb3VyY2UiOiJ3d3cifQ%3D%3D&ccb=17-1&_nc_gid=CHxLUEAsGX2Du-II1YXe_A&_nc_zt=28&vs=6db190bd10f71d2a&_nc_vs=HBksFQIYOnBhc3N0aHJvdWdoX2V2ZXJzdG9yZS9HRFA0QVNZT1dvN0dMbnNIQUxlQkZrTWc0ckFCYnNwVEFRQUYVAALIARIAFQIYUWlnX3hwdl9wbGFjZW1lbnRfcGVybWFuZW50X3YyL0JGNEU2MzE5ODAzNkM5RDk3OEUxODI2NUU3NzIzQzlDX2F1ZGlvX2Rhc2hpbml0Lm1wNBUCAsgBEgAoABgAGwKIB3VzZV9vaWwBMRJwcm9ncmVzc2l2ZV9yZWNpcGUBMRUAACbSv4GE3PLePxUCKAJDMywXQCQU_fO2RaIYEmRhc2hfYmFzZWxpbmVfMV92MREAdf4HZeadAQA&oh=00_Aft0_xOfvFO8q9HtmvEuPK2_vgKGSi2V5QVspp52BFeB7w&oe=69A23AA9"
+              ],
+              "engagement": {
+                "like": 130,
+                "comment": 24
+              }
+            }
+          ],
+          "posts_count": 1,
+          "fetched_at": "2026-02-23T16:14:07.596072Z"
+        }
+      ],
+      "platforms_summary": {
+        "tiktok_mob control": {
+          "platform_type": "tiktok",
+          "game": "mob control",
+          "posts_count": 1,
+          "dates": [
+            "2026-02-16"
+          ]
+        },
+        "instagram_mob control": {
+          "platform_type": "instagram",
+          "game": "mob control",
+          "posts_count": 2,
+          "dates": [
+            "2026-02-17",
+            "2026-02-18"
+          ]
+        }
+      }
+    }
+  },
+  "extracted_at": "2026-02-24"
+}

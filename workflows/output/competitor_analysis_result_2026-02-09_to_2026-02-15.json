@@ -1,0 +1,89 @@
+{
+  "period": {
+    "start_date": "2026-02-09",
+    "end_date": "2026-02-15",
+    "days": 7
+  },
+  "companies": {
+    "Hungray Studio": {
+      "company": "Hungray Studio",
+      "company_analysis": {
+        "company": "Hungray Studio",
+        "weekly_score": 6.0,
+        "weekly_title": "春节+情人节双节活动上线，多语言本地化运营加速",
+        "summary": "过去7天，Hungray Studio围绕Block Blast密集推进以春节（CNY）和情人节为核心的双节营销，推出「CNY Hunt – Binondo Edition」限时活动及情人节送花玩法，并在TikTok启动巴西、法国、土耳其等多语言本地化运营（含创作者招募计划），同时借势超级碗热点进行内容营销。整体以节日活动促活+UGC生态建设为主，无重大线下实体动作。",
+        "new_gameplay": "推出「Block Blast CNY Hunt」春节寻宝活动（Binondo Edition）、情人节限时送花活动，并在巴西市场启动创作者分享变现激励计划。",
+        "new_gameplay_post_urls": [
+          "https://www.tiktok.com/@BlockBlastOfficial/video/7606741417280523550",
+          "https://www.tiktok.com/@BlockBlastOfficial/video/7605590125040422157",
+          "https://www.tiktok.com/@BlockBlastOfficial/video/7605210301386018061"
+        ],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "日常多语言社区维护（法/葡/土语区）、节日热点跟进（超级碗中场秀）及轻松向情绪互动（披萨、好心情等）占比较高。",
+        "direct_action_suggestions": "1. 拆解「CNY Hunt」活动机制与奖励设计，评估在目标市场复制文化限定活动的ROI；\n2. 建立多语言TikTok内容矩阵，优先覆盖葡语（巴西）、法语（北非/欧洲）及土耳其等高增长市场；\n3. 启动创作者激励计划（参考巴西「分享赚钱」模式），通过阶梯奖励刺激UGC病毒传播；\n4. 建立节日热点SOP，提前2周备妥情人节/春节等节点素材以快速响应；\n5. 监控Binondo Edition数据，若涉及LBS线下玩法需评估技术成本与合规风险；\n6. 关注其 hashtag 策略（#filter #viral），测试AR滤镜对安装转化的提升效果。",
+        "posts_count": 16,
+        "period_days": 7
+      }
+    },
+    "King": {
+      "company": "King",
+      "company_analysis": {
+        "company": "King",
+        "weekly_score": 6.0,
+        "weekly_title": "情人节主题营销+新玩法Crushable推广，线下音乐活动抽奖",
+        "summary": "King本周社媒以情人节节点营销为核心，Candy Crush Saga密集发布节日相关内容（5条），同时持续推广新玩法\"Crushable\"（4条KOL合作内容）。亮点是推出LA线下音乐体验抽奖活动（含机票酒店），但仅限美国用户。此外发布2条雇主品牌内容展示办公文化，整体节奏紧凑但新玩法披露细节有限。",
+        "new_gameplay": "新玩法/功能「Crushable」正在推广中，从KOL合作内容判断应为策略/解谜向的每日挑战模式，强调\"set yourself up for success\"和每日胜利，但官方未披露具体机制细节",
+        "new_gameplay_post_urls": [
+          "https://www.instagram.com/p/DUrcn_qF21Q/",
+          "https://www.instagram.com/p/DUopkM0jdFy/",
+          "https://www.instagram.com/p/DUmSGo5iSaS/",
+          "https://www.instagram.com/p/DUl2akiEqo3/"
+        ],
+        "offline_events": "LA线下音乐体验活动抽奖：含Kia Forum演唱会门票+往返机票+酒店，2名获奖者，限18岁以上美国居民，2月18日截止",
+        "offline_event_post_urls": [
+          "https://www.instagram.com/p/DUtDoH-DId8/"
+        ],
+        "routine_note": "情人节节日问候、日常ASMR内容、雇主品牌办公文化展示均为常规运营",
+        "direct_action_suggestions": "1. 【深挖Crushable机制】King对新玩法信息披露极少，建议通过KOL合作视频、玩家社区（Reddit/Discord）反向拆解具体规则，评估是否威胁我方同类产品\n2. 【监测线下活动ROI】该音乐抽奖仅限美国且门槛高（18+/机票酒店成本），建议追踪后续UGC产出量及品牌声量变化，判断King是否测试\"游戏+现场娱乐\"跨界模式\n3. 【抢占情人节后空档】King密集投放2.9-2.14节日内容，建议我方在2.15-2.21推出\"节后治愈/回归\"主题内容，承接玩家情绪空窗\n4. 【关注ASMR内容线】King持续发布ASMR视频（帖子13），验证休闲玩家对解压内容的偏好，建议评估我方产品是否可开发类似\"感官舒适\"素材\n5. 【雇主品牌竞争】King本周2条办公文化内容针对人才争夺，若我方同期有招聘需求，建议对比其\"多元化+具体员工故事\"的叙事结构优化我方雇主内容",
+        "posts_count": 13,
+        "period_days": 7
+      }
+    },
+    "voodoo": {
+      "company": "voodoo",
+      "company_analysis": {
+        "company": ",",
+        "weekly_score": 0,
+        "weekly_title": "本周社媒动态",
+        "summary": "",
+        "new_gameplay": "无",
+        "new_gameplay_post_urls": [],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "",
+        "direct_action_suggestions": "",
+        "posts_count": 5,
+        "period_days": 7
+      }
+    },
+    "vita studio": {
+      "company": "vita studio",
+      "company_analysis": {
+        "company": "vita studio",
+        "weekly_score": 3.0,
+        "weekly_title": "日常运营为主，无重大动作",
+        "summary": "过去7天内，vita studio仅在社媒发布了9条内容，全部为Vita Mahjong的常规推广素材。TikTok端于2月12日集中投放6条短视频，采用「Harder than you think」「Boost brain, free, easy」「Easy on the eyes」等通用买量话术；Facebook端发布2条解谜类互动帖子，分别为「Scramble mode: ON!」和「Every clue counts」的脑筋急转弯式内容，整体无新玩法实机演示、无版本更新公告、无线下活动露出，属于典型的日常买量维护周期。",
+        "new_gameplay": "无",
+        "new_gameplay_post_urls": [],
+        "offline_events": "无",
+        "offline_event_post_urls": [],
+        "routine_note": "TikTok集中投放6条同质化买量素材，Facebook发布2条常规解谜互动帖，均为日常维护性质，无版本更新或重大运营节点。",
+        "direct_action_suggestions": "1. 监控Vita Mahjong的「Scramble mode」是否为即将上线的新玩法，若为解谜变体玩法，建议我方同类产品提前布局同类关键词买量；\n2. 针对其「Harder than you think」的反直觉话术进行A/B测试反制，用「真的简单」或「3秒上手」等对立话术抢占用户心智；\n3. 其TikTok 6条素材同日集中投放，推测为预算测试期，建议追踪后续7天是否放量，及时调整我方出价策略；\n4. Facebook解谜互动帖 Engagement 数据若较好，可快速借鉴「文字解谜+Mahjong」的 hybrid 内容形式，降低素材制作成本；\n5. 本周竞品无新玩法/无线下活动，窗口期适合我方抢量，建议加大预算测试新素材。",
+        "posts_count": 9,
+        "period_days": 7
+      }
+    }
+  },
+  "analyzed_at": "2026-02-24T03:45:25.766583Z"
+}
