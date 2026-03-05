@@ -70,6 +70,10 @@
 ### 1. 环境配置
 
 ```bash
+# （推荐）在项目根目录创建并激活虚拟环境
+python -m venv .venv
+source .venv/bin/activate  # Windows 使用 .venv\Scripts\activate
+
 # 安装依赖
 pip install -r requirements.txt
 
