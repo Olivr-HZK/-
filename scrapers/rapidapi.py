@@ -70,6 +70,33 @@ def get_all_rapidapi_keys_count() -> int:
     """获取配置的 API Key 数量"""
     return len(_rapidapi_keys)
 
+
+# Twitter241：实际发出的 HTTP 次数（含 429/403 换 key 后的重试），供每日爬虫日志统计用量
+_twitter_api_stats: Dict[str, int] = {"user_lookup": 0, "user_tweets_page": 0}
+
+
+def reset_twitter_api_stats() -> None:
+    """重置 Twitter 相关 HTTP 计数（建议每日爬虫每轮任务开始时调用）。"""
+    global _twitter_api_stats
+    _twitter_api_stats = {"user_lookup": 0, "user_tweets_page": 0}
+
+
+def get_twitter_api_stats() -> Dict[str, int]:
+    """返回当前累计的 Twitter RapidAPI HTTP 次数（字典拷贝）。"""
+    return dict(_twitter_api_stats)
+
+
+def _twitter_stats_record_request(host: str, url: str) -> None:
+    """在每次对 twitter241 成功发出 requests 后调用（与 RAPIDAPI_HOSTS['twitter'] 一致）。"""
+    if host != "twitter241.p.rapidapi.com":
+        return
+    global _twitter_api_stats
+    if "user-tweets" in url:
+        _twitter_api_stats["user_tweets_page"] = _twitter_api_stats.get("user_tweets_page", 0) + 1
+    elif "/user" in url and "user-tweets" not in url:
+        _twitter_api_stats["user_lookup"] = _twitter_api_stats.get("user_lookup", 0) + 1
+
+
 def _make_rapidapi_request(
     method: str,
     url: str,
@@ -140,6 +167,9 @@ def _make_rapidapi_request(
             else:
                 print(f"  ❌ 不支持的 HTTP 方法: {method}")
                 return None
+
+            # 统计 Twitter241 实际 HTTP 次数（每次 requests 算 1 次，含后续可能因 429 触发的重试）
+            _twitter_stats_record_request(host, url)
             
             # 处理 429（限流）和 403（Forbidden，如订阅/权限问题）错误，尝试切换 API Key 重试
             if response.status_code in (429, 403):
@@ -1272,7 +1302,8 @@ def get_posts_from_twitter(
     """
     使用 RapidAPI 获取 Twitter/X 推文
     - days_ago=None: 不做日期过滤，返回最新 count 条（解析到多少返回多少）
-    - days_ago=int: 仅返回该天(相对今天)的推文（按 UTC 日历日）
+    - days_ago=int: 返回该天(相对今天)的全部推文（按 UTC 日历日）
+      此时 count 仅作为单页请求大小，而不是最终结果上限
     - expected_username: 可选，期望的作者 handle；仅保留该作者的推文，避免混入转推/他人内容
     """
     api_key = get_rapidapi_key()
@@ -1305,9 +1336,10 @@ def get_posts_from_twitter(
         'x-rapidapi-host': host
     }
     
+    page_size = max(1, min(int(count), 100))
     params = {
         "user": user_id,
-        "count": int(count),
+        "count": page_size,
     }
     
     try:
@@ -1324,9 +1356,12 @@ def get_posts_from_twitter(
 
         next_cursor: Optional[str] = None
         page = 0
+        max_pages = 20 if days_ago is not None else 3
 
         while True:
             page += 1
+            reached_before_target_day = False
+            page_added = 0
             resp = _make_rapidapi_request('GET', url, host, headers=headers, params=params, max_retries=2, timeout=30)
             if resp is None:
                 print(f"  ⚠️ Twitter API 调用失败（第 {page} 页）")
@@ -1371,6 +1406,9 @@ def get_posts_from_twitter(
                             created_at_utc = created_at.astimezone(timezone.utc)
 
                             if day_start_utc and day_end_utc:
+                                if created_at_utc < day_start_utc:
+                                    reached_before_target_day = True
+                                    continue
                                 if not (day_start_utc <= created_at_utc <= day_end_utc):
                                     continue
 
@@ -1399,6 +1437,7 @@ def get_posts_from_twitter(
                                 }
                             )
                             seen_ids.add(tweet_id)
+                            page_added += 1
 
                 # 查找下一页游标
                 if next_cursor is None:
@@ -1406,19 +1445,27 @@ def get_posts_from_twitter(
                     if cur:
                         next_cursor = cur
 
-            # 是否满足数量
-            if len(posts) >= int(count):
+            # 不按日期过滤时，仍按 count 截断为最新 N 条
+            if days_ago is None and len(posts) >= int(count):
                 break
-            # 没有游标或翻页上限，退出
-            if not next_cursor or page >= 3:
+
+            # 按日期过滤时，若已经翻到目标日期之前，则后续页面只会更旧，可以停止
+            if days_ago is not None and reached_before_target_day:
                 break
+
+            # 当前页没有新增且没有下一页，或达到安全翻页上限，退出
+            if not next_cursor or page >= max_pages:
+                break
+
             # 准备下一页
             params = dict(params)
             params["cursor"] = next_cursor
             next_cursor = None
 
         posts.sort(key=lambda p: p.get("published_at", ""), reverse=True)
-        return posts[: int(count)]
+        if days_ago is None:
+            return posts[: int(count)]
+        return posts
     
     except Exception as exc:
         print(f"  ❌ Twitter API 调用失败: {exc}")

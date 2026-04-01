@@ -8,7 +8,8 @@ import json
 import re
 import time
 from datetime import date, datetime, timezone, timedelta
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
+from collections import Counter
 
 import env_loader  # noqa: F401
 
@@ -20,7 +21,21 @@ from scrapers.rapidapi import (
     get_twitter_user_id_from_username,
     get_tiktok_secuid_from_username,
     extract_username_from_url,
+    reset_twitter_api_stats,
+    get_twitter_api_stats,
 )
+
+# 本趟每日爬虫中尝试爬取的 Twitter 账号（公司、游戏），用于日志汇总
+_daily_twitter_accounts: List[Tuple[str, str]] = []
+
+
+def _reset_daily_twitter_run_log() -> None:
+    global _daily_twitter_accounts
+    _daily_twitter_accounts = []
+
+
+def _record_twitter_account_attempt(company: str, game: Optional[str]) -> None:
+    _daily_twitter_accounts.append((company, game or "(公司级)"))
 
 
 def scrape_twitter_platform(
@@ -36,6 +51,8 @@ def scrape_twitter_platform(
     url = platform.get("url", "")
     
     display_name = f"{company} - {game}" if game else company
+    
+    _record_twitter_account_attempt(company, game)
     
     print(f"    [Twitter] {display_name}")
     print(f"      URL: {url}")
@@ -488,6 +505,9 @@ def scrape_all_companies_to_database(
     print(f"📅 目标日期: {target_date} (days_ago={days_ago})")
     print()
     
+    reset_twitter_api_stats()
+    _reset_daily_twitter_run_log()
+    
     # 初始化数据库
     db = CompetitorDatabaseDB(db_path)
     
@@ -567,6 +587,28 @@ def scrape_all_companies_to_database(
     print(f"  成功: {success_count} 个公司")
     if fail_count > 0:
         print(f"  失败: {fail_count} 个公司")
+    print("=" * 60)
+    
+    # Twitter RapidAPI 用量与本趟账号清单（写入日志便于估算月度请求量）
+    tw_stats = get_twitter_api_stats()
+    n_user = tw_stats.get("user_lookup", 0)
+    n_pages = tw_stats.get("user_tweets_page", 0)
+    n_total = n_user + n_pages
+    n_accounts = len(_daily_twitter_accounts)
+    print()
+    print("=" * 60)
+    print("🐦 Twitter RapidAPI 本趟统计（twitter241）")
+    print("=" * 60)
+    print(f"  GET /user（按 username 解析 user_id）: {n_user} 次")
+    print(f"  GET /user-tweets（每页 1 次，含翻页与 429 换 key 重试）: {n_pages} 次")
+    print(f"  本趟 Twitter HTTP 合计: {n_total} 次")
+    print(f"  本趟尝试爬取的 Twitter 账号数: {n_accounts}（按 公司 - 游戏 计次如下）")
+    if n_accounts == 0:
+        print("    （本趟未执行任何 Twitter 爬取）")
+    else:
+        for (co, gm), cnt in sorted(Counter(_daily_twitter_accounts).items()):
+            suffix = f" ×{cnt}" if cnt > 1 else ""
+            print(f"    • {co} / {gm}{suffix}")
     print("=" * 60)
     
     return 0 if fail_count == 0 else 1
