@@ -14,6 +14,7 @@ import env_loader  # noqa: F401
 
 from analyzers.daily_ai import call_model_with_retry
 
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 API_KEY = os.getenv("OPENROUTER_API_KEY", "") or os.getenv("OPENAI_API_KEY", "")
 DEFAULT_TIMEOUT = float(os.environ.get("OPENAI_TIMEOUT", "40"))
@@ -291,7 +292,7 @@ def save_analysis_result(analysis_result: Dict[str, Any], output_path: Optional[
         end_date = period.get("end_date", "")
         output_dir = os.environ.get("OUTPUT_DIR")
         if not output_dir or not os.path.exists(output_dir):
-            output_dir = os.path.join(os.path.dirname(__file__), "output")
+            output_dir = os.path.join(_PROJECT_ROOT, "workflows", "output")
             os.makedirs(output_dir, exist_ok=True)
         
         output_path = os.path.join(

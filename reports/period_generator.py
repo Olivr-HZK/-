@@ -1,6 +1,6 @@
 """
-竞品社媒日报生成模块 (第三部分)
-按公司生成飞书日报，包含AI分析结果、监控时间段和平台信息
+竞品社媒周报生成模块（第三部分）
+按公司生成飞书/企微周报卡片，包含 AI 分析结果、监控时间段和平台信息。
 """
 import json
 import os
@@ -15,6 +15,22 @@ import requests
 import env_loader  # noqa: F401
 
 from database.competitor_db import CompetitorDatabaseDB
+
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _resolve_config_path() -> str:
+    """项目根目录下的 config/config.yaml，或由 CONFIG_PATH / 环境指定。"""
+    env_path = os.environ.get("CONFIG_PATH")
+    if env_path and os.path.exists(env_path):
+        return env_path
+    root_cfg = os.path.join(_PROJECT_ROOT, "config", "config.yaml")
+    if os.path.exists(root_cfg):
+        return root_cfg
+    docker_cfg = "/app/config/config.yaml"
+    if os.path.exists(docker_cfg):
+        return docker_cfg
+    return ""
 
 
 def _get_company_color(company: str) -> str:
@@ -48,15 +64,11 @@ def get_feishu_webhook() -> str:
     for env_key in ("FEISHU_WEBHOOK_URL", "FEISHU_URL", "FEISHU_WEBHOOK"):
         if os.environ.get(env_key):
             return os.environ[env_key]
-    
-    config_path = os.environ.get("CONFIG_PATH", "/app/config/config.yaml")
-    if not os.path.exists(config_path):
-        alt = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
-        if os.path.exists(alt):
-            config_path = alt
-        else:
-            return ""
-    
+
+    config_path = _resolve_config_path()
+    if not config_path:
+        return ""
+
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             cfg = yaml.safe_load(f) or {}
@@ -82,14 +94,10 @@ def get_wework_webhook() -> tuple[str, str]:
     
     # 如果环境变量没有，从配置文件读取
     if not webhook:
-        config_path = os.environ.get("CONFIG_PATH", "/app/config/config.yaml")
-        if not os.path.exists(config_path):
-            alt = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
-            if os.path.exists(alt):
-                config_path = alt
-            else:
-                return "", "markdown"
-        
+        config_path = _resolve_config_path()
+        if not config_path:
+            return "", "markdown"
+
         try:
             with open(config_path, "r", encoding="utf-8") as f:
                 cfg = yaml.safe_load(f) or {}
@@ -660,10 +668,10 @@ def generate_period_reports(
             except Exception as exc:
                 print(f"    ⚠️ 保存周报到数据库时出错: {exc}")
     
-    # 保存报告到文件
+    # 保存报告到文件（与 period_workflow 默认的 workflows/output 一致）
     output_dir = os.environ.get("OUTPUT_DIR")
     if not output_dir or not os.path.exists(output_dir):
-        output_dir = os.path.join(os.path.dirname(__file__), "output")
+        output_dir = os.path.join(_PROJECT_ROOT, "workflows", "output")
         os.makedirs(output_dir, exist_ok=True)
     
     report_file = os.path.join(

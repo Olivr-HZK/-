@@ -26,6 +26,10 @@ env/
 *.swo
 *~
 
+# 周报工作流中间产物
+workflows/output/*.json
+!workflows/output/.gitkeep
+
 # Output files (可能包含临时数据)
 output/*.json
 output/*.csv
@@ -52,3 +56,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.bak
+
+# 本地数据库手动备份（勿提交）
+db/*.db.bak.*
+database/db/*.db.bak.*

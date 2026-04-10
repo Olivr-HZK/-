@@ -14,6 +14,7 @@ from collections import Counter
 import env_loader  # noqa: F401
 
 from database.competitor_db import CompetitorDatabaseDB
+from competitor_config import get_competitors_from_config_yaml
 from scrapers.rapidapi import (
     get_posts_from_twitter,
     get_posts_from_tiktok,
@@ -379,76 +380,54 @@ def scrape_company_platforms_from_db(
     return platforms_data
 
 
-def load_companies_from_json_to_database(
-    json_path: str = "input/twitter_input.json",
+def load_companies_to_database(
+    data: Dict[str, Any],
     db: Optional[CompetitorDatabaseDB] = None,
-    db_path: Optional[str] = None
+    db_path: Optional[str] = None,
+    source_label: str = "配置",
 ) -> bool:
     """
-    从 JSON 文件加载所有公司配置并更新到数据库
-    
-    Args:
-        json_path: JSON 文件路径
-        db: 数据库实例（如果提供，使用该实例；否则创建新实例）
-        db_path: 数据库路径（仅在 db 为 None 时使用）
-    
-    Returns:
-        是否加载成功
+    将已解析的数据（含 competitors 列表）写入数据库。
     """
     try:
-        if not os.path.exists(json_path):
-            print(f"⚠️ JSON 配置文件不存在: {json_path}，跳过配置更新")
-            return False
-        
-        print("\n" + "=" * 60)
-        print("📖 从 JSON 加载并更新公司配置到数据库")
-        print("=" * 60)
-        
-        # 读取 JSON 文件
-        with open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        
         competitors = data.get("competitors", [])
         if not competitors:
-            print("⚠️ JSON 文件中未找到任何公司配置")
+            print(f"⚠️ {source_label} 中未找到任何公司配置")
             return False
-        
-        # 创建或使用数据库实例
+
         if db is None:
             db = CompetitorDatabaseDB(db_path)
-        
+
         print(f"📋 找到 {len(competitors)} 个公司配置")
-        
+
         success_count = 0
         fail_count = 0
-        
-        # 更新每个公司的配置
+
         for competitor in competitors:
             company_name = competitor.get("name", "").strip()
             if not company_name:
                 continue
-            
+
             priority = competitor.get("priority", "high")
-            
-            # 构建社媒配置结构
+
             social_media_config = {
                 "platforms": competitor.get("platforms", []),
-                "games": competitor.get("games", [])
+                "games": competitor.get("games", []),
             }
-            
+
             print(f"\n  📝 更新公司配置: {company_name}")
             success = db.save_company_social_media_config(
                 company=company_name,
                 priority=priority,
-                social_media_config=social_media_config
+                social_media_config=social_media_config,
             )
-            
+
             if success:
                 success_count += 1
             else:
                 fail_count += 1
                 print(f"    ❌ {company_name} 配置更新失败")
-        
+
         print("\n" + "=" * 60)
         print("✅ 配置更新完成")
         print("=" * 60)
@@ -456,14 +435,71 @@ def load_companies_from_json_to_database(
         if fail_count > 0:
             print(f"  失败: {fail_count} 个公司")
         print("=" * 60)
-        
+
         return success_count > 0
-    
+
+    except Exception as exc:
+        print(f"❌ 从 {source_label} 加载失败: {exc}")
+        import traceback
+        print(f"[调试] 错误详情: {traceback.format_exc()}")
+        return False
+
+
+def load_companies_from_json_to_database(
+    json_path: str = "input/twitter_input.json",
+    db: Optional[CompetitorDatabaseDB] = None,
+    db_path: Optional[str] = None,
+) -> bool:
+    """从 JSON 文件加载公司配置并更新到数据库。"""
+    try:
+        if not os.path.exists(json_path):
+            print(f"⚠️ JSON 配置文件不存在: {json_path}，跳过配置更新")
+            return False
+
+        print("\n" + "=" * 60)
+        print("📖 从 JSON 加载并更新公司配置到数据库")
+        print("=" * 60)
+
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        return load_companies_to_database(data, db=db, db_path=db_path, source_label="JSON")
+
     except Exception as exc:
         print(f"❌ 从 JSON 加载配置失败: {exc}")
         import traceback
         print(f"[调试] 错误详情: {traceback.format_exc()}")
         return False
+
+
+def load_companies_config_into_database(
+    json_path: str = "input/twitter_input.json",
+    db: Optional[CompetitorDatabaseDB] = None,
+    db_path: Optional[str] = None,
+) -> bool:
+    """
+    优先从 config/config.yaml 根级 ``competitors`` 加载；
+    若未配置或为空，再回退到 ``json_path`` JSON 文件。
+    """
+    competitors_yaml = get_competitors_from_config_yaml()
+    if competitors_yaml:
+        print("\n" + "=" * 60)
+        print("📖 从 config/config.yaml（competitors）加载并更新公司配置到数据库")
+        print("=" * 60)
+        return load_companies_to_database(
+            {"competitors": competitors_yaml},
+            db=db,
+            db_path=db_path,
+            source_label="config.yaml",
+        )
+
+    if os.path.exists(json_path):
+        return load_companies_from_json_to_database(json_path, db=db, db_path=db_path)
+
+    print(
+        f"⚠️ config.yaml 中无 competitors，且未找到 {json_path}，跳过配置更新"
+    )
+    return False
 
 
 def scrape_all_companies_to_database(
@@ -482,8 +518,8 @@ def scrape_all_companies_to_database(
         target_date: 目标日期（如果指定，则使用该日期；否则使用 days_ago 计算）
         days_ago: 爬取多少天前的数据（0表示今天，1表示昨天）
         companies: 指定要爬取的公司列表，如果为None则爬取所有公司
-        load_from_json: 是否先从 JSON 加载并更新配置到数据库（默认: True）
-        json_path: JSON 配置文件路径（默认: input/twitter_input.json）
+        load_from_json: 是否将配置同步到数据库（默认: True；优先 config.yaml，其次 JSON）
+        json_path: 回退用的 JSON 路径（默认: input/twitter_input.json）
     
     Returns:
         退出码（0表示成功）
@@ -511,9 +547,9 @@ def scrape_all_companies_to_database(
     # 初始化数据库
     db = CompetitorDatabaseDB(db_path)
     
-    # 步骤 0: 从 JSON 加载并更新配置到数据库（如果启用）
+    # 步骤 0: 优先 config.yaml competitors，否则 twitter_input.json
     if load_from_json:
-        load_companies_from_json_to_database(json_path=json_path, db=db, db_path=db_path)
+        load_companies_config_into_database(json_path=json_path, db=db, db_path=db_path)
         print()  # 空行分隔
     
     # 获取公司列表
@@ -646,13 +682,13 @@ def main():
     parser.add_argument(
         "--skip-load-json",
         action="store_true",
-        help="跳过从 JSON 加载配置到数据库的步骤（默认会先加载 JSON 更新配置）"
+        help="跳过将配置写入数据库（默认先读 config.yaml 的 competitors，否则读 JSON）",
     )
     parser.add_argument(
         "--json-path",
         type=str,
         default="input/twitter_input.json",
-        help="JSON 配置文件路径（默认: input/twitter_input.json）"
+        help="config.yaml 无 competitors 时的回退 JSON（默认: input/twitter_input.json）",
     )
     
     args = parser.parse_args()

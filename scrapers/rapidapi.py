@@ -230,23 +230,32 @@ RAPIDAPI_HOSTS = {
     "facebook": "facebook-scraper3.p.rapidapi.com",
 }
 
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def load_config() -> Dict[str, Any]:
-    """加载配置文件"""
-    config_path = os.environ.get("CONFIG_PATH", "/app/config/config.yaml")
-    if not os.path.exists(config_path):
-        alt_path = os.path.join(os.path.dirname(__file__), "config", "config.yaml")
-        if os.path.exists(alt_path):
-            config_path = alt_path
-        else:
-            print(f"⚠️ 未找到配置文件: {config_path}")
+    """加载配置文件（项目根目录 config/config.yaml，或由环境变量 CONFIG_PATH 指定）。"""
+    candidates = []
+    env_path = os.environ.get("CONFIG_PATH")
+    if env_path:
+        candidates.append(env_path)
+    candidates.append(os.path.join(_PROJECT_ROOT, "config", "config.yaml"))
+    # Docker 默认路径
+    docker_path = "/app/config/config.yaml"
+    if docker_path not in candidates:
+        candidates.append(docker_path)
+
+    for config_path in candidates:
+        if not config_path or not os.path.exists(config_path):
+            continue
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                return yaml.safe_load(f) or {}
+        except Exception as exc:
+            print(f"⚠️ 读取配置失败 ({config_path}): {exc}")
             return {}
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f) or {}
-    except Exception as exc:
-        print(f"⚠️ 读取配置失败: {exc}")
-        return {}
+    print("⚠️ 未找到配置文件，已尝试: " + ", ".join(candidates))
+    return {}
 
 
 def get_competitor_accounts(cfg: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -1073,68 +1082,10 @@ def load_historical_youtube_shorts(
     days_ago: int = 1
 ) -> set[str]:
     """
-    从历史数据库中加载指定频道的 Shorts video IDs
-    支持从 SQLite 数据库或 JSON 文件读取
-    
-    Args:
-        company: 公司名称
-        game: 游戏名称（可选）
-        platform_type: 平台类型
-        url: 频道URL
-        days_ago: 查看几天前的数据（默认1天前，即昨天的数据）
-    
-    Returns:
-        video ID 集合
+    历史 Shorts 视频 ID（用于去重）。当前项目不维护独立 history 库，返回空集合，
+    即不做跨日历史去重；若需去重可改为查询 competitor 库中的昨日帖子。
     """
-    try:
-        from database.history_db import CompetitorHistoryDB
-        from datetime import date
-        
-        db = CompetitorHistoryDB()
-        target_date = date.today() - timedelta(days=days_ago)
-        
-        # 如果使用数据库模式，直接调用 get_platform_video_ids
-        if db.use_database:
-            video_ids = db.get_platform_video_ids(company, game, platform_type, url, target_date)
-            return video_ids
-        
-        # 使用 JSON 文件模式
-        raw_data = db.load_raw_data_by_date(target_date)
-        if not raw_data:
-            return set()
-        
-        companies_dict = raw_data.get("companies", {})
-        company_data = companies_dict.get(company)
-        if not company_data:
-            return set()
-        
-        platforms_dict = company_data.get("platforms", {})
-        video_ids = set()
-        
-        # 遍历所有平台数据，查找匹配的平台
-        for key, platform_data in platforms_dict.items():
-            # 检查是否匹配（平台类型和URL）
-            if (platform_data.get("platform_type", "").lower() == platform_type.lower() and
-                platform_data.get("url", "") == url):
-                posts = platform_data.get("posts", [])
-                for post in posts:
-                    # 提取 video_id（可能在不同字段中）
-                    vid = post.get("video_id") or post.get("videoId")
-                    if vid:
-                        video_ids.add(vid)
-                    # 也可以从 post_url 中提取
-                    post_url = post.get("post_url", "")
-                    if "/shorts/" in post_url:
-                        match = re.search(r'/shorts/([A-Za-z0-9_-]+)', post_url)
-                        if match:
-                            video_ids.add(match.group(1))
-        
-        return video_ids
-    except Exception as e:
-        print(f"  ⚠️ 加载历史数据失败: {e}")
-        import traceback
-        print(f"  [调试] 错误详情: {traceback.format_exc()}")
-        return set()
+    return set()
 
 
 def get_twitter_user_id_from_username(username: str, debug: bool = False) -> Optional[str]:

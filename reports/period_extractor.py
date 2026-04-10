@@ -10,6 +10,8 @@ from pathlib import Path
 
 from database.competitor_db import CompetitorDatabaseDB
 
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 class CompetitorPeriodDataExtractor:
     """从数据库提取一段时间内的社媒数据"""
@@ -200,7 +202,7 @@ class CompetitorPeriodDataExtractor:
             end_date = data["period"]["end_date"]
             output_dir = os.environ.get("OUTPUT_DIR")
             if not output_dir or not os.path.exists(output_dir):
-                output_dir = os.path.join(os.path.dirname(__file__), "output")
+                output_dir = os.path.join(_PROJECT_ROOT, "workflows", "output")
                 os.makedirs(output_dir, exist_ok=True)
             
             output_path = os.path.join(

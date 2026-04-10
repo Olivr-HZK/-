@@ -4,9 +4,10 @@
 README.md
 
 output/
+workflows/output/*.json
 
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
 .Python
@@ -22,14 +23,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-docker/.env
-
-_image/
-
-.github/
-
 *.log
 .env.local
 .env.*.local
-version
-index.html

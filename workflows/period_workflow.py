@@ -198,30 +198,26 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 示例:
-  # 完整工作流（提取最近7天的数据）
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13
+  # 完整工作流
+  python workflows/period_workflow.py --start-date 2026-01-07 --end-date 2026-01-13
 
-  # 只执行第一部分（数据提取）
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
+  # 只执行数据提取
+  python workflows/period_workflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
       --skip-analysis --skip-report
 
-  # 只执行第二部分（AI分析，使用已有的提取数据）
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
+  # 只执行 AI 分析（使用已有提取 JSON）
+  python workflows/period_workflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
       --skip-extract --skip-report \\
-      --extracted-data output/competitor_extracted_data_2026-01-07_to_2026-01-13.json
+      --extracted-data workflows/output/competitor_extracted_data_2026-01-07_to_2026-01-13.json
 
-  # 只执行第三部分（报告生成，使用已有的分析结果）
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
+  # 只生成报告（使用已有分析 JSON）
+  python workflows/period_workflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
       --skip-extract --skip-analysis \\
-      --analysis-result output/competitor_analysis_result_2026-01-07_to_2026-01-13.json
+      --analysis-result workflows/output/competitor_analysis_result_2026-01-07_to_2026-01-13.json
 
-  # 指定公司
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
-      --companies voodoo dream_games
-
-  # 不发送到飞书
-  python CompetitorPeriodWorkflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
-      --skip-send
+  # 指定公司、不推送飞书
+  python workflows/period_workflow.py --start-date 2026-01-07 --end-date 2026-01-13 \\
+      --companies voodoo dream_games --skip-send
         """
     )
     
@@ -276,7 +272,7 @@ def main():
     parser.add_argument(
         "--output-dir",
         type=str,
-        help="输出目录（可选，默认为 output/）"
+        help="中间产物输出目录（可选，默认 workflows/output/）"
     )
     parser.add_argument(
         "--skip-send",
